@@ -17,6 +17,7 @@ int main(int argc, char **argv){
     fprintf(stdout, "[INSTALL] Please enter the root password: \n");
     read_cmd(password, FILENAME_MAX_SIZE);
     fprintf(stdout, "[INSTALL] Password chosen: %s\n", password);
+    sha256ofString((BYTE *)password, password_hash);
     init_user("root", password);
     file_t file;
     for (int i = 0; i < strlen("root"); ++i) {

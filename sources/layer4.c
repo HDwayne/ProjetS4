@@ -32,7 +32,7 @@ void write_file(char * filename, file_t filedata){
     if (i_inode != INODE_TABLE_SIZE){
         if (filedata.size <= virtual_disk_sos->inodes[i_inode].size){
             strcpy(virtual_disk_sos->inodes[i_inode].mtimestamp, timestamp());
-            int pos = (int)virtual_disk_sos->inodes[i_inode].first_byte;
+            uint pos = virtual_disk_sos->inodes[i_inode].first_byte;
             block_t block;
             for (int i = 0; i < compute_nblock(filedata.size); i++) {
                 block.data[0] = filedata.data[i*BLOCK_SIZE+0];
@@ -48,7 +48,7 @@ void write_file(char * filename, file_t filedata){
             strcpy(ctimestamp, virtual_disk_sos->inodes[i_inode].ctimestamp);
             delete_inode(i_inode);
             init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, ctimestamp, timestamp());
-            int pos = (int)virtual_disk_sos->inodes[is_file_in_inode(filename)].first_byte;
+            uint pos = virtual_disk_sos->inodes[is_file_in_inode(filename)].first_byte;
             block_t block;
             for (int i = 0; i < compute_nblock(filedata.size); i++) {
                 block.data[0] = filedata.data[i*BLOCK_SIZE+0];
@@ -64,7 +64,7 @@ void write_file(char * filename, file_t filedata){
     else{
         init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp());
         block_t block;
-        int pos = (int)virtual_disk_sos->inodes[is_file_in_inode(filename)].first_byte;
+        uint pos = virtual_disk_sos->inodes[is_file_in_inode(filename)].first_byte;
         for (int i = 0; i < compute_nblock(filedata.size); i++) {
             block.data[0] = filedata.data[i*BLOCK_SIZE+0];
             block.data[1] = filedata.data[i*BLOCK_SIZE+1];
@@ -87,7 +87,7 @@ int read_file(char *filename, file_t *filedata) {
     int index_inode = is_file_in_inode(filename);
     if (index_inode == INODE_TABLE_SIZE) return 0;
     filedata->size = virtual_disk_sos->inodes[index_inode].size;
-    int pos = (int)virtual_disk_sos->inodes[index_inode].first_byte;
+    uint pos = virtual_disk_sos->inodes[index_inode].first_byte;
     block_t block;
     for (int j = 0; j < compute_nblock(filedata->size); j++) {
         read_block(&block, pos);
