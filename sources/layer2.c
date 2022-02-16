@@ -58,7 +58,7 @@ void update_first_free_byte(){
         virtual_disk_sos->super_block.first_free_byte =
                 virtual_disk_sos->inodes[imax].first_byte + virtual_disk_sos->inodes[imax].nblock * BLOCK_SIZE;
     }
-    while (virtual_disk_sos->super_block.first_free_byte%4!= 0) virtual_disk_sos->super_block.first_free_byte ++;
+    while (virtual_disk_sos->super_block.first_free_byte%BLOCK_SIZE != 0) virtual_disk_sos->super_block.first_free_byte ++;
 }
 
 /**

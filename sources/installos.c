@@ -30,8 +30,8 @@ int main(int argc, char **argv){
     file.data[strlen("root")+1+strlen(password)] = '\0';
     file.size= strlen("root")+1+strlen(password)+1;
 
-    write_file("coucou", file);
-    store_file_to_host("coucou");
+    write_file("passwd", file);
+    store_file_to_host("passwd");
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
 
     display_disk_storage();
