@@ -19,6 +19,8 @@ BIN_OS = $(BINDIR)/os
 
 DISK = repdisk
 
+all: clean os installer disk
+
 os: $(BIN_OS)
 
 $(BIN_OS): $(SRC_OS)
