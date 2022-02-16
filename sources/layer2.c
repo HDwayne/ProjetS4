@@ -3,51 +3,50 @@
 //
 
 #include "../headers/layer2.h"
-#include "../headers/layer1.h"
 
 /**
- * \brief Function that writes the super_block into the disk storage
- * @return Success code or error code depending on whether successful or failure
+ * @brief Function that writes the super_block into the disk storage
+ * @return int, Success code or error code depending on whether successful or failure
  */
 int write_super_block(){
     super_block_t superblock = virtual_disk_sos->super_block;
     block_t data;
+
     uint_to_block(virtual_disk_sos->super_block.number_of_files, &data);
-    write_block(data, 0);
+    if (write_block(data, 0) == ERROR) return ERROR;
     uint_to_block(superblock.number_of_users, &data);
-    write_block(data, BLOCK_SIZE);
+    if (write_block(data, BLOCK_SIZE) == ERROR) return ERROR;
     uint_to_block(superblock.nb_blocks_used, &data);
-    write_block(data, 2*BLOCK_SIZE);
+    if ( write_block(data, 2*BLOCK_SIZE) == ERROR) return ERROR;
     uint_to_block(superblock.first_free_byte, &data);
-    write_block(data, 3*BLOCK_SIZE);
+    if (write_block(data, 3*BLOCK_SIZE) == ERROR) return ERROR;
     return SUCCESS;
 }
 
 /**
- * \brief Function that read the super_block from the disk storage
- * @return Success code or error code
+ * @brief Function that read the super_block from the disk storage
+ * @return int, Success code or error code depending on whether successful or failure
  */
 int read_super_block(){
     block_t data;
-    read_block(&data, 0);
+    if (read_block(&data, 0) == ERROR) return ERROR;
     virtual_disk_sos->super_block.number_of_files = block_to_uint(data);
-    read_block(&data, BLOCK_SIZE);
+    if (read_block(&data, BLOCK_SIZE) == ERROR) return ERROR;
     virtual_disk_sos->super_block.number_of_users = block_to_uint(data);
-    read_block(&data, 2*BLOCK_SIZE);
+    if (read_block(&data, 2*BLOCK_SIZE) == ERROR) return ERROR;
     virtual_disk_sos->super_block.nb_blocks_used = block_to_uint(data);
-    read_block(&data, 3*BLOCK_SIZE);
+    if (read_block(&data, 3*BLOCK_SIZE) == ERROR) return ERROR;
     virtual_disk_sos->super_block.first_free_byte = block_to_uint(data);
     return SUCCESS;
 }
 
 /**
- * \brief Function that updates the first_free_byte field of super_block
+ * @brief Function that updates the first_free_byte field of super_block
  */
 void update_first_free_byte(){
     if (virtual_disk_sos->inodes[0].first_byte == 0){
         virtual_disk_sos->super_block.first_free_byte = USERS_START + (USER_SIZE * NB_USERS * BLOCK_SIZE);
-    }
-    else {
+    } else {
         uint maxfirstbyte = USERS_START + (USER_SIZE * NB_USERS * BLOCK_SIZE);
         int imax = 0;
         for (int i = 0; i < get_unused_inode(); i++) {
@@ -55,41 +54,41 @@ void update_first_free_byte(){
                 maxfirstbyte = virtual_disk_sos->inodes[i].first_byte;
             imax = i;
         }
-        virtual_disk_sos->super_block.first_free_byte =
-                virtual_disk_sos->inodes[imax].first_byte + virtual_disk_sos->inodes[imax].nblock * BLOCK_SIZE;
+        virtual_disk_sos->super_block.first_free_byte = virtual_disk_sos->inodes[imax].first_byte + virtual_disk_sos->inodes[imax].nblock * BLOCK_SIZE;
     }
     while (virtual_disk_sos->super_block.first_free_byte%4!= 0) virtual_disk_sos->super_block.first_free_byte ++;
 }
 
 /**
- * \brief Function that read inode table from the disk storage
+ * @brief Function that read inode table from the disk storage
+ * @return int, Success code or error code depending on whether successful or failure
  */
-void read_inodes_table(){
+int read_inodes_table(){
     int pos = INODES_START;
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
         block_t block;
         for (int j = 0; j < compute_nblock(FILENAME_MAX_SIZE); ++j) {
-            read_block(&block, pos);
+            if (read_block(&block, pos) == ERROR) return ERROR;
             virtual_disk_sos->inodes[i].filename[j*BLOCK_SIZE+0] = (char)block.data[0];
             virtual_disk_sos->inodes[i].filename[j*BLOCK_SIZE+1] = (char)block.data[1];
             virtual_disk_sos->inodes[i].filename[j*BLOCK_SIZE+2] = (char)block.data[2];
             virtual_disk_sos->inodes[i].filename[j*BLOCK_SIZE+3] = (char)block.data[3];
             pos+=BLOCK_SIZE;
         }
-        read_block(&block, pos);
+        if (read_block(&block, pos) == ERROR) return ERROR;
         virtual_disk_sos->inodes[i].size = block_to_uint(block);
         pos+=BLOCK_SIZE;
-        read_block(&block, pos);
+        if (read_block(&block, pos) == ERROR) return ERROR;
         virtual_disk_sos->inodes[i].uid = block_to_uint(block);
         pos+=BLOCK_SIZE;
-        read_block(&block, pos);
+        if (read_block(&block, pos) == ERROR) return ERROR;
         virtual_disk_sos->inodes[i].uright = block_to_uint(block);
         pos+=BLOCK_SIZE;
-        read_block(&block, pos);
+        if (read_block(&block, pos) == ERROR) return ERROR;
         virtual_disk_sos->inodes[i].oright = block_to_uint(block);
         pos+=BLOCK_SIZE;
         for (int j = 0; j < compute_nblock(TIMESTAMP_SIZE); ++j) {
-            read_block(&block, pos);
+            if (read_block(&block, pos) == ERROR) return ERROR;
             virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+0] = (char)block.data[0];
             virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+1] = (char)block.data[1];
             virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+2] = (char)block.data[2];
@@ -97,27 +96,28 @@ void read_inodes_table(){
             pos+=BLOCK_SIZE;
         }
         for (int j = 0; j < compute_nblock(TIMESTAMP_SIZE); ++j) {
-            read_block(&block, pos);
+            if (read_block(&block, pos) == ERROR) return ERROR;
             virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+0] = (char)block.data[0];
             virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+1] = (char)block.data[1];
             virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+2] = (char)block.data[2];
             virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+3] = (char)block.data[3];
             pos+=BLOCK_SIZE;
         }
-        read_block(&block, pos);
+        if (read_block(&block, pos) == ERROR) return ERROR;
         virtual_disk_sos->inodes[i].nblock = block_to_uint(block);
         pos+=BLOCK_SIZE;
-        read_block(&block, pos);
+        if (read_block(&block, pos) == ERROR) return ERROR;
         virtual_disk_sos->inodes[i].first_byte = block_to_uint(block);
         pos+=BLOCK_SIZE;
     }
+    return SUCCESS;
 }
 
-
 /**
- * \brief Function that write inode table to the disk storage
+ * @brief Function that write inode table to the disk storage
+ * @return int, Success code or error code depending on whether successful or failure
  */
-void write_inodes_table(){
+int write_inodes_table(){
     int pos = INODES_START;
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
         inode_t inode = virtual_disk_sos->inodes[i];
@@ -127,27 +127,27 @@ void write_inodes_table(){
             block.data[1] = (unsigned char)inode.filename[1 + j*BLOCK_SIZE];
             block.data[2] = (unsigned char)inode.filename[2 + j*BLOCK_SIZE];
             block.data[3] = (unsigned char)inode.filename[3 + j*BLOCK_SIZE];
-            write_block(block, pos);
+            if (write_block(block, pos) == ERROR) return ERROR;
             pos+=BLOCK_SIZE;
         }
         uint_to_block(inode.size, &block);
-        write_block(block, pos);
+        if (write_block(block, pos) == ERROR) return ERROR;
         pos+=BLOCK_SIZE;
         uint_to_block(inode.uid, &block);
-        write_block(block, pos);
+        if (write_block(block, pos) == ERROR) return ERROR;
         pos+=BLOCK_SIZE;
         uint_to_block(inode.uright, &block);
-        write_block(block, pos);
+        if (write_block(block, pos) == ERROR) return ERROR;
         pos+=BLOCK_SIZE;
         uint_to_block(inode.oright, &block);
-        write_block(block, pos);
+        if (write_block(block, pos) == ERROR) return ERROR;
         pos+=BLOCK_SIZE;
         for (int j = 0; j < compute_nblock(TIMESTAMP_SIZE); ++j) {
             block.data[0] = (unsigned char)inode.ctimestamp[0 + j*BLOCK_SIZE];
             block.data[1] = (unsigned char)inode.ctimestamp[1 + j*BLOCK_SIZE];
             block.data[2] = (unsigned char)inode.ctimestamp[2 + j*BLOCK_SIZE];
             block.data[3] = (unsigned char)inode.ctimestamp[3 + j*BLOCK_SIZE];
-            write_block(block, pos);
+           if (write_block(block, pos) == ERROR) return ERROR;
             pos+=BLOCK_SIZE;
         }
         for (int j = 0; j < compute_nblock(TIMESTAMP_SIZE); ++j) {
@@ -155,20 +155,24 @@ void write_inodes_table(){
             block.data[1] = (unsigned char)inode.mtimestamp[1 + j*BLOCK_SIZE];
             block.data[2] = (unsigned char)inode.mtimestamp[2 + j*BLOCK_SIZE];
             block.data[3] = (unsigned char)inode.mtimestamp[3 + j*BLOCK_SIZE];
-            write_block(block, pos);
+            if (write_block(block, pos) == ERROR) return ERROR;
             pos+=BLOCK_SIZE;
         }
         uint_to_block(inode.nblock, &block);
-        write_block(block, pos);
+        if (write_block(block, pos) == ERROR) return ERROR;
         pos+=BLOCK_SIZE;
         uint_to_block(inode.first_byte, &block);
-        write_block(block, pos);
+        if (write_block(block, pos) == ERROR) return ERROR;
         pos+=BLOCK_SIZE;
     }
+    return SUCCESS;
 }
 
-/*
- * \brief Function that delete an inode using index of the inode
+/**
+ * @brief Function that delete an inode using index of the inode
+ * 
+ * @param index_inode 
+ * @return int, Success code or error code depending on whether successful or failure
  */
 int delete_inode(int index_inode){
     if (index_inode >= INODE_TABLE_SIZE || index_inode < 0){
@@ -185,6 +189,11 @@ int delete_inode(int index_inode){
     return SUCCESS;
 }
 
+/**
+ * @brief Get the index of unused inode
+ * 
+ * @return int, 0 <= x <= 10
+ */
 int get_unused_inode(){
     for (int i = 0; i < INODE_TABLE_SIZE; i++) {
         if (virtual_disk_sos->inodes[i].first_byte == 0) return i;
@@ -192,6 +201,16 @@ int get_unused_inode(){
     return INODE_TABLE_SIZE;
 }
 
+/**
+ * @brief Initialize an inode
+ * 
+ * @param fileName 
+ * @param size 
+ * @param pos 
+ * @param createTime 
+ * @param modifyTime 
+ * @return int, Success code or error code depending on whether successful or failure 
+ */
 int init_inode(const char *fileName, uint size, uint pos, char *createTime, char *modifyTime){
     int index_inode = get_unused_inode();
     if (index_inode == INODE_TABLE_SIZE || virtual_disk_sos->super_block.number_of_files >= 10 ){
@@ -222,19 +241,25 @@ int init_inode(const char *fileName, uint size, uint pos, char *createTime, char
     return SUCCESS;
 }
 
-void cmd_dump_inode(char *directory){
-    init_disk_sos(directory);
+/**
+ * @brief @BerlinFlorian EXPLIQUE MOI STP
+ * 
+ * @param directory 
+ * @return int, Success code or error code depending on whether successful or failure 
+ */
+int cmd_dump_inode(char *directory){
+    if (init_disk_sos(directory) == ERROR) return ERROR;
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
-        init_inode("\0", 0, 0, timestamp(), timestamp());
-        delete_inode(0);
+        if (init_inode("\0", 0, 0, timestamp(), timestamp()) == ERROR) return ERROR;
+        if (delete_inode(0) == ERROR) return ERROR;
     }
     update_first_free_byte();
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
 
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
-        init_inode("bonjour.txt", 10, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp());
+        if (init_inode("bonjour.txt", 10, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp()) == ERROR) return ERROR;
     }
-    delete_inode(4);
+    if (delete_inode(4) == ERROR) return ERROR;
     for (int i = 0; i < get_unused_inode(); ++i) {
         fprintf(stdout, "File n° %d : %s \n",i, virtual_disk_sos->inodes[i].filename);
         fprintf(stdout, "size:  %d\n", virtual_disk_sos->inodes[i].size);
@@ -242,8 +267,8 @@ void cmd_dump_inode(char *directory){
         fprintf(stdout, "Pos  : %d \n",virtual_disk_sos->inodes[i].first_byte);
     }
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
-    shutdown_disk_sos();
-    init_disk_sos(directory);
+    if (shutdown_disk_sos() == ERROR) return ERROR;
+    if (init_disk_sos(directory) == ERROR) return ERROR;
     display_disk_storage();
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
     for (int i = 0; i < virtual_disk_sos->super_block.number_of_files; i++) {
@@ -252,10 +277,19 @@ void cmd_dump_inode(char *directory){
         fprintf(stdout, "Blocks  : %d \n",virtual_disk_sos->inodes[i].nblock);
         fprintf(stdout, "Pos  : %d \n",virtual_disk_sos->inodes[i].first_byte);
     }
-    shutdown_disk_sos();
-
+    if (shutdown_disk_sos() == ERROR) return ERROR;
+    return SUCCESS;
 }
 
+/**
+ * @brief Checks if the user has sufficient rights in the inode
+ * 
+ * @param i_inode 
+ * @param user_id 
+ * @param right 
+ * @return true 
+ * @return false 
+ */
 bool has_rights(int i_inode, int user_id, int right){
     if (virtual_disk_sos->inodes[i_inode].first_byte == 0){
         fprintf(stderr, "Inode not initialized\n");
@@ -269,7 +303,3 @@ bool has_rights(int i_inode, int user_id, int right){
     if (virtual_disk_sos->inodes[i_inode].oright == RW || virtual_disk_sos->inodes[i_inode].oright == right) return true;
     return false;
 }
-
-/*int main(){
-    cmd_dump_inode("../Format");
-}*/

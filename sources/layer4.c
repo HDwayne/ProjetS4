@@ -10,10 +10,12 @@
 #include "../headers/layer3.h"
 #include "../headers/layer4.h"
 
+
+
 /**
- * \brief Check if file exists.
+ * @brief Check if file exists.
  * @param filename
- * @return
+ * @return int, index of the file
  */
 int is_file_in_inode(char *filename){
     for (int i = 0; i < virtual_disk_sos->super_block.number_of_files; ++i) {
@@ -178,7 +180,3 @@ void cmd_dump_file(char *directory){
 
     shutdown_disk_sos();
 }
-
-/*int main(){
-    cmd_dump_file("../Format");
-}*/

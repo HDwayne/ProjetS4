@@ -1,7 +1,10 @@
 #ifndef SCRATCHOS_LAYER1_H
 #define SCRATCHOS_LAYER1_H
 
+#include "layer2.h"
+#include "layer3.h"
 #include "os_defines.h"
+
 void uint_to_block(uint number, block_t *block);
 uint block_to_uint(block_t block);
 int init_disk_sos(char directory[FILENAME_MAX_SIZE]);

@@ -66,7 +66,7 @@ typedef struct inode_s{
     char ctimestamp[TIMESTAMP_SIZE]; // date creation : 26 octets
     char mtimestamp[TIMESTAMP_SIZE]; // date dernière modif. : 26 octets
     uint nblock; // nblock du fichier = (size+BLOCK_SIZE-1)/BLOCK_SIZE ?
-    uint first_byte; // number of the first byte on the virtual disk
+    uint first_byte; // number of the first byte on the virtual disk
 } inode_t;
 
 /* Type of the inode table */
@@ -103,4 +103,5 @@ typedef struct cmd_s{
 //Variables globales
 virtual_disk_t *virtual_disk_sos;
 session_t *user;
+
 #endif //SCRATCHOS_OS_DEFINES_H

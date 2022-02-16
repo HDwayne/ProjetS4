@@ -40,5 +40,5 @@ int main(int argc, char **argv){
     init_disk_sos(argv[1]);
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
 
-
+    return SUCCESS;
 }
