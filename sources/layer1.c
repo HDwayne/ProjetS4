@@ -68,11 +68,11 @@ int init_disk_sos(char *directory){
     fprintf(stdout, "step 6 !\n");
     if (read_users_table() == ERROR) return ERROR;
     fprintf(stdout, "step 7 !\n");
-    user = malloc(sizeof(session_t));
-    user->userid = 0;
+    free(diskFile);
+
+    user.userid = 0;
     fprintf(stdout, "step 8 !\n");
 
-    free(diskFile);
     return SUCCESS;
 }
 
@@ -84,7 +84,6 @@ int shutdown_disk_sos(){
     write_super_block();
     write_inodes_table();
     write_users_table();
-    free(user);
     if (fclose(virtual_disk_sos->storage) == EOF) {
         fprintf(stderr, "Cannot close file\n" );
         return ERROR;

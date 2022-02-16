@@ -225,7 +225,7 @@ int init_inode(const char *fileName, uint size, uint pos, char *createTime, char
     virtual_disk_sos->inodes[index_inode].first_byte = pos;
 
     //TO DO ON LAYER 5
-    virtual_disk_sos->inodes[index_inode].uid = user->userid;
+    virtual_disk_sos->inodes[index_inode].uid = user.userid;
     virtual_disk_sos->inodes[index_inode].uright = RW;
     virtual_disk_sos->inodes[index_inode].oright = rw;
 

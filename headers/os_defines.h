@@ -102,6 +102,6 @@ typedef struct cmd_s{
 
 //Variables globales
 virtual_disk_t *virtual_disk_sos;
-session_t *user;
+session_t user;
 
 #endif //SCRATCHOS_OS_DEFINES_H

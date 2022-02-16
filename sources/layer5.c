@@ -47,7 +47,7 @@ int cmd_ls(cmd_t args){
             for (int i = 0; i < last_inode; i++) {
                 char uright[3];
                 inode_t inode = virtual_disk_sos->inodes[i];
-                if(inode.uid == user->userid){
+                if(inode.uid == user.userid){
                     if (inode.uright == rw) strcpy(uright, "--");
                     else if (inode.uright == rW) strcpy(uright, "-w");
                     else if (inode.uright == Rw) strcpy(uright, "r-");
@@ -90,7 +90,7 @@ int cmd_cat(cmd_t args){
         fprintf(stderr, "File does not exist: %s\n", args.tabArgs[1]);
         return ERROR;
     }
-    if(!has_rights(index_inode, user->userid, Rw)){
+    if(!has_rights(index_inode, user.userid, Rw)){
         fprintf(stderr, "You aren't authorized to access this file\n");
         return ERROR;
     }
@@ -117,7 +117,7 @@ int cmd_rm(cmd_t args) {
         fprintf(stderr, "File does not exist: %s\n", args.tabArgs[1]);
         return ERROR;
     }
-    if(!has_rights(index_inode, user->userid, rW)){
+    if(!has_rights(index_inode, user.userid, rW)){
         fprintf(stderr, "You aren't authorized to access this file");
         return ERROR;
     }
@@ -157,7 +157,7 @@ int cmd_store(cmd_t args){
         fprintf(stderr, "File does not exist: %s\n", args.tabArgs[1]);
         return ERROR;
     }
-    if(!has_rights(index_inode, user->userid, RW)){
+    if(!has_rights(index_inode, user.userid, RW)){
         fprintf(stderr, "You aren't authorized to access this file");
         return ERROR;
     }
@@ -184,7 +184,7 @@ int cmd_chown(cmd_t args){
         fprintf(stderr, "Login does not exist: %s\n", args.tabArgs[2]);
         return ERROR;
     }
-    if(!has_rights(index_inode, user->userid, RW)){
+    if(!has_rights(index_inode, user.userid, RW)){
         fprintf(stderr, "You aren't authorized to access this file");
         return ERROR;
     }
@@ -204,7 +204,7 @@ int cmd_chmod(cmd_t args){
         fprintf(stderr, "File does not exist: %s\n", args.tabArgs[1]);
         return ERROR;
     }
-    if(!has_rights(index_inode, user->userid, RW)){
+    if(!has_rights(index_inode, user.userid, RW)){
         fprintf(stderr, "You aren't authorized to access this file");
         return ERROR;
     }
@@ -236,7 +236,7 @@ int cmd_adduser(cmd_t args){
         fprintf(stderr, "Usage: adduser\n");
         return ERROR;
     }
-    if (user->userid != 0) {
+    if (user.userid != 0) {
         fprintf(stderr, "Only root user is allowed\n");
         return ERROR;
     }
@@ -258,7 +258,7 @@ int cmd_rmuser(cmd_t args){
         fprintf(stderr, "Usage: rmuser <login>\n");
         return ERROR;
     }
-    if (user->userid != 0) {
+    if (user.userid != 0) {
         fprintf(stderr, "Only root user is allowed\n");
         return ERROR;
     }
@@ -326,7 +326,7 @@ int execute_cmd(cmd_t args){
     if(!strcmp(cmd_name, CMD_LISTUSERS)) return cmd_listusers(args);
     if(!strcmp(cmd_name, CMD_ADDUSER)) return cmd_adduser(args);
     if(!strcmp(cmd_name, CMD_RMUSER)) return cmd_rmuser(args);
-    fprintf(stderr, "[%s] Unknown command \"%s\"\n", virtual_disk_sos->users_table[user->userid].login, cmd_name);
+    fprintf(stderr, "[%s] Unknown command \"%s\"\n", virtual_disk_sos->users_table[user.userid].login, cmd_name);
     return ERROR;
 
 }
@@ -348,10 +348,10 @@ int terminal_shell(){
         read_cmd(pwd, FILENAME_MAX_SIZE);
         user_id = is_good_credentials(log, pwd);
     }while(user_id == NB_USERS);
-    user->userid = user_id;
+    user.userid = user_id;
 
     while(system_on){
-        fprintf(stdout, "[%s]: ", virtual_disk_sos->users_table[user->userid].login);
+        fprintf(stdout, "[%s]: ", virtual_disk_sos->users_table[user.userid].login);
         read_cmd(cmd, CMD_MAX_SIZE);
         fprintf(stdout, "\n");
         cmd_t interpreted_cmd;
