@@ -10,10 +10,12 @@
 #include "../headers/layer3.h"
 #include "../headers/layer4.h"
 
+
+
 /**
- * \brief Check if file exists.
+ * @brief Check if file exists.
  * @param filename
- * @return
+ * @return int, index of the file
  */
 int is_file_in_inode(char *filename){
     for (int i = 0; i < virtual_disk_sos->super_block.number_of_files; ++i) {
@@ -128,24 +130,44 @@ int load_file_from_host(char *filename){
     fseek(hostfile, 0, SEEK_END);
     sosfile.size = ftell(hostfile);
     fseek(hostfile, 0, SEEK_SET);
-    fread(sosfile.data, sizeof(uchar), sosfile.size, hostfile);
+
+    fread(sosfile.data, sizeof(char), sosfile.size, hostfile);
+    sosfile.data[sosfile.size] = '\0';
     fprintf(stdout, "Red : %s\n", sosfile.data);
     write_file(filename, sosfile);
     return 1;
 }
 
-
+// TODO ERROR
 int store_file_to_host(char *filenamesos){
     int index_inode = is_file_in_inode(filenamesos);
-    if (index_inode == INODE_TABLE_SIZE) return 0; // TODO: Error handling
+    if (index_inode == INODE_TABLE_SIZE) return ERROR; // TODO: Error handling
     file_t file;
     read_file(filenamesos, &file);
     FILE * fd;
+    
     fd = fopen(filenamesos, "w");
     if (fd == NULL) return 0;
-    fseek(fd, 0, SEEK_SET);
-    fwrite(file.data, sizeof(uchar), file.size, fd);
-    return 1;
+    if (fseek(fd, 0, SEEK_SET) != 0) {
+        fprintf(stderr, "Changement de position impossible\n");
+        if (fclose(fd) == EOF) {
+            fprintf( stderr, "Cannot close file\n" );
+        }
+        return ERROR;
+    }
+    int code = fwrite(file.data, sizeof(uchar), file.size, fd);
+    if (code != file.size){
+        fprintf(stderr, "An error occurred while writing block\n");
+        if (fclose(fd) == EOF) {
+            fprintf( stderr, "Cannot close file\n" );
+        }
+        return ERROR;
+    }
+    if (fclose(fd) == EOF) {
+        fprintf( stderr, "Cannot close file\n" );
+        return ERROR;
+    }
+    return SUCCESS;
 }
 
 
@@ -178,7 +200,3 @@ void cmd_dump_file(char *directory){
 
     shutdown_disk_sos();
 }
-
-/*int main(){
-    cmd_dump_file("../Format");
-}*/

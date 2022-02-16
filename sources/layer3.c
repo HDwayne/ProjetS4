@@ -2,12 +2,13 @@
 // Created by Florian Berlin on 14/02/2022.
 //
 
-#include "../headers/layer1.h"
-#include "../headers/layer2.h"
 #include "../headers/layer3.h"
 
-
-void write_users_table(){
+/**
+ * @brief write users table
+ * @return int, Success code or error code depending on whether successful or failure
+ */
+int write_users_table(){
     int pos = USERS_START;
     for (int i = 0; i < NB_USERS; ++i) {
         user_t user = virtual_disk_sos->users_table[i];
@@ -17,7 +18,7 @@ void write_users_table(){
             block.data[1] = (unsigned char)user.login[1 + j*BLOCK_SIZE];
             block.data[2] = (unsigned char)user.login[2 + j*BLOCK_SIZE];
             block.data[3] = (unsigned char)user.login[3 + j*BLOCK_SIZE];
-            write_block(block, pos);
+            if (write_block(block, pos) == ERROR) return ERROR;
             pos+=BLOCK_SIZE;
         }
         for (int j = 0; j < compute_nblock(SHA256_BLOCK_SIZE*2 + 1); j++) {
@@ -25,18 +26,23 @@ void write_users_table(){
             block.data[1] = (unsigned char)user.passwd[1 + j*BLOCK_SIZE];
             block.data[2] = (unsigned char)user.passwd[2 + j*BLOCK_SIZE];
             block.data[3] = (unsigned char)user.passwd[3 + j*BLOCK_SIZE];
-            write_block(block, pos);
+            if (write_block(block, pos) == ERROR) return ERROR;
             pos+=BLOCK_SIZE;
         }
     }
+    return SUCCESS;
 }
 
-void read_users_table(){
+/**
+ * @brief Read users table
+ * @return int, Success code or error code depending on whether successful or failure
+ */
+int read_users_table(){
     int pos = USERS_START;
     for (int i = 0; i < NB_USERS; ++i) {
         block_t block;
         for (int j = 0; j < compute_nblock(FILENAME_MAX_SIZE); j++) {
-            read_block(&block, pos);
+            if(read_block(&block, pos) == ERROR) return ERROR;
             virtual_disk_sos->users_table[i].login[j*BLOCK_SIZE+0] = (char)block.data[0];
             virtual_disk_sos->users_table[i].login[j*BLOCK_SIZE+1] = (char)block.data[1];
             virtual_disk_sos->users_table[i].login[j*BLOCK_SIZE+2] = (char)block.data[2];
@@ -44,7 +50,7 @@ void read_users_table(){
             pos+=BLOCK_SIZE;
         }
         for (int j = 0; j < compute_nblock(SHA256_BLOCK_SIZE*2 + 1); j++) {
-            read_block(&block, pos);
+            if(read_block(&block, pos) == ERROR) return ERROR;
             virtual_disk_sos->users_table[i].passwd[j*BLOCK_SIZE+0] = (char)block.data[0];
             virtual_disk_sos->users_table[i].passwd[j*BLOCK_SIZE+1] = (char)block.data[1];
             virtual_disk_sos->users_table[i].passwd[j*BLOCK_SIZE+2] = (char)block.data[2];
@@ -52,8 +58,16 @@ void read_users_table(){
             pos+=BLOCK_SIZE;
         }
     }
+    return SUCCESS;
 }
 
+// TODO Check if user is root (can do this action and cannot delete root)
+/**
+ * @brief Delete a user
+ * 
+ * @param id_user user id
+ * @return int, Success code or error code depending on whether successful or failure
+ */
 int delete_user(int id_user){
     if (id_user >= NB_USERS || id_user <= 0){
         fprintf(stderr, "Incorrect userid\n");
@@ -67,6 +81,10 @@ int delete_user(int id_user){
     return SUCCESS;
 }
 
+/**
+ * @brief Get number of unused user object
+ * @return int 
+ */
 int get_unused_user(){
     for (int i = 0; i < NB_USERS; ++i) {
         if(virtual_disk_sos->users_table[i].login[0] == '\0') return i;
@@ -74,6 +92,13 @@ int get_unused_user(){
     return NB_USERS;
 }
 
+/**
+ * @brief Initialize a user
+ * 
+ * @param login 
+ * @param password 
+ * @return int, Success code or error code depending on whether successful or failure  
+ */
 int init_user(char *login, char *password){
     int id_user = get_unused_user();
     if (id_user == NB_USERS){
@@ -124,6 +149,12 @@ void cmd_dump_user(char *directory){
 
 }
 
+/**
+ * @brief Look up the user's index in the table (if connected)
+ * 
+ * @param login 
+ * @return int, index of the user
+ */
 int is_login_in_users_table(char *login){
     for (int i = 0; i < virtual_disk_sos->super_block.number_of_users; ++i) {
         if (strcmp(login, virtual_disk_sos->users_table[i].login) == 0) return i;
@@ -131,6 +162,14 @@ int is_login_in_users_table(char *login){
     return NB_USERS;
 }
 
+// TODO @BerlinFlorian return ???
+/**
+ * @brief Check if the credentials are correct
+ * 
+ * @param login 
+ * @param password 
+ * @return int 
+ */
 int is_good_credentials(char *login, char *password){
     int uid = is_login_in_users_table(login);
     if(uid == NB_USERS) return NB_USERS;
@@ -139,8 +178,3 @@ int is_good_credentials(char *login, char *password){
     if (strcmp(virtual_disk_sos->users_table[uid].passwd, hash_password) == 0) return uid;
     return NB_USERS;
 }
-
-/*int main(){
-    cmd_dump_user("../Format");
-    //cmd_dump_inode("../Format");
-}*/

@@ -2,8 +2,9 @@
 // Created by Florian Berlin on 13/02/2022.
 //
 
-#ifndef UNTITLED_LAYER5_H
-#define UNTITLED_LAYER5_H
+#ifndef SCRATCHOS_LAYER5_H
+#define SCRATCHOS_LAYER5_H
+
 #include "os_defines.h"
 
 #define CMD_QUIT "quit"
@@ -39,4 +40,4 @@ int cmd_listusers(cmd_t args);
 int cmd_adduser(cmd_t args);
 int cmd_rmuser(cmd_t args);
 
-#endif //UNTITLED_LAYER5_H
+#endif //SCRATCHOS_LAYER5_H
