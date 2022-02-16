@@ -121,7 +121,6 @@ int init_user(char *login, char *password){
     return SUCCESS;
 }
 
-// TODO @BerlinFlorian only for test ? no need comment or error handling ?
 void cmd_dump_user(char *directory){
     init_disk_sos(directory);
     update_first_free_byte();

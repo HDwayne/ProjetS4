@@ -35,17 +35,22 @@ uint block_to_uint(block_t block){
  * @return int, success code or error code depending on whether success or failure 
  */
 int init_disk_sos(char *directory){
+    fprintf(stdout, "step 1 !\n");
+
     virtual_disk_sos = malloc(sizeof(virtual_disk_t));
     if (virtual_disk_sos == NULL){
         perror("virtual_disk_sos");
         return ERROR;
     }
+    fprintf(stdout, "step 2 !\n");
+
 
     char *diskFile = malloc(sizeof(char)*(strlen(directory)+4));
     if (diskFile == NULL){
         perror("diskFile");
         return ERROR;
     }
+    fprintf(stdout, "step 3 !\n");
 
     strcpy(diskFile, directory);
     strcat(diskFile, "/d0");
@@ -55,11 +60,19 @@ int init_disk_sos(char *directory){
         perror("Could not open diskFile");
         return ERROR;
     }
-    read_super_block();
-    read_inodes_table();
-    read_users_table();
+    fprintf(stdout, "step 4 !\n");
+
+    if (read_super_block() == ERROR) return ERROR;
+    fprintf(stdout, "step 5 !\n");
+    if (read_inodes_table() == ERROR) return ERROR;
+    fprintf(stdout, "step 6 !\n");
+    if (read_users_table() == ERROR) return ERROR;
+    fprintf(stdout, "step 7 !\n");
     user = malloc(sizeof(session_t));
     user->userid = 0;
+    fprintf(stdout, "step 8 !\n");
+
+    free(diskFile);
     return SUCCESS;
 }
 
@@ -73,7 +86,7 @@ int shutdown_disk_sos(){
     write_users_table();
     free(user);
     if (fclose(virtual_disk_sos->storage) == EOF) {
-        fprintf( stderr, "Cannot close file\n" );
+        fprintf(stderr, "Cannot close file\n" );
         return ERROR;
     }
     free(virtual_disk_sos);
@@ -121,16 +134,11 @@ int write_block(block_t block, int pos){
         fprintf(stderr, "An error occurred while writing block\n");
         return ERROR;
     }
-    // TODO @BerlinFlorian
-    // Renvoie le nombre de blocs écris (attention, cette valeur n'est pas exprimée en nombre 
-    // d'octets, mais bien en nombre de blocs). Si cette valeur est inférieure à la valeur initialement 
-    // demandée, alors une erreur d'écriture vient de survenir. Dans ce cas, il vous faudra alors consulter 
-    // la variable errno pour obtenir plus de détails sur la nature exacte de l'erreur constatée. 
     return SUCCESS;
 }
 
 /**
- * \brief Function that read a block of data from the disk storage
+ * @brief Function that read a block of data from the disk storage
  * @param block
  * @param pos
  * @return int, error code or success code dpeending on what happened
@@ -157,7 +165,6 @@ int read_block(block_t *block, int pos){
     }
 
     int code = (int)fread(block->data, sizeof(uchar), BLOCK_SIZE, virtual_disk_sos->storage);
-    // TODO SAME HERE !
     if (code != BLOCK_SIZE){
         fprintf(stderr, "An error occurred while reading\n");
         return ERROR;

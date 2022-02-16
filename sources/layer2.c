@@ -241,12 +241,6 @@ int init_inode(const char *fileName, uint size, uint pos, char *createTime, char
     return SUCCESS;
 }
 
-/**
- * @brief @BerlinFlorian EXPLIQUE MOI STP
- * 
- * @param directory 
- * @return int, Success code or error code depending on whether successful or failure 
- */
 int cmd_dump_inode(char *directory){
     if (init_disk_sos(directory) == ERROR) return ERROR;
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {

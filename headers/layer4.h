@@ -13,5 +13,6 @@ int read_file(char *filename, file_t *filedata); // return 1 if successful, 0 if
 int delete_file(char *filename); // return 1 if successful, 0 if unsuccessful
 int load_file_from_host(char * hostfilename);
 int store_file_to_host(char *filenamesos);
+void cmd_dump_file(char *directory);
 
 #endif //SCRATCHOS_LAYER4_H
