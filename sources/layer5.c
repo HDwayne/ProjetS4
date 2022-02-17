@@ -3,7 +3,7 @@
  * \brief Source code for layer5 of the ScratchOs : shell and commands
  * \author HERZBERG Dwayne and BERLIN Florian
  * \version 0.1
- * \date 13 February 2022
+ * \date 15 February 2022
 */
 
 #include "../headers/layer1.h"
@@ -138,7 +138,7 @@ int cmd_load(cmd_t args, session_t user){
         return ERROR;
     }
     int code = load_file_from_host(args.tabArgs[1], user);
-    if (code == 0){
+    if (code == ERROR){
         fprintf(stderr, "Error on loading file %s\n", args.tabArgs[1]);
         return ERROR;
     }
@@ -237,7 +237,7 @@ int cmd_adduser(cmd_t args, session_t user){
         fprintf(stderr, "Usage: adduser\n");
         return ERROR;
     }
-    if (user.userid != 0) {
+    if (user.userid != ROOT_UID) {
         fprintf(stderr, "Only root user is allowed\n");
         return ERROR;
     }
@@ -257,7 +257,7 @@ int cmd_rmuser(cmd_t args, session_t user){
         fprintf(stderr, "Usage: rmuser <login>\n");
         return ERROR;
     }
-    if (user.userid != 0) {
+    if (user.userid != ROOT_UID) {
         fprintf(stderr, "Only root user is allowed\n");
         return ERROR;
     }

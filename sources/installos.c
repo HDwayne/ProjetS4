@@ -11,7 +11,7 @@ int main(int argc, char **argv){
     init_disk_sos(argv[1]);
     update_first_free_byte();
     session_t user;
-    user.userid = 0;
+    user.userid = ROOT_UID;
 
     char *password = malloc(sizeof(char)*FILENAME_MAX_SIZE);
     char *password_hash = malloc(sizeof(char)*(SHA256_BLOCK_SIZE*2 + 1));

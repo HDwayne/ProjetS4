@@ -1,3 +1,11 @@
+/**
+* \file cmd_dump_inode.c
+ * \brief Source code for cmd_dump_inode of the ScratchOs : testing program for layer 2
+ * \author HERZBERG Dwayne and BERLIN Florian
+ * \version 0.1
+ * \date 17 February 2022
+*/
+
 #include "../headers/layer2.h"
 
 int main(int argc, char **argv){
@@ -7,7 +15,7 @@ int main(int argc, char **argv){
     }
     if (init_disk_sos(argv[1]) == ERROR) return ERROR;
     session_t user;
-    user.userid = 0;
+    user.userid = ROOT_UID;
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
         if (init_inode("\0", 0, 0, timestamp(), timestamp(), user) == ERROR) return ERROR;
         if (delete_inode(0) == ERROR) return ERROR;

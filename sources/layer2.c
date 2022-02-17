@@ -1,6 +1,10 @@
-//
-// Created by Florian Berlin on 14/02/2022.
-//
+/**
+* \file layer2.c
+ * \brief Source code for layer2 of the ScratchOs : inodes
+ * \author HERZBERG Dwayne and BERLIN Florian
+ * \version 0.1
+ * \date 14 February 2022
+*/
 
 #include "../headers/layer2.h"
 

@@ -1,3 +1,11 @@
+/**
+* \file cmd_dump_file.c
+ * \brief Source code for cmd_dump_file of the ScratchOs : testing program for layer 4
+ * \author HERZBERG Dwayne and BERLIN Florian
+ * \version 0.1
+ * \date 17 February 2022
+*/
+
 #include "../headers/layer4.h"
 
 int main(int argc, char **argv){
@@ -7,7 +15,7 @@ int main(int argc, char **argv){
     init_disk_sos(argv[1]);
     update_first_free_byte();
     session_t user;
-    user.userid = 0;
+    user.userid = ROOT_UID;
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
     init_user("root", "bonjour");
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {

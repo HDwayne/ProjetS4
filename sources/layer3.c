@@ -1,6 +1,10 @@
-//
-// Created by Florian Berlin on 14/02/2022.
-//
+/**
+* \file layer3.c
+ * \brief Source code for layer3 of the ScratchOs : users
+ * \author HERZBERG Dwayne and BERLIN Florian
+ * \version 0.1
+ * \date 14 February 2022
+*/
 
 #include "../headers/layer3.h"
 
