@@ -130,7 +130,7 @@ int load_file_from_host(char *filename, session_t user){
 
     fread(sosfile.data, sizeof(char), sosfile.size, hostfile);
     sosfile.data[sosfile.size] = '\0';
-    fprintf(stdout, "Red : %s\n", sosfile.data);
+
     write_file(filename, sosfile, user);
     return 1;
 }

@@ -160,7 +160,7 @@ int cmd_store(cmd_t args, session_t user){
         return ERROR;
     }
     int code = store_file_to_host(args.tabArgs[1]);
-    if (code == 0){
+    if (code == ERROR){
         fprintf(stderr, "Error on storing file: %s\n", args.tabArgs[1]);
         return ERROR;
     }
@@ -240,13 +240,11 @@ int cmd_adduser(cmd_t args, session_t user){
     }
     char login[FILENAME_MAX_SIZE];
     char pwd[FILENAME_MAX_SIZE];
-    char pwd_hash[SHA256_BLOCK_SIZE*2 + 1];
     fprintf(stdout, "Please enter a login for the new user: \n");
     read_cmd(login, FILENAME_MAX_SIZE);
     fprintf(stdout, "Please enter a password for the new user: \n");
-    read_cmd(pwd,SHA256_BLOCK_SIZE*2 + 1);
-    sha256ofString((BYTE *)pwd,pwd_hash);
-    init_user(login, pwd_hash);
+    read_cmd(pwd,FILENAME_MAX_SIZE);
+    init_user(login, pwd);
     fprintf(stdout, "New user created\n");
     return SUCCESS;
 }
@@ -310,7 +308,7 @@ void interprete_cmd(char * cmd, cmd_t *args){
  * @param session
  */
 int execute_cmd(cmd_t args, session_t user){
-    char cmd_name[8];
+    char cmd_name[CMD_MAX_SIZE];
     strcpy(cmd_name, args.tabArgs[0]);
     if(strcmp(cmd_name, CMD_LS) == 0) return cmd_ls(args, user);
     if(strcmp(cmd_name, CMD_CAT) == 0) return cmd_cat(args, user);
