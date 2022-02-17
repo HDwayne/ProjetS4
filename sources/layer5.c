@@ -82,7 +82,6 @@ int cmd_cat(cmd_t args, session_t user){
         fprintf(stderr, "Usage: cat <file name>\n");
         return ERROR;
     }
-    fprintf(stdout, "%s\n", args.tabArgs[1]);
     int index_inode = is_file_in_inode(args.tabArgs[1]);
     if(index_inode == INODE_TABLE_SIZE){
         fprintf(stderr, "File does not exist: %s\n", args.tabArgs[1]);
@@ -125,10 +124,56 @@ int cmd_rm(cmd_t args, session_t user) {
 }
 
 int cmd_cr(cmd_t args, session_t user){
+    if (args.nbArgs != 2){
+        fprintf(stderr, "Usage: cr <file name>\n");
+        return ERROR;
+    }
+    int index_inode = is_file_in_inode(args.tabArgs[1]);
+    if(index_inode != INODE_TABLE_SIZE){
+        fprintf(stderr, "File already exists: %s\n", args.tabArgs[1]);
+        return ERROR;
+    }
+    int inode = get_unused_inode();
+    file_t file;
+    file.size = 1;
+    file.data[0] = '\0';
+    write_file(args.tabArgs[1], file, user);
+    fprintf(stdout, "File %s created\n", args.tabArgs[1]);
     return SUCCESS;
 }
 
 int cmd_edit(cmd_t args, session_t user){
+    if (args.nbArgs != 2){
+        fprintf(stderr, "Usage: cr <file name>\n");
+        return ERROR;
+    }
+    int index_inode = is_file_in_inode(args.tabArgs[1]);
+    if(index_inode == INODE_TABLE_SIZE){
+        fprintf(stderr, "File does not exist: %s\n", args.tabArgs[1]);
+        return ERROR;
+    }
+    if (!has_rights(index_inode, user.userid, rW)){
+        fprintf(stderr, "You aren't authorized to access this file\n'");
+        return ERROR;
+    }
+    file_t file;
+    char ligne[MAX_MSG];
+    int i =0;
+    fprintf(stdout, "Editing %s (Enter to stop editing) :\n", args.tabArgs[1]);
+    do {
+        fprintf(stdout, "Ligne n°%d : ", i);
+        read_cmd(ligne, MAX_MSG);
+        i++;
+        strcat(file.data, (unsigned char *)ligne);
+        strcat(file.data, "\n");
+        file.size+=strlen(ligne)+1;
+    }while(ligne[0] != '\0');
+    file.data[file.size] = '\0';
+    file.size++;
+
+    write_file(args.tabArgs[1], file, user);
+    fprintf(stdout, "File %s edited\n", args.tabArgs[1]);
+
     return SUCCESS;
 }
 
@@ -322,7 +367,7 @@ int execute_cmd(cmd_t args, session_t user){
     if(strcmp(cmd_name, CMD_STORE) == 0) return cmd_store(args, user);
     if(strcmp(cmd_name, CMD_CHOWN) == 0) return cmd_chown(args, user);
     if(strcmp(cmd_name, CMD_CHMOD) == 0) return cmd_chmod(args, user);
-    if(strcmp(cmd_name, CMD_LISTUSERS) == 0) return cmd_listusers(args, user);
+    if(strcmp(cmd_name, CMD_LISTUSERS) == 0) return cmd_listusers(args);
     if(strcmp(cmd_name, CMD_ADDUSER) == 0) return cmd_adduser(args, user);
     if(strcmp(cmd_name, CMD_RMUSER) == 0) return cmd_rmuser(args, user);
     fprintf(stderr, "[%s] Unknown command \"%s\"\n", virtual_disk_sos->users_table[user.userid].login, cmd_name);
