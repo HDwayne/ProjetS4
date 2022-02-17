@@ -35,22 +35,17 @@ uint block_to_uint(block_t block){
  * @return int, success code or error code depending on whether success or failure 
  */
 int init_disk_sos(char *directory){
-    fprintf(stdout, "step 1 !\n");
-
     virtual_disk_sos = malloc(sizeof(virtual_disk_t));
     if (virtual_disk_sos == NULL){
         perror("virtual_disk_sos");
         return ERROR;
     }
-    fprintf(stdout, "step 2 !\n");
-
 
     char *diskFile = malloc(sizeof(char)*(strlen(directory)+4));
     if (diskFile == NULL){
         perror("diskFile");
         return ERROR;
     }
-    fprintf(stdout, "step 3 !\n");
 
     strcpy(diskFile, directory);
     strcat(diskFile, "/d0");
@@ -60,19 +55,14 @@ int init_disk_sos(char *directory){
         perror("Could not open diskFile");
         return ERROR;
     }
-    fprintf(stdout, "step 4 !\n");
 
     if (read_super_block() == ERROR) return ERROR;
-    fprintf(stdout, "step 5 !\n");
     if (read_inodes_table() == ERROR) return ERROR;
-    fprintf(stdout, "step 6 !\n");
     if (read_users_table() == ERROR) return ERROR;
-    fprintf(stdout, "step 7 !\n");
+
     free(diskFile);
 
     user.userid = 0;
-    fprintf(stdout, "step 8 !\n");
-
     return SUCCESS;
 }
 
