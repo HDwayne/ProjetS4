@@ -95,7 +95,7 @@ int cmd_cat(cmd_t args, session_t user){
     file_t file;
     read_file(args.tabArgs[1], &file);
     fprintf(stdout, "file: %s\n", args.tabArgs[1]);
-    fprintf(stdout, "%s", file.data);
+    fprintf(stdout, "%s\n", file.data);
     return SUCCESS;
 }
 
