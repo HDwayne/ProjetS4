@@ -10,10 +10,10 @@
 
 
 int is_file_in_inode(char * filename);
-void write_file(char * filename, file_t filedata);
+void write_file(char * filename, file_t filedata, session_t user);
 int read_file(char *filename, file_t *filedata); // return 1 if successful, 0 if unsuccessful
 int delete_file(char *filename); // return 1 if successful, 0 if unsuccessful
-int load_file_from_host(char * hostfilename);
+int load_file_from_host(char * hostfilename, session_t user);
 int store_file_to_host(char *filenamesos);
 
 #endif //SCRATCHOS_LAYER4_H

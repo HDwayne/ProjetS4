@@ -21,23 +21,23 @@
 #define CMD_ADDUSER "adduser"
 #define CMD_RMUSER "rmuser"
 
-#define CMD_MAX_SIZE 9 + FILENAME_MAX_SIZE*2 + 1
+#define CMD_MAX_SIZE ((9 + FILENAME_MAX_SIZE*2 + 1))
 
 int terminal_shell();
 void read_cmd(char * cmd, int size);
 void interprete_cmd(char * cmd, cmd_t *args);
-int execute_cmd(cmd_t args);
-int cmd_ls(cmd_t args);
-int cmd_cat(cmd_t args);
-int cmd_rm(cmd_t args);
-int cmd_cr(cmd_t args);
-int cmd_edit(cmd_t args);
-int cmd_load(cmd_t args);
-int cmd_store(cmd_t args);
-int cmd_chown(cmd_t args);
-int cmd_chmod(cmd_t args);
-int cmd_listusers(cmd_t args);
-int cmd_adduser(cmd_t args);
-int cmd_rmuser(cmd_t args);
+int execute_cmd(cmd_t args, session_t user);
+int cmd_ls(cmd_t args, session_t user);
+int cmd_cat(cmd_t args, session_t user);
+int cmd_rm(cmd_t args, session_t user);
+int cmd_cr(cmd_t args, session_t user);
+int cmd_edit(cmd_t args, session_t user);
+int cmd_load(cmd_t args, session_t user);
+int cmd_store(cmd_t args, session_t user);
+int cmd_chown(cmd_t args, session_t user);
+int cmd_chmod(cmd_t args, session_t user);
+int cmd_listusers(cmd_t args, session_t user);
+int cmd_adduser(cmd_t args, session_t user);
+int cmd_rmuser(cmd_t args, session_t user);
 
 #endif //SCRATCHOS_LAYER5_H

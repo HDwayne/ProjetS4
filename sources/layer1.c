@@ -61,8 +61,6 @@ int init_disk_sos(char *directory){
     if (read_users_table() == ERROR) return ERROR;
 
     free(diskFile);
-
-    user.userid = 0;
     return SUCCESS;
 }
 
@@ -103,7 +101,7 @@ int write_block(block_t block, int pos){
         return ERROR;
     }
 
-    int currentPos = ftell(virtual_disk_sos->storage);
+    int currentPos = (int)ftell(virtual_disk_sos->storage);
     if (currentPos == -1) {
         fprintf(stderr, "Cannot get the file position\n");
         return ERROR;
@@ -138,7 +136,7 @@ int read_block(block_t *block, int pos){
         return ERROR;
     }
 
-    int currentPos = ftell(virtual_disk_sos->storage);
+    int currentPos = (int)ftell(virtual_disk_sos->storage);
     if (currentPos == -1) {
         fprintf(stderr, "Cannot get the file position\n");
         return ERROR;

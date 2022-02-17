@@ -211,7 +211,7 @@ int get_unused_inode(){
  * @param modifyTime 
  * @return int, Success code or error code depending on whether successful or failure 
  */
-int init_inode(const char *fileName, uint size, uint pos, char *createTime, char *modifyTime){
+int init_inode(const char *fileName, uint size, uint pos, char *createTime, char *modifyTime, session_t user){
     int index_inode = get_unused_inode();
     if (index_inode == INODE_TABLE_SIZE || virtual_disk_sos->super_block.number_of_files >= 10 ){
         fprintf(stderr, "The inode table is full.\n");
@@ -255,7 +255,7 @@ bool has_rights(int i_inode, int user_id, int right){
         fprintf(stderr, "Inode not initialized\n");
         return false;
     }
-    if (user_id == 0) return true;
+    if (user_id == ROOT_UID) return true;
     if (virtual_disk_sos->inodes[i_inode].uid == user_id){
         if (virtual_disk_sos->inodes[i_inode].uright == RW || virtual_disk_sos->inodes[i_inode].uright == right) return true;
         return false;

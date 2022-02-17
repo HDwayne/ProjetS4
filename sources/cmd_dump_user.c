@@ -7,10 +7,12 @@ int main(int argc, char **argv){
     }
     init_disk_sos(argv[1]);
     update_first_free_byte();
+    session_t user;
+    user.userid = 0;
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
     init_user("root", "bonjour");
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
-        init_inode("bonjour.txt", 10, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp());
+        init_inode("bonjour.txt", 10, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp(), user);
     }
     delete_inode(4);
     for (int i = 1; i < NB_USERS; ++i) {

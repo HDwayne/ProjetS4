@@ -29,7 +29,7 @@ void read_cmd(char *cmd, int size){
  * @param session
  * @return
  */
-int cmd_ls(cmd_t args){
+int cmd_ls(cmd_t args, session_t user){
     int last_inode = get_unused_inode(virtual_disk_sos->inodes);
     if (args.nbArgs > 2){
         fprintf(stderr, "Usage: ls [-l]\n");
@@ -77,7 +77,7 @@ int cmd_ls(cmd_t args){
  * @param session
  * @return
  */
-int cmd_cat(cmd_t args){
+int cmd_cat(cmd_t args, session_t user){
     if (args.nbArgs != 2){
         fprintf(stderr, "Usage: cat <file name>\n");
         return ERROR;
@@ -105,7 +105,7 @@ int cmd_cat(cmd_t args){
  * @param session
  * @return
  */
-int cmd_rm(cmd_t args) {
+int cmd_rm(cmd_t args, session_t user) {
     if (args.nbArgs != 2){
         fprintf(stderr, "Usage: rm <file name>\n");
         return ERROR;
@@ -116,28 +116,28 @@ int cmd_rm(cmd_t args) {
         return ERROR;
     }
     if(!has_rights(index_inode, user.userid, rW)){
-        fprintf(stderr, "You aren't authorized to access this file");
+        fprintf(stderr, "You aren't authorized to access this file\n");
         return ERROR;
     }
     delete_file(args.tabArgs[1]);
-    fprintf(stderr, "%s deleted", args.tabArgs[1]);
+    fprintf(stderr, "%s deleted\n", args.tabArgs[1]);
     return SUCCESS;
 }
 
-int cmd_cr(cmd_t args){
+int cmd_cr(cmd_t args, session_t user){
     return SUCCESS;
 }
 
-int cmd_edit(cmd_t args){
+int cmd_edit(cmd_t args, session_t user){
     return SUCCESS;
 }
 
-int cmd_load(cmd_t args){
+int cmd_load(cmd_t args, session_t user){
     if (args.nbArgs != 2){
         fprintf(stderr, "Usage: load <file name>\n");
         return ERROR;
     }
-    int code = load_file_from_host(args.tabArgs[1]);
+    int code = load_file_from_host(args.tabArgs[1], user);
     if (code == 0){
         fprintf(stderr, "Error on loading file %s\n", args.tabArgs[1]);
         return ERROR;
@@ -145,7 +145,7 @@ int cmd_load(cmd_t args){
     return SUCCESS;
 }
 
-int cmd_store(cmd_t args){
+int cmd_store(cmd_t args, session_t user){
     if (args.nbArgs != 2){
         fprintf(stderr, "Usage: store <file name>\n");
         return ERROR;
@@ -167,7 +167,7 @@ int cmd_store(cmd_t args){
     return SUCCESS;
 }
 
-int cmd_chown(cmd_t args){
+int cmd_chown(cmd_t args, session_t user){
     if (args.nbArgs != 3){
         fprintf(stderr, "Usage: chown <file name> <login>\n");
         return ERROR;
@@ -192,7 +192,7 @@ int cmd_chown(cmd_t args){
     return SUCCESS;
 }
 
-int cmd_chmod(cmd_t args){
+int cmd_chmod(cmd_t args, session_t user){
     if (args.nbArgs != 3){
         fprintf(stderr, "Usage: chmod <file name> <right>\n");
         return ERROR;
@@ -217,7 +217,7 @@ int cmd_chmod(cmd_t args){
     return SUCCESS;
 }
 
-int cmd_listusers(cmd_t args){
+int cmd_listusers(cmd_t args, session_t user){
     if (args.nbArgs != 1){
         fprintf(stderr, "Usage: listusers\n");
         return ERROR;
@@ -229,7 +229,7 @@ int cmd_listusers(cmd_t args){
     return SUCCESS;
 }
 
-int cmd_adduser(cmd_t args){
+int cmd_adduser(cmd_t args, session_t user){
     if (args.nbArgs != 1){
         fprintf(stderr, "Usage: adduser\n");
         return ERROR;
@@ -251,7 +251,7 @@ int cmd_adduser(cmd_t args){
     return SUCCESS;
 }
 
-int cmd_rmuser(cmd_t args){
+int cmd_rmuser(cmd_t args, session_t user){
     if (args.nbArgs != 2){
         fprintf(stderr, "Usage: rmuser <login>\n");
         return ERROR;
@@ -309,21 +309,21 @@ void interprete_cmd(char * cmd, cmd_t *args){
  * @param args
  * @param session
  */
-int execute_cmd(cmd_t args){
+int execute_cmd(cmd_t args, session_t user){
     char cmd_name[8];
     strcpy(cmd_name, args.tabArgs[0]);
-    if(!strcmp(cmd_name, CMD_LS)) return cmd_ls(args);
-    if(!strcmp(cmd_name, CMD_CAT)) return cmd_cat(args);
-    if(!strcmp(cmd_name, CMD_RM)) return cmd_rm(args);
-    if(!strcmp(cmd_name, CMD_CR)) return cmd_cr(args);
-    if(!strcmp(cmd_name, CMD_EDIT)) return cmd_edit(args);
-    if(!strcmp(cmd_name, CMD_LOAD)) return cmd_load(args);
-    if(!strcmp(cmd_name, CMD_STORE)) return cmd_store(args);
-    if(!strcmp(cmd_name, CMD_CHOWN)) return cmd_chown(args);
-    if(!strcmp(cmd_name, CMD_CHMOD)) return cmd_chmod(args);
-    if(!strcmp(cmd_name, CMD_LISTUSERS)) return cmd_listusers(args);
-    if(!strcmp(cmd_name, CMD_ADDUSER)) return cmd_adduser(args);
-    if(!strcmp(cmd_name, CMD_RMUSER)) return cmd_rmuser(args);
+    if(strcmp(cmd_name, CMD_LS) == 0) return cmd_ls(args, user);
+    if(strcmp(cmd_name, CMD_CAT) == 0) return cmd_cat(args, user);
+    if(strcmp(cmd_name, CMD_RM) == 0) return cmd_rm(args, user);
+    if(strcmp(cmd_name, CMD_CR) == 0) return cmd_cr(args, user);
+    if(strcmp(cmd_name, CMD_EDIT) == 0) return cmd_edit(args, user);
+    if(strcmp(cmd_name, CMD_LOAD) == 0) return cmd_load(args, user);
+    if(strcmp(cmd_name, CMD_STORE) == 0) return cmd_store(args, user);
+    if(strcmp(cmd_name, CMD_CHOWN) == 0) return cmd_chown(args, user);
+    if(strcmp(cmd_name, CMD_CHMOD) == 0) return cmd_chmod(args, user);
+    if(strcmp(cmd_name, CMD_LISTUSERS) == 0) return cmd_listusers(args, user);
+    if(strcmp(cmd_name, CMD_ADDUSER) == 0) return cmd_adduser(args, user);
+    if(strcmp(cmd_name, CMD_RMUSER) == 0) return cmd_rmuser(args, user);
     fprintf(stderr, "[%s] Unknown command \"%s\"\n", virtual_disk_sos->users_table[user.userid].login, cmd_name);
     return ERROR;
 
@@ -336,6 +336,7 @@ int execute_cmd(cmd_t args){
 int terminal_shell(){
     char cmd[CMD_MAX_SIZE];
     int user_id;
+    session_t user;
     int system_on = true;
     char log[FILENAME_MAX_SIZE];
     char pwd[FILENAME_MAX_SIZE];
@@ -355,7 +356,7 @@ int terminal_shell(){
         cmd_t interpreted_cmd;
         interprete_cmd(cmd, &interpreted_cmd);
         if (strcmp(interpreted_cmd.tabArgs[0], CMD_QUIT) == 0) system_on = false;
-        else execute_cmd(interpreted_cmd);
+        else execute_cmd(interpreted_cmd, user);
     }
     return SUCCESS;
 }

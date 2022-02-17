@@ -10,6 +10,8 @@ int main(int argc, char **argv){
 
     init_disk_sos(argv[1]);
     update_first_free_byte();
+    session_t user;
+    user.userid = 0;
 
     char *password = malloc(sizeof(char)*FILENAME_MAX_SIZE);
     char *password_hash = malloc(sizeof(char)*(SHA256_BLOCK_SIZE*2 + 1));
@@ -30,8 +32,8 @@ int main(int argc, char **argv){
     file.size = strlen(chaine);
     free(chaine);
 
-    write_file("coucou", file);
-    store_file_to_host("coucou");
+    write_file("passwd", file, user);
+    store_file_to_host("passwd");
 
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
 

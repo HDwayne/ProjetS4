@@ -26,7 +26,7 @@ int is_file_in_inode(char *filename){
  * @param filename
  * @param filedata
  */
-void write_file(char * filename, file_t filedata){
+void write_file(char * filename, file_t filedata, session_t user){
     int i_inode = is_file_in_inode(filename);
     if (i_inode != INODE_TABLE_SIZE){
         if (filedata.size <= virtual_disk_sos->inodes[i_inode].size){
@@ -46,7 +46,7 @@ void write_file(char * filename, file_t filedata){
             char *ctimestamp = malloc(sizeof(char)*TIMESTAMP_SIZE);
             strcpy(ctimestamp, virtual_disk_sos->inodes[i_inode].ctimestamp);
             delete_inode(i_inode);
-            init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, ctimestamp, timestamp());
+            init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, ctimestamp, timestamp(), user);
             uint pos = virtual_disk_sos->inodes[is_file_in_inode(filename)].first_byte;
             block_t block;
             for (int i = 0; i < compute_nblock(filedata.size); i++) {
@@ -61,7 +61,7 @@ void write_file(char * filename, file_t filedata){
         }
     }
     else{
-        init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp());
+        init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp(), user);
         block_t block;
         uint pos = virtual_disk_sos->inodes[is_file_in_inode(filename)].first_byte;
         for (int i = 0; i < compute_nblock(filedata.size); i++) {
@@ -117,7 +117,7 @@ int delete_file(char *filename){
  * @param filename
  * @return
  */
-int load_file_from_host(char *filename){
+int load_file_from_host(char *filename, session_t user){
     FILE * hostfile = fopen(filename, "r");
     if (hostfile == NULL){
         perror("fopen");
@@ -131,7 +131,7 @@ int load_file_from_host(char *filename){
     fread(sosfile.data, sizeof(char), sosfile.size, hostfile);
     sosfile.data[sosfile.size] = '\0';
     fprintf(stdout, "Red : %s\n", sosfile.data);
-    write_file(filename, sosfile);
+    write_file(filename, sosfile, user);
     return 1;
 }
 
