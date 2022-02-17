@@ -5,8 +5,8 @@ SRC = sources
 BINDIR = bin
 
 SRCS = $(wildcard $(SRC)/*.c)
-SRC_OS = $(filter-out $(SRC)/installos.c, $(SRCS))
-SRC_INSTALLER = $(filter-out $(SRC)/os.c, $(SRCS))
+SRC_OS = $(filter-out $(SRC)/installos.c $(SRC)/cmd_dump_file.c $(SRC)/cmd_dump_inode.c $(SRC)/cmd_dump_user.c,  $(SRCS))
+SRC_INSTALLER = $(filter-out $(SRC)/os.c $(SRC)/cmd_dump_file.c $(SRC)/cmd_dump_inode.c $(SRC)/cmd_dump_user.c, $(SRCS))
 
 BIN_INSTALL = $(BINDIR)/os_installer
 BIN_OS = $(BINDIR)/os
