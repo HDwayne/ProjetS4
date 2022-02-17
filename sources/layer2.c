@@ -97,10 +97,10 @@ int read_inodes_table(){
         }
         for (int j = 0; j < compute_nblock(TIMESTAMP_SIZE); ++j) {
             if (read_block(&block, pos) == ERROR) return ERROR;
-            virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+0] = (char)block.data[0];
-            virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+1] = (char)block.data[1];
-            virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+2] = (char)block.data[2];
-            virtual_disk_sos->inodes[i].ctimestamp[j*BLOCK_SIZE+3] = (char)block.data[3];
+            virtual_disk_sos->inodes[i].mtimestamp[j*BLOCK_SIZE+0] = (char)block.data[0];
+            virtual_disk_sos->inodes[i].mtimestamp[j*BLOCK_SIZE+1] = (char)block.data[1];
+            virtual_disk_sos->inodes[i].mtimestamp[j*BLOCK_SIZE+2] = (char)block.data[2];
+            virtual_disk_sos->inodes[i].mtimestamp[j*BLOCK_SIZE+3] = (char)block.data[3];
             pos+=BLOCK_SIZE;
         }
         if (read_block(&block, pos) == ERROR) return ERROR;
@@ -229,12 +229,13 @@ int init_inode(const char *fileName, uint size, uint pos, char *createTime, char
     virtual_disk_sos->inodes[index_inode].uright = RW;
     virtual_disk_sos->inodes[index_inode].oright = rw;
 
-    for (int i = 0; i < TIMESTAMP_SIZE; ++i) {
-        virtual_disk_sos->inodes[index_inode].ctimestamp[i] = createTime[i];
-    }
-    for (int i = 0; i < TIMESTAMP_SIZE; ++i) {
+    strcpy(virtual_disk_sos->inodes[index_inode].ctimestamp, createTime);
+    fprintf(stdout, "%s %s\n", createTime, virtual_disk_sos->inodes[index_inode].ctimestamp);
+    strcpy(virtual_disk_sos->inodes[index_inode].mtimestamp, modifyTime);
+    fprintf(stdout, "%s %s\n", modifyTime, virtual_disk_sos->inodes[index_inode].mtimestamp);
+    /*for (int i = 0; i < TIMESTAMP_SIZE; ++i) {
         virtual_disk_sos->inodes[index_inode].mtimestamp[i] = modifyTime[i];
-    }
+    }*/
     virtual_disk_sos->super_block.nb_blocks_used+=compute_nblock(size);
     virtual_disk_sos->super_block.number_of_files++;
     update_first_free_byte();

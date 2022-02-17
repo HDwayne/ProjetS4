@@ -35,6 +35,8 @@ int main(int argc, char **argv){
         fprintf(stdout, "size:  %d\n", virtual_disk_sos->inodes[i].size);
         fprintf(stdout, "Blocks  : %d \n",virtual_disk_sos->inodes[i].nblock);
         fprintf(stdout, "Pos  : %d \n",virtual_disk_sos->inodes[i].first_byte);
+        fprintf(stdout, "File n° %d : %s \n",i, virtual_disk_sos->inodes[i].ctimestamp);
+        fprintf(stdout, "File n° %d : %s \n",i, virtual_disk_sos->inodes[i].mtimestamp);
     }
     if (shutdown_disk_sos() == ERROR) return ERROR;
     return SUCCESS;

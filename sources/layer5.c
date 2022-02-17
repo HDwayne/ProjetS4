@@ -49,13 +49,13 @@ int cmd_ls(cmd_t args, session_t user){
                     if (inode.uright == rw) strcpy(uright, "--");
                     else if (inode.uright == rW) strcpy(uright, "-w");
                     else if (inode.uright == Rw) strcpy(uright, "r-");
-                    else if (inode.uright == rW) strcpy(uright, "rw");
+                    else if (inode.uright == RW) strcpy(uright, "rw");
                 }
                 else{
                     if (inode.oright == rw) strcpy(uright, "--");
                     else if (inode.oright == rW) strcpy(uright, "-w");
                     else if (inode.oright == Rw) strcpy(uright, "r-");
-                    else if (inode.oright == rW) strcpy(uright, "rw");
+                    else if (inode.oright == RW) strcpy(uright, "rw");
                 }
                 fprintf(stdout, "%s %d %s %d %s %s\n", uright, inode.uid, virtual_disk_sos->users_table[inode.uid].login, inode.size, inode.mtimestamp, inode.filename);
             }
