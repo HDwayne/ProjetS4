@@ -142,6 +142,7 @@ int cmd_load(cmd_t args, session_t user){
         fprintf(stderr, "Error on loading file %s\n", args.tabArgs[1]);
         return ERROR;
     }
+    fprintf(stdout, "File %s loaded\n", args.tabArgs[1]);
     return SUCCESS;
 }
 
@@ -164,6 +165,7 @@ int cmd_store(cmd_t args, session_t user){
         fprintf(stderr, "Error on storing file: %s\n", args.tabArgs[1]);
         return ERROR;
     }
+    fprintf(stdout, "File %s stored\n", args.tabArgs[1]);
     return SUCCESS;
 }
 
@@ -207,13 +209,14 @@ int cmd_chmod(cmd_t args, session_t user){
         return ERROR;
     }
     if (strcmp(args.tabArgs[2], "rw") == 0 || strcmp(args.tabArgs[2], "0") == 0) virtual_disk_sos->inodes[index_inode].oright = rw;
-    if (strcmp(args.tabArgs[2], "rW") == 0 || strcmp(args.tabArgs[2], "1") == 0) virtual_disk_sos->inodes[index_inode].oright = rW;
-    if (strcmp(args.tabArgs[2], "Rw") == 0 || strcmp(args.tabArgs[2], "2") == 0) virtual_disk_sos->inodes[index_inode].oright = Rw;
-    if (strcmp(args.tabArgs[2], "RW") == 0|| strcmp(args.tabArgs[2], "3") == 0) virtual_disk_sos->inodes[index_inode].oright = RW;
+    else if (strcmp(args.tabArgs[2], "rW") == 0 || strcmp(args.tabArgs[2], "1") == 0) virtual_disk_sos->inodes[index_inode].oright = rW;
+    else if (strcmp(args.tabArgs[2], "Rw") == 0 || strcmp(args.tabArgs[2], "2") == 0) virtual_disk_sos->inodes[index_inode].oright = Rw;
+    else if (strcmp(args.tabArgs[2], "RW") == 0|| strcmp(args.tabArgs[2], "3") == 0) virtual_disk_sos->inodes[index_inode].oright = RW;
     else{
         fprintf(stderr, "Those rights does not exist: %s\n", args.tabArgs[2]);
         return ERROR;
     }
+    fprintf(stdout, "Rights of %s changed to %s\n", args.tabArgs[1], args.tabArgs[2]);
     return SUCCESS;
 }
 
