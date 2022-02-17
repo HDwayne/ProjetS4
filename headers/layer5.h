@@ -36,7 +36,7 @@ int cmd_load(cmd_t args, session_t user);
 int cmd_store(cmd_t args, session_t user);
 int cmd_chown(cmd_t args, session_t user);
 int cmd_chmod(cmd_t args, session_t user);
-int cmd_listusers(cmd_t args, session_t user);
+int cmd_listusers(cmd_t args);
 int cmd_adduser(cmd_t args, session_t user);
 int cmd_rmuser(cmd_t args, session_t user);
 

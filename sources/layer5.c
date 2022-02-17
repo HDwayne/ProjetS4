@@ -220,7 +220,7 @@ int cmd_chmod(cmd_t args, session_t user){
     return SUCCESS;
 }
 
-int cmd_listusers(cmd_t args, session_t user){
+int cmd_listusers(cmd_t args){
     if (args.nbArgs != 1){
         fprintf(stderr, "Usage: listusers\n");
         return ERROR;
