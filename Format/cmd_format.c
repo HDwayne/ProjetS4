@@ -10,7 +10,7 @@
 void format(char *dirname, int size, int diskid){
   char filename[strlen(dirname)+4];
   snprintf(filename, strlen(dirname)+4, "%s/d%d", dirname, diskid);
-  printf("%s\n", filename);
+  // printf("%s\n", filename);
   FILE *fp = fopen(filename, "w");
   assert(fp!=NULL);
   unsigned char zero=0;

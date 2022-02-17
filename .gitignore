@@ -1,0 +1,7 @@
+Format/cmd_format
+Format/cmd_format.d
+
+*.o
+bin/os
+bin/os_installer
+repdisk/d0
