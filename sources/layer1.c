@@ -41,7 +41,7 @@ int init_disk_sos(char *directory){
         return ERROR;
     }
 
-    char *diskFile = malloc(sizeof(char)*(strlen(directory)+4));
+    char *diskFile = (char*) malloc(sizeof(char)*(strlen(directory)+4));
     if (diskFile == NULL){
         perror("diskFile");
         return ERROR;

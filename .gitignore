@@ -5,3 +5,7 @@ Format/cmd_format.d
 bin/os
 bin/os_installer
 repdisk/d0
+bin/dump_file
+bin/dump_inode
+bin/dump_user
+.vscode/*

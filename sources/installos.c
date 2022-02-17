@@ -7,6 +7,7 @@ int main(int argc, char **argv){
         fprintf(stderr, "Usage: %s <directory>\n", argv[0]);
         return ERROR;
     }
+
     init_disk_sos(argv[1]);
     update_first_free_byte();
 
@@ -22,7 +23,7 @@ int main(int argc, char **argv){
     sha256ofString((BYTE *)password, password_hash);
 
     file_t file;
-    char* chaine = (char*) malloc(strlen(password_hash+10)*sizeof(char));
+    char* chaine = (char*) malloc((strlen(password_hash)+strlen("root "))*sizeof(char));
     strcpy(chaine, "root ");
     strcat(chaine, password_hash);
     memcpy(file.data, chaine, strlen(chaine));
