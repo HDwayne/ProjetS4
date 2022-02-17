@@ -5,7 +5,7 @@ int main(int argc, char **argv){
         fprintf(stderr, "Usage: %s <directory path>\n", argv[0]);
         return 1;
     }
-    init_disk_sos(directory);
+    init_disk_sos(argv[1]);
     update_first_free_byte();
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
     init_user("root", "bonjour");
@@ -19,7 +19,7 @@ int main(int argc, char **argv){
     delete_user(3);
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
     shutdown_disk_sos();
-    init_disk_sos(directory);
+    init_disk_sos(argv[1]);
     display_disk_storage();
 
     for (int i = 0; i < virtual_disk_sos->super_block.number_of_users; ++i) {
