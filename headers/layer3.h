@@ -14,7 +14,6 @@ int delete_user(int id_user);
 int get_unused_user();
 int init_user(char login[FILENAME_MAX_SIZE], char password[FILENAME_MAX_SIZE]);
 int is_login_in_users_table(char login[FILENAME_MAX_SIZE]);
-void cmd_dump_user(char directory[FILENAME_MAX_SIZE]);
 int is_good_credentials(char login[FILENAME_MAX_SIZE], char password[FILENAME_MAX_SIZE]);
 
 #endif //SCRATCHOS_LAYER3_H
