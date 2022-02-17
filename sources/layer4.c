@@ -5,9 +5,6 @@
  * \version 0.1
  * \date 13 February 2022
 */
-#include "../headers/layer1.h"
-#include "../headers/layer2.h"
-#include "../headers/layer3.h"
 #include "../headers/layer4.h"
 
 
@@ -41,7 +38,7 @@ void write_file(char * filename, file_t filedata){
                 block.data[1] = filedata.data[i*BLOCK_SIZE+1];
                 block.data[2] = filedata.data[i*BLOCK_SIZE+2];
                 block.data[3] = filedata.data[i*BLOCK_SIZE+3];
-                write_block(block, pos);
+                write_block(block, (int)pos);
                 pos+=BLOCK_SIZE;
             }
         }
@@ -57,7 +54,7 @@ void write_file(char * filename, file_t filedata){
                 block.data[1] = filedata.data[i*BLOCK_SIZE+1];
                 block.data[2] = filedata.data[i*BLOCK_SIZE+2];
                 block.data[3] = filedata.data[i*BLOCK_SIZE+3];
-                write_block(block, pos);
+                write_block(block, (int)pos);
                 pos+=BLOCK_SIZE;
             }
             free(ctimestamp);
@@ -72,7 +69,7 @@ void write_file(char * filename, file_t filedata){
             block.data[1] = filedata.data[i*BLOCK_SIZE+1];
             block.data[2] = filedata.data[i*BLOCK_SIZE+2];
             block.data[3] = filedata.data[i*BLOCK_SIZE+3];
-            write_block(block, pos);
+            write_block(block, (int)pos);
             pos+=BLOCK_SIZE;
         }
     }
@@ -92,7 +89,7 @@ int read_file(char *filename, file_t *filedata) {
     uint pos = virtual_disk_sos->inodes[index_inode].first_byte;
     block_t block;
     for (int j = 0; j < compute_nblock(filedata->size); j++) {
-        read_block(&block, pos);
+        read_block(&block, (int)pos);
         filedata->data[j*BLOCK_SIZE+0] = block.data[0];
         filedata->data[j*BLOCK_SIZE+1] = block.data[1];
         filedata->data[j*BLOCK_SIZE+2] = block.data[2];
@@ -155,7 +152,7 @@ int store_file_to_host(char *filenamesos){
         }
         return ERROR;
     }
-    int code = fwrite(file.data, sizeof(uchar), file.size, fd);
+    int code = (int)fwrite(file.data, sizeof(uchar), file.size, fd);
     if (code != file.size){
         fprintf(stderr, "An error occurred while writing block\n");
         if (fclose(fd) == EOF) {
@@ -168,35 +165,4 @@ int store_file_to_host(char *filenamesos){
         return ERROR;
     }
     return SUCCESS;
-}
-
-
-void cmd_dump_file(char *directory){
-    init_disk_sos(directory);
-    update_first_free_byte();
-    printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
-    init_user("root", "bonjour");
-    for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
-        init_inode("bonjour.txt", 10, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp());
-    }
-    delete_inode(4);
-    for (int i = 1; i < NB_USERS; ++i) {
-        init_user("Michel", "bonjour");
-    }
-    printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
-    load_file_from_host("coucou");
-    load_file_from_host("coucou");
-    store_file_to_host("coucou");
-    delete_file("coucou");
-    shutdown_disk_sos();
-    init_disk_sos(directory);
-    display_disk_storage();
-
-    for (int i = 0; i < virtual_disk_sos->super_block.number_of_users; ++i) {
-        fprintf(stdout, "userid %d: %s\n", i,virtual_disk_sos->users_table[i].login);
-        fprintf(stdout, "pass:%s\n", virtual_disk_sos->users_table[i].passwd);
-    }
-    printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
-
-    shutdown_disk_sos();
 }

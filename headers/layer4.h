@@ -6,6 +6,8 @@
 #define SCRATCHOS_LAYER4_H
 
 #include "../headers/os_defines.h"
+#include "../headers/layer1.h"
+
 
 int is_file_in_inode(char * filename);
 void write_file(char * filename, file_t filedata);
