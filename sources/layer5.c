@@ -133,7 +133,6 @@ int cmd_cr(cmd_t args, session_t user){
         fprintf(stderr, "File already exists: %s\n", args.tabArgs[1]);
         return ERROR;
     }
-    int inode = get_unused_inode();
     file_t file;
     file.size = 1;
     file.data[0] = '\0';
@@ -157,19 +156,30 @@ int cmd_edit(cmd_t args, session_t user){
         return ERROR;
     }
     file_t file;
+    file.size = 0;
     char ligne[MAX_MSG];
     int i =0;
     fprintf(stdout, "Editing %s (Enter to stop editing) :\n", args.tabArgs[1]);
     do {
         fprintf(stdout, "Ligne n°%d : ", i);
         read_cmd(ligne, MAX_MSG);
-        i++;
-        strcat(file.data, (unsigned char *)ligne);
-        strcat(file.data, "\n");
-        file.size+=strlen(ligne)+1;
-    }while(ligne[0] != '\0');
+        if (strlen(ligne) == MAX_MSG){
+            fprintf(stdout, "Your input may have been too long\n");
+        }
+        if(ligne[0] != '\0' && (strlen(ligne) + file.size) <= MAX_FILE_SIZE) {
+            memcpy(file.data + file.size, ligne, strlen(ligne));
+            file.size += strlen(ligne);
+            memcpy(file.data + file.size, "\n", strlen("\n"));
+            file.size += strlen("\n");
+            i++;
+        }
+    }while(ligne[0] != '\0' && file.size < MAX_FILE_SIZE);
+    if (file.size > MAX_FILE_SIZE){
+        fprintf(stdout, "This file has reached its maximum size\n");
+        file.data[MAX_FILE_SIZE-1] = '\0';
+    }
     file.data[file.size] = '\0';
-    file.size++;
+    file.size=strlen((char *)file.data);
 
     write_file(args.tabArgs[1], file, user);
     fprintf(stdout, "File %s edited\n", args.tabArgs[1]);
