@@ -1,6 +1,6 @@
 #include "../headers/layer3.h"
 
-int main(int argc, char **argv){
+/*int main(int argc, char **argv){
     if (argc != 2){
         fprintf(stderr, "Usage: %s <directory path>\n", argv[0]);
         return 1;
@@ -30,4 +30,4 @@ int main(int argc, char **argv){
 
     shutdown_disk_sos();
     return 0;
-}
+}*/

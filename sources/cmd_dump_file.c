@@ -1,7 +1,3 @@
-//
-// Created by Florian Berlin on 17/02/2022.
-//
-
 #include "../headers/layer4.h"
 
 int main(int argc, char **argv){
