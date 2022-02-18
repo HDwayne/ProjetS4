@@ -41,13 +41,13 @@ uint block_to_uint(block_t block){
 int init_disk_sos(char *directory){
     virtual_disk_sos = malloc(sizeof(virtual_disk_t));
     if (virtual_disk_sos == NULL){
-        perror("virtual_disk_sos");
+        fprintf(stderr, ERROR_MALLOC);
         return ERROR;
     }
 
     char *diskFile = (char*) malloc(sizeof(char)*(strlen(directory)+4));
     if (diskFile == NULL){
-        perror("diskFile");
+        fprintf(stderr, ERROR_MALLOC);
         return ERROR;
     }
 
@@ -56,13 +56,13 @@ int init_disk_sos(char *directory){
 
     virtual_disk_sos->storage=fopen(diskFile, "r+w");
     if (virtual_disk_sos->storage==NULL){
-        perror("Could not open diskFile");
+        perror(ERROR_ACCESS_DISKFILE);
         return ERROR;
     }
 
-    if (read_super_block() == ERROR) return ERROR;
-    if (read_inodes_table() == ERROR) return ERROR;
-    if (read_users_table() == ERROR) return ERROR;
+    if (read_super_block() == ERROR) { fprintf(stderr, ERROR_READ_SUPERBLOCK); return ERROR; }
+    if (read_inodes_table() == ERROR) { fprintf(stderr, ERROR_READ_INODES_TABLE); return ERROR; }
+    if (read_users_table() == ERROR) { fprintf(stderr, ERROR_READ_USERS_TABLE); return ERROR; }
 
     free(diskFile);
     return SUCCESS;
@@ -73,13 +73,10 @@ int init_disk_sos(char *directory){
  * @return int, success code or error code depending on whether success or failure 
  */
 int shutdown_disk_sos(){
-    write_super_block();
-    write_inodes_table();
-    write_users_table();
-    if (fclose(virtual_disk_sos->storage) == EOF) {
-        fprintf(stderr, "Cannot close file\n" );
-        return ERROR;
-    }
+    if (write_super_block() == ERROR) { fprintf(stderr, ERROR_WRITE_SUPERBLOCK); return ERROR; }
+    if (write_inodes_table() == ERROR) { fprintf(stderr, ERROR_WRITE_INODES_TABLE); return ERROR; }
+    if (write_users_table() == ERROR) { fprintf(stderr, ERROR_WRITE_USERS_TABLE); return ERROR; }
+    if (fclose(virtual_disk_sos->storage) == EOF) { fprintf(stderr, ERROR_FILE_CLOSE); return ERROR; }
     free(virtual_disk_sos);
     return SUCCESS;
 }
@@ -94,37 +91,32 @@ uint compute_nblock(uint octets){
 }
 
 /**
+ * @brief Positioning function for write and read block
+ * 
+ * @param pos 
+ * @return int, error code or success code dpeending on what happened 
+ */
+int rw_tool_block(int pos){
+    if (fseek(virtual_disk_sos->storage, 0, SEEK_END) != 0) { fprintf(stderr, ERROR_FSEEK); return ERROR; }
+
+    int currentPos = (int)ftell(virtual_disk_sos->storage);
+    if (currentPos == -1) { fprintf(stderr, ERROR_FTELL); return ERROR; }
+    if (currentPos <= pos){ fprintf(stderr, ERROR_DISK_FULL); return ERROR; }
+
+    if (fseek(virtual_disk_sos->storage, (long)pos, SEEK_SET) != 0) { fprintf(stderr, ERROR_FSEEK); return ERROR; }
+    return SUCCESS;
+}
+
+/**
  * @brief Function that writes a block on the disk storage
  * @param block
  * @param pos
  * @return int, error code or success code dpeending on what happened
  */
 int write_block(block_t block, int pos){
-    if (fseek(virtual_disk_sos->storage, 0, SEEK_END) != 0) {
-        fprintf(stderr, "Changement de position impossible\n");
-        return ERROR;
-    }
-
-    int currentPos = (int)ftell(virtual_disk_sos->storage);
-    if (currentPos == -1) {
-        fprintf(stderr, "Cannot get the file position\n");
-        return ERROR;
-    }
-    if( currentPos <= pos){
-        fprintf(stderr, "The disk storage is full.\n");
-        return ERROR;
-    }
-
-    if (fseek(virtual_disk_sos->storage, (long)pos, SEEK_SET) != 0) {
-        fprintf(stderr, "Changement de position impossible\n");
-        return ERROR;
-    }
-
+    if (rw_tool_block(pos) == ERROR) return ERROR;
     int code = (int)fwrite(block.data, sizeof(uchar), BLOCK_SIZE, virtual_disk_sos->storage);
-    if (code != BLOCK_SIZE){
-        fprintf(stderr, "An error occurred while writing block\n");
-        return ERROR;
-    }
+    if (code != BLOCK_SIZE){ fprintf(stderr, ERROR_FWRITE); return ERROR; }
     return SUCCESS;
 }
 
@@ -135,31 +127,9 @@ int write_block(block_t block, int pos){
  * @return int, error code or success code dpeending on what happened
  */
 int read_block(block_t *block, int pos){
-    if (fseek(virtual_disk_sos->storage, 0, SEEK_END) != 0) {
-        fprintf(stderr, "Changement de position impossible\n");
-        return ERROR;
-    }
-
-    int currentPos = (int)ftell(virtual_disk_sos->storage);
-    if (currentPos == -1) {
-        fprintf(stderr, "Cannot get the file position\n");
-        return ERROR;
-    }
-    if( currentPos <= pos){
-        fprintf(stderr, "The disk storage is full.\n");
-        return ERROR;
-    }
-
-    if (fseek(virtual_disk_sos->storage, (long)pos, SEEK_SET) != 0) {
-        fprintf(stderr, "Changement de position impossible\n");
-        return ERROR;
-    }
-
+    if (rw_tool_block(pos) == ERROR) return ERROR;
     int code = (int)fread(block->data, sizeof(uchar), BLOCK_SIZE, virtual_disk_sos->storage);
-    if (code != BLOCK_SIZE){
-        fprintf(stderr, "An error occurred while reading\n");
-        return ERROR;
-    }
+    if (code != BLOCK_SIZE){ fprintf(stderr, ERROR_READ); return ERROR; }
     return SUCCESS;
 }
 
@@ -179,35 +149,23 @@ void display_block(block_t block){
  * @brief Print all disk blocks to console
  */
 void display_disk_storage(){
+    fprintf(stdout, "\n\n");
+    block_t block;
     for (int i = 0; i < INODES_START; i+=BLOCK_SIZE) {
-        block_t block;
-        read_block(&block, i);
+        if (read_block(&block, i) == ERROR) return;
         display_block(block);
     }
     fprintf(stdout, "\n");
-    int k = 0;
     for (int i = INODES_START; i < (INODES_START)+(INODE_SIZE)*(INODE_TABLE_SIZE)*(BLOCK_SIZE); i += BLOCK_SIZE) {
-        if (k == 28){
-            fprintf(stdout, "\n");
-            k=0;
-        }
-        block_t block;
-        read_block(&block, i);
+        if ((i-INODES_START)%28 == 0) fprintf(stdout, "\n");
+        if (read_block(&block, i) == ERROR) return;
         display_block(block);
-        k++;
     }
     fprintf(stdout, "\n");
-    k=0;
     for (int i = USERS_START; i < (NB_USERS)*(USER_SIZE)*(BLOCK_SIZE)+(USERS_START); i+=BLOCK_SIZE) {
-        if (k == USER_SIZE){
-            fprintf(stdout, "\n");
-            k=0;
-        }
-        block_t block;
+        if ((i-USERS_START)%USER_SIZE == 0){ fprintf(stdout, "\n"); }
         read_block(&block, i);
         display_block(block);
-        k++;
-
     }
-    fprintf(stdout, "\n");
+    fprintf(stdout, "\n\n\n");
 }
