@@ -12,6 +12,7 @@ int write_super_block();
 int read_super_block();
 void update_first_free_byte();
 int write_inodes_table();
+int read_text_block(int pos, int size, char* destination);
 int read_inodes_table();
 int delete_inode(int index_inode);
 int get_unused_inode();

@@ -20,4 +20,8 @@
 #define ERROR_FWRITE "An error occurred while writing block\n"
 #define ERROR_READ "An error occurred while reading block\n"
 
+#define ERROR_INODE_TABLE_FULL "The inode table is full.\n"
+#define ERROR_INODE_INDEX "Incorrect index of inode\n"
+#define ERROR_INODE_INIT "Inode not initialized\n"
+
 #endif //SCRATCHOS_LABGUAGE_H

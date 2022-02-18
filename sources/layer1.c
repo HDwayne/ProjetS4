@@ -40,25 +40,16 @@ uint block_to_uint(block_t block){
  */
 int init_disk_sos(char *directory){
     virtual_disk_sos = malloc(sizeof(virtual_disk_t));
-    if (virtual_disk_sos == NULL){
-        fprintf(stderr, ERROR_MALLOC);
-        return ERROR;
-    }
+    if (virtual_disk_sos == NULL){ fprintf(stderr, ERROR_MALLOC); return ERROR; }
 
     char *diskFile = (char*) malloc(sizeof(char)*(strlen(directory)+4));
-    if (diskFile == NULL){
-        fprintf(stderr, ERROR_MALLOC);
-        return ERROR;
-    }
+    if (diskFile == NULL){ fprintf(stderr, ERROR_MALLOC); return ERROR; }
 
     strcpy(diskFile, directory);
     strcat(diskFile, "/d0");
 
     virtual_disk_sos->storage=fopen(diskFile, "r+w");
-    if (virtual_disk_sos->storage==NULL){
-        perror(ERROR_ACCESS_DISKFILE);
-        return ERROR;
-    }
+    if (virtual_disk_sos->storage==NULL){ fprintf(stderr, ERROR_ACCESS_DISKFILE); return ERROR; }
 
     if (read_super_block() == ERROR) { fprintf(stderr, ERROR_READ_SUPERBLOCK); return ERROR; }
     if (read_inodes_table() == ERROR) { fprintf(stderr, ERROR_READ_INODES_TABLE); return ERROR; }
