@@ -1,10 +1,10 @@
 /**
-* \file layer2.c
- * \brief Source code for layer2 of the ScratchOs : inodes
- * \author HERZBERG Dwayne and BERLIN Florian
- * \version 0.1
- * \date 14 February 2022
-*/
+ * @file layer2.c
+ * @author  HERZBERG Dwayne and BERLIN Florian
+ * @brief Source code for layer2 of the ScratchOs : inodes
+ * @version 0.1
+ * @date 2022-02-14
+ */
 
 #include "../headers/layer2.h"
 
@@ -80,21 +80,18 @@ void update_first_free_byte(){
 }
 
 /**
- * @brief read specific text
+ * @brief Write data in blok for write_inodes_table
  * 
  * @param pos 
- * @param size 
- * @param destination 
- * @return int, new reading pos
+ * @param source 
+ * @return int, Success code or error code depending on whether successful or failure
  */
-int read_text_block(int pos, int size, char* destination){
+int read_param_inode(int *pos, uint *source){
     block_t block;
-    for (int j = 0; j < compute_nblock(size); j++) {
-        if (read_block(&block, pos) == ERROR) return ERROR;
-        for (int i = 0; i < 4; i++) destination[j*BLOCK_SIZE+i] = (char)block.data[i];
-        pos+=BLOCK_SIZE;
-    }
-    return pos;
+    if (read_block(&block, *pos) == ERROR) return ERROR;
+    (*source) = block_to_uint(block);
+    (*pos)+=BLOCK_SIZE;
+    return SUCCESS;
 }
 
 /**
@@ -103,50 +100,16 @@ int read_text_block(int pos, int size, char* destination){
  */
 int read_inodes_table(){
     int pos = INODES_START;
-    block_t block;
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
-        pos = read_text_block(pos, FILENAME_MAX_SIZE, virtual_disk_sos->inodes[i].filename);
-
-        if (read_block(&block, pos) == ERROR) return ERROR;
-        virtual_disk_sos->inodes[i].size = block_to_uint(block);
-        pos+=BLOCK_SIZE;
-        if (read_block(&block, pos) == ERROR) return ERROR;
-        virtual_disk_sos->inodes[i].uid = block_to_uint(block);
-        pos+=BLOCK_SIZE;
-        if (read_block(&block, pos) == ERROR) return ERROR;
-        virtual_disk_sos->inodes[i].uright = block_to_uint(block);
-        pos+=BLOCK_SIZE;
-        if (read_block(&block, pos) == ERROR) return ERROR;
-        virtual_disk_sos->inodes[i].oright = block_to_uint(block);
-        pos+=BLOCK_SIZE;
-
-        pos = read_text_block(pos, TIMESTAMP_SIZE, virtual_disk_sos->inodes[i].ctimestamp);
-        pos = read_text_block(pos, TIMESTAMP_SIZE, virtual_disk_sos->inodes[i].mtimestamp);
-
-        if (read_block(&block, pos) == ERROR) return ERROR;
-        virtual_disk_sos->inodes[i].nblock = block_to_uint(block);
-        pos+=BLOCK_SIZE;
-        if (read_block(&block, pos) == ERROR) return ERROR;
-        virtual_disk_sos->inodes[i].first_byte = block_to_uint(block);
-        pos+=BLOCK_SIZE;
-    }
-    return SUCCESS;
-}
-
-/**
- * @brief Write text in block for write_inodes_table
- * 
- * @param pos 
- * @param size 
- * @param destination 
- * @return int, Success code or error code depending on whether successful or failure
- */
-int write_text_block(int *pos, int size, char *destination){
-    block_t block;
-    for (int j = 0; j < compute_nblock(size); j++) {
-        for (int i = 0; i < 4; i++) block.data[i] = (unsigned char)destination[j*BLOCK_SIZE+i];
-        if (write_block(block, *pos) == ERROR) return ERROR;
-        (*pos)+=BLOCK_SIZE;
+        if (read_text_block_char(&pos, FILENAME_MAX_SIZE, virtual_disk_sos->inodes[i].filename) == ERROR) return ERROR;
+        if (read_param_inode(&pos, &virtual_disk_sos->inodes[i].size) == ERROR) return ERROR;
+        if (read_param_inode(&pos, &virtual_disk_sos->inodes[i].uid) == ERROR) return ERROR;
+        if (read_param_inode(&pos, &virtual_disk_sos->inodes[i].uright) == ERROR) return ERROR;
+        if (read_param_inode(&pos, &virtual_disk_sos->inodes[i].oright) == ERROR) return ERROR;
+        if (read_text_block_char(&pos, TIMESTAMP_SIZE, virtual_disk_sos->inodes[i].ctimestamp) == ERROR) return ERROR;
+        if (read_text_block_char(&pos, TIMESTAMP_SIZE, virtual_disk_sos->inodes[i].mtimestamp) == ERROR) return ERROR;
+        if (read_param_inode(&pos, &virtual_disk_sos->inodes[i].nblock) == ERROR) return ERROR;
+        if (read_param_inode(&pos, &virtual_disk_sos->inodes[i].first_byte) == ERROR) return ERROR;
     }
     return SUCCESS;
 }
@@ -155,12 +118,12 @@ int write_text_block(int *pos, int size, char *destination){
  * @brief Write data in blok for write_inodes_table
  * 
  * @param pos 
- * @param destination 
+ * @param source 
  * @return int, Success code or error code depending on whether successful or failure
  */
-int write_param_inode(int *pos, uint destination){
+int write_param_inode(int *pos, uint source){
     block_t block;
-    uint_to_block(destination, &block);
+    uint_to_block(source, &block);
     if (write_block(block, *pos) == ERROR) return ERROR;
     (*pos)+=BLOCK_SIZE;
     return SUCCESS;
@@ -174,13 +137,13 @@ int write_inodes_table(){
     int pos = INODES_START;
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
         inode_t inode = virtual_disk_sos->inodes[i];
-        if (write_text_block(&pos, FILENAME_MAX_SIZE, inode.filename) == ERROR) return ERROR;
+        if (write_text_block_char(&pos, FILENAME_MAX_SIZE, inode.filename) == ERROR) return ERROR;
         if (write_param_inode(&pos, inode.size) == ERROR) return ERROR;
         if (write_param_inode(&pos, inode.uid) == ERROR) return ERROR;
         if (write_param_inode(&pos, inode.uright) == ERROR) return ERROR;
         if (write_param_inode(&pos, inode.oright) == ERROR) return ERROR;
-        if (write_text_block(&pos, TIMESTAMP_SIZE, inode.ctimestamp) == ERROR) return ERROR;
-        if (write_text_block(&pos, TIMESTAMP_SIZE, inode.mtimestamp) == ERROR) return ERROR;
+        if (write_text_block_char(&pos, TIMESTAMP_SIZE, inode.ctimestamp) == ERROR) return ERROR;
+        if (write_text_block_char(&pos, TIMESTAMP_SIZE, inode.mtimestamp) == ERROR) return ERROR;
         if (write_param_inode(&pos, inode.nblock) == ERROR) return ERROR;
         if (write_param_inode(&pos, inode.first_byte) == ERROR) return ERROR;
     }

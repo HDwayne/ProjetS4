@@ -1,10 +1,10 @@
 /**
-* \file layer3.c
- * \brief Source code for layer3 of the ScratchOs : users
- * \author HERZBERG Dwayne and BERLIN Florian
- * \version 0.1
- * \date 14 February 2022
-*/
+ * @file layer3.c
+ * @author  HERZBERG Dwayne and BERLIN Florian
+ * @brief Source code for layer3 of the ScratchOs : users
+ * @version 0.1
+ * @date 2022-02-14
+ */
 
 #include "../headers/layer3.h"
 
@@ -15,24 +15,8 @@
 int write_users_table(){
     int pos = USERS_START;
     for (int i = 0; i < NB_USERS; ++i) {
-        user_t user = virtual_disk_sos->users_table[i];
-        block_t block;
-        for (int j = 0; j < compute_nblock(FILENAME_MAX_SIZE); j++) {
-            block.data[0] = (unsigned char)user.login[0 + j*BLOCK_SIZE];
-            block.data[1] = (unsigned char)user.login[1 + j*BLOCK_SIZE];
-            block.data[2] = (unsigned char)user.login[2 + j*BLOCK_SIZE];
-            block.data[3] = (unsigned char)user.login[3 + j*BLOCK_SIZE];
-            if (write_block(block, pos) == ERROR) return ERROR;
-            pos+=BLOCK_SIZE;
-        }
-        for (int j = 0; j < compute_nblock(SHA256_BLOCK_SIZE*2 + 1); j++) {
-            block.data[0] = (unsigned char)user.passwd[0 + j*BLOCK_SIZE];
-            block.data[1] = (unsigned char)user.passwd[1 + j*BLOCK_SIZE];
-            block.data[2] = (unsigned char)user.passwd[2 + j*BLOCK_SIZE];
-            block.data[3] = (unsigned char)user.passwd[3 + j*BLOCK_SIZE];
-            if (write_block(block, pos) == ERROR) return ERROR;
-            pos+=BLOCK_SIZE;
-        }
+        if (write_text_block_char(&pos, FILENAME_MAX_SIZE, virtual_disk_sos->users_table[i].login) == ERROR) return ERROR;
+        if (write_text_block_char(&pos, SHA256_BLOCK_SIZE*2+1, virtual_disk_sos->users_table[i].passwd) == ERROR) return ERROR;
     }
     return SUCCESS;
 }
@@ -44,23 +28,8 @@ int write_users_table(){
 int read_users_table(){
     int pos = USERS_START;
     for (int i = 0; i < NB_USERS; ++i) {
-        block_t block;
-        for (int j = 0; j < compute_nblock(FILENAME_MAX_SIZE); j++) {
-            if(read_block(&block, pos) == ERROR) return ERROR;
-            virtual_disk_sos->users_table[i].login[j*BLOCK_SIZE+0] = (char)block.data[0];
-            virtual_disk_sos->users_table[i].login[j*BLOCK_SIZE+1] = (char)block.data[1];
-            virtual_disk_sos->users_table[i].login[j*BLOCK_SIZE+2] = (char)block.data[2];
-            virtual_disk_sos->users_table[i].login[j*BLOCK_SIZE+3] = (char)block.data[3];
-            pos+=BLOCK_SIZE;
-        }
-        for (int j = 0; j < compute_nblock(SHA256_BLOCK_SIZE*2 + 1); j++) {
-            if(read_block(&block, pos) == ERROR) return ERROR;
-            virtual_disk_sos->users_table[i].passwd[j*BLOCK_SIZE+0] = (char)block.data[0];
-            virtual_disk_sos->users_table[i].passwd[j*BLOCK_SIZE+1] = (char)block.data[1];
-            virtual_disk_sos->users_table[i].passwd[j*BLOCK_SIZE+2] = (char)block.data[2];
-            virtual_disk_sos->users_table[i].passwd[j*BLOCK_SIZE+3] = (char)block.data[3];
-            pos+=BLOCK_SIZE;
-        }
+        if (read_text_block_char(&pos, FILENAME_MAX_SIZE, virtual_disk_sos->users_table[i].login) == ERROR) return ERROR;
+        if (read_text_block_char(&pos, SHA256_BLOCK_SIZE*2+1, virtual_disk_sos->users_table[i].passwd) == ERROR) return ERROR;
     }
     return SUCCESS;
 }
@@ -73,10 +42,7 @@ int read_users_table(){
  * @return int, Success code or error code depending on whether successful or failure
  */
 int delete_user(int id_user){
-    if (id_user >= NB_USERS || id_user <= 0){
-        fprintf(stderr, "Incorrect userid\n");
-        return ERROR;
-    }
+    if (id_user >= NB_USERS || id_user <= 0){ fprintf(stderr, ERROR_USER_ID); return ERROR; }
     for (int i = id_user; i < get_unused_user()-1; ++i) {
         virtual_disk_sos->users_table[i] = virtual_disk_sos->users_table[i+1];
     }
@@ -105,14 +71,8 @@ int get_unused_user(){
  */
 int init_user(char *login, char *password){
     int id_user = get_unused_user();
-    if (id_user == NB_USERS){
-        fprintf(stderr, "Maximum amount of users is reached\n");
-        return ERROR;
-    }
-    if(is_login_in_users_table(login) != NB_USERS){
-        fprintf(stderr, "User already exists\n");
-        return ERROR;
-    }
+    if (id_user == NB_USERS){ fprintf(stderr, ERROR_USER_MAX); return ERROR; }
+    if(is_login_in_users_table(login) != NB_USERS){ fprintf(stderr, ERROR_USER_EXIST); return ERROR; }
     for (int i = 0; i < FILENAME_MAX_SIZE; i++) {
         virtual_disk_sos->users_table[id_user].login[i] = login[i];
     }

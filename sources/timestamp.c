@@ -1,3 +1,7 @@
+/**
+ * @file timestamp.c
+ */
+
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,10 +32,3 @@ char *timestamp(){
     c_time_string[strlen(c_time_string)-1] = '\0';
     return c_time_string;
 }
-
-// int main(void)
-// {
-//   char * ts = timestamp();
-//     printf("Current time is : |%s| %ld\n", ts,strlen(ts));
-//     exit(EXIT_SUCCESS);
-// }

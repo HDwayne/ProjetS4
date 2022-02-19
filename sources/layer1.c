@@ -1,13 +1,12 @@
 /**
-* \file layer1.c
- * \brief Source code for layer1 of the ScratchOs : Blocks
- * \author HERZBERG Dwayne and BERLIN Florian
- * \version 0.1
- * \date 14 February 2022
-*/
+ * @file layer1.c
+ * @author  HERZBERG Dwayne and BERLIN Florian
+ * @brief Source code for layer1 of the ScratchOs : Blocks
+ * @version 0.1
+ * @date 2022-02-14
+ */
 
 #include "../headers/layer1.h"
-
 
 /**
  * @brief Converter unsigned int to block
@@ -134,6 +133,78 @@ void display_block(block_t block){
         fprintf(stdout, "%02x", block.data[i]);
     }
     fprintf(stdout, "]");
+}
+
+/**
+ * @brief Write text (char) in block for write_inodes_table
+ * 
+ * @param pos 
+ * @param size 
+ * @param source 
+ * @return int, Success code or error code depending on whether successful or failure
+ */
+int write_text_block_char(int *pos, int size, char *source){
+    block_t block;
+    for (int j = 0; j < compute_nblock(size); j++) {
+        for (int i = 0; i < 4; i++) block.data[i] = (unsigned char)source[j*BLOCK_SIZE+i];
+        if (write_block(block, *pos) == ERROR) return ERROR;
+        (*pos)+=BLOCK_SIZE;
+    }
+    return SUCCESS;
+}
+
+/**
+ * @brief Write text (uchar) in block for write_inodes_table
+ * 
+ * @param pos 
+ * @param size 
+ * @param source 
+ * @return int, Success code or error code depending on whether successful or failure
+ */
+int write_text_block_uchar(uint *pos, int size, uchar *source){
+    block_t block;
+    for (int j = 0; j < compute_nblock(size); j++) {
+        for (int i = 0; i < 4; i++) block.data[i] = source[j*BLOCK_SIZE+i];
+        if (write_block(block, (int)*pos) == ERROR) return ERROR;
+        (*pos)+=BLOCK_SIZE;
+    }
+    return SUCCESS;
+}
+
+/**
+ * @brief read specific text (char)
+ * 
+ * @param pos 
+ * @param size 
+ * @param destination 
+ * @return int, Success code or error code depending on whether successful or failure
+ */
+int read_text_block_char(int *pos, int size, char* destination){
+    block_t block;
+    for (int j = 0; j < compute_nblock(size); j++) {
+        if (read_block(&block, *pos) == ERROR) return ERROR;
+        for (int i = 0; i < 4; i++) destination[j*BLOCK_SIZE+i] = (char)block.data[i];
+        (*pos)+=BLOCK_SIZE;
+    }
+    return SUCCESS;
+}
+
+/**
+ * @brief read specific text (uchar)
+ * 
+ * @param pos 
+ * @param size 
+ * @param destination 
+ * @return int, Success code or error code depending on whether successful or failure
+ */
+int read_text_block_uchar(uint *pos, int size, uchar* destination){
+    block_t block;
+    for (int j = 0; j < compute_nblock(size); j++) {
+        if (read_block(&block, (int)*pos) == ERROR) return ERROR;
+        for (int i = 0; i < 4; i++) destination[j*BLOCK_SIZE+i] = block.data[i];
+        (*pos)+=BLOCK_SIZE;
+    }
+    return SUCCESS;
 }
 
 /**

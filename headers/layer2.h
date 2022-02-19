@@ -1,18 +1,26 @@
-//
-// Created by Florian Berlin on 14/02/2022.
-//
+/**
+ * @file layer2.h
+ * @author  HERZBERG Dwayne and BERLIN Florian
+ * @brief header for layer2.c
+ * @version 0.1
+ * @date 2022-02-14
+ */
 
 #ifndef SCRATCHOS_LAYER2_H
 #define SCRATCHOS_LAYER2_H
 
 #include "os_defines.h"
-#include "../headers/layer1.h"
+#include "language.h"
+#include "layer1.h"
+#include "layer3.h"
+#include "layer4.h"
+#include "layer5.h"
 
 int write_super_block();
 int read_super_block();
 void update_first_free_byte();
 int write_inodes_table();
-int read_text_block(int pos, int size, char* destination);
+int write_param_inode(int *pos, uint source);
 int read_inodes_table();
 int delete_inode(int index_inode);
 int get_unused_inode();

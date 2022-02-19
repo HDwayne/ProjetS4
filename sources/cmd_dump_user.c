@@ -1,10 +1,10 @@
 /**
-* \file cmd_dump_user.c
- * \brief Source code for cmd_dump_user of the ScratchOs : testing program for layer 3
- * \author HERZBERG Dwayne and BERLIN Florian
- * \version 0.1
- * \date 17 February 2022
-*/
+ * @file cmd_dump_user.c
+ * @author  HERZBERG Dwayne and BERLIN Florian
+ * @brief Source code for cmd_dump_user of the ScratchOs : testing program for layer 3
+ * @version 0.1
+ * @date 2022-02-17
+ */
 
 #include "../headers/layer3.h"
 

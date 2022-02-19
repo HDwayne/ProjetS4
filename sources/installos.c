@@ -1,4 +1,16 @@
+/**
+ * @file installos.c
+ * @author  HERZBERG Dwayne and BERLIN Florian
+ * @brief Source code for the OS installer
+ * @version 0.1
+ * @date 2022-02-14
+ */
+
+#include "../headers/os_defines.h"
+#include "../headers/language.h"
 #include "../headers/layer1.h"
+#include "../headers/layer2.h"
+#include "../headers/layer3.h"
 #include "../headers/layer4.h"
 #include "../headers/layer5.h"
 

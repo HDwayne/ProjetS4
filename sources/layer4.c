@@ -1,13 +1,12 @@
 /**
-* \file layer4.c
- * \brief Source code for layer4 of the ScratchOs: File System
- * \author HERZBERG Dwayne and BERLIN Florian
- * \version 0.1
- * \date 15 February 2022
-*/
+ * @file layer4.c
+ * @author  HERZBERG Dwayne and BERLIN Florian
+ * @brief Source code for layer4 of the ScratchOs : File System
+ * @version 0.1
+ * @date 2022-02-14
+ */
+
 #include "../headers/layer4.h"
-
-
 
 /**
  * @brief Check if file exists.
@@ -22,147 +21,120 @@ int is_file_in_inode(char *filename){
 }
 
 /**
- * \brief Create or edit a file in the disk storage and in the inodes table
- * @param filename
- * @param filedata
+ * @brief Create or edit a file in the disk storage and in the inodes table
+ * 
+ * @param filename 
+ * @param filedata 
+ * @param user 
+ * @return int, Success code or error code depending on whether successful or failure
  */
-void write_file(char * filename, file_t filedata, session_t user){
+int write_file(char * filename, file_t filedata, session_t user){
     int i_inode = is_file_in_inode(filename);
-    if (i_inode != INODE_TABLE_SIZE){
-        if (filedata.size <= virtual_disk_sos->inodes[i_inode].size){
+    if (i_inode != INODE_TABLE_SIZE) {
+        if (filedata.size <= virtual_disk_sos->inodes[i_inode].size) {
             strcpy(virtual_disk_sos->inodes[i_inode].mtimestamp, timestamp());
             uint pos = virtual_disk_sos->inodes[i_inode].first_byte;
-            block_t block;
-            for (int i = 0; i < compute_nblock(filedata.size); i++) {
-                block.data[0] = filedata.data[i*BLOCK_SIZE+0];
-                block.data[1] = filedata.data[i*BLOCK_SIZE+1];
-                block.data[2] = filedata.data[i*BLOCK_SIZE+2];
-                block.data[3] = filedata.data[i*BLOCK_SIZE+3];
-                write_block(block, (int)pos);
-                pos+=BLOCK_SIZE;
-            }
-        }
-        else{
+            if(write_text_block_uchar(&pos, filedata.size, filedata.data) == ERROR) return ERROR;
+        } else {
             char *ctimestamp = malloc(sizeof(char)*TIMESTAMP_SIZE);
+            if (ctimestamp == NULL){ fprintf(stdout, ERROR_MALLOC); return ERROR; }
             strcpy(ctimestamp, virtual_disk_sos->inodes[i_inode].ctimestamp);
-            delete_inode(i_inode);
-            init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, ctimestamp, timestamp(), user);
+            if (delete_inode(i_inode) == ERROR) return ERROR;
+            if (init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, ctimestamp, timestamp(), user) == ERROR) return ERROR;
             uint pos = virtual_disk_sos->inodes[is_file_in_inode(filename)].first_byte;
-            block_t block;
-            for (int i = 0; i < compute_nblock(filedata.size); i++) {
-                block.data[0] = filedata.data[i*BLOCK_SIZE+0];
-                block.data[1] = filedata.data[i*BLOCK_SIZE+1];
-                block.data[2] = filedata.data[i*BLOCK_SIZE+2];
-                block.data[3] = filedata.data[i*BLOCK_SIZE+3];
-                write_block(block, (int)pos);
-                pos+=BLOCK_SIZE;
-            }
+            if (write_text_block_uchar(&pos, filedata.size, filedata.data) == ERROR) return ERROR;
             free(ctimestamp);
         }
-    }
-    else{
-        init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp(), user);
-        block_t block;
+    } else {
+        if (init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp(), user) == ERROR) return ERROR;
         uint pos = virtual_disk_sos->inodes[is_file_in_inode(filename)].first_byte;
-        for (int i = 0; i < compute_nblock(filedata.size); i++) {
-            block.data[0] = filedata.data[i*BLOCK_SIZE+0];
-            block.data[1] = filedata.data[i*BLOCK_SIZE+1];
-            block.data[2] = filedata.data[i*BLOCK_SIZE+2];
-            block.data[3] = filedata.data[i*BLOCK_SIZE+3];
-            write_block(block, (int)pos);
-            pos+=BLOCK_SIZE;
-        }
+        if (write_text_block_uchar(&pos, filedata.size, filedata.data) == ERROR) return ERROR;
     }
+    return SUCCESS;
 }
 
 
 /**
- * \brief Read a file from the disk storage
+ * @brief Read a file from the disk storage
  * @param filename
  * @param filedata
- * @return
+ * @return int, Success code or error code depending on whether successful or failure
  */
 int read_file(char *filename, file_t *filedata) {
     int index_inode = is_file_in_inode(filename);
-    if (index_inode == INODE_TABLE_SIZE) return 0;
+    if (index_inode == INODE_TABLE_SIZE) { fprintf(stderr, ERROR_INODE_INDEX); return ERROR; }
     filedata->size = virtual_disk_sos->inodes[index_inode].size;
     uint pos = virtual_disk_sos->inodes[index_inode].first_byte;
-    block_t block;
-    for (int j = 0; j < compute_nblock(filedata->size); j++) {
-        read_block(&block, (int)pos);
-        filedata->data[j*BLOCK_SIZE+0] = block.data[0];
-        filedata->data[j*BLOCK_SIZE+1] = block.data[1];
-        filedata->data[j*BLOCK_SIZE+2] = block.data[2];
-        filedata->data[j*BLOCK_SIZE+3] = block.data[3];
-        pos+=BLOCK_SIZE;
-    }
-    //fprintf("Find : %s\n", filedata->data);
-    return 1;
+    if (read_text_block_uchar(&pos, filedata->size, filedata->data) == ERROR) return ERROR;
+    return SUCCESS;
 }
 
 /**
- * \brief Delete a file from the inode table
+ * @brief Delete a file from the inode table
  * @param filename
- * @return
+ * @return int, Success code or error code depending on whether successful or failure
  */
 int delete_file(char *filename){
     int index_inode = is_file_in_inode(filename);
-    if (index_inode == INODE_TABLE_SIZE) return 0;
-    delete_inode(index_inode);
-    return 1;
+    if (index_inode == INODE_TABLE_SIZE) return ERROR;
+    if (delete_inode(index_inode) == ERROR) return ERROR;
+    return SUCCESS;
 }
 
 /**
- * \brief Write file from host to virtual disk
- * @param filename
- * @return
+ * @brief Write file from host to virtual disk
+ * 
+ * @param filename 
+ * @param user 
+ * @return int, Success code or error code depending on whether successful or failure
  */
 int load_file_from_host(char *filename, session_t user){
     FILE * hostfile = fopen(filename, "r");
-    if (hostfile == NULL){
-        perror("fopen");
-        return 0;
-    }
+    if (hostfile == NULL){ fprintf(stderr, ERROR_FILE_OPEN); return ERROR; }
     file_t sosfile;
-    fseek(hostfile, 0, SEEK_END);
+    if (fseek(hostfile, 0, SEEK_END) != 0) { fprintf(stderr, ERROR_FSEEK); return ERROR; }
     sosfile.size = ftell(hostfile);
-    fseek(hostfile, 0, SEEK_SET);
+    if (sosfile.size == -1) { fprintf(stderr, ERROR_FTELL); return ERROR; }
+    if (fseek(hostfile, 0, SEEK_SET) != 0) { fprintf(stderr, ERROR_FSEEK); return ERROR; }
 
-    fread(sosfile.data, sizeof(char), sosfile.size, hostfile);
+    int code = (int)fread(sosfile.data, sizeof(char), sosfile.size, hostfile);
+    if (code != sosfile.size){ fprintf(stderr, ERROR_READ); return ERROR; }
     sosfile.data[sosfile.size] = '\0';
 
-    write_file(filename, sosfile, user);
-    return 1;
+    if (write_file(filename, sosfile, user) == ERROR) return ERROR;
+    return SUCCESS;
 }
 
-// TODO ERROR
+/**
+ * @brief Download file to host
+ * 
+ * @param filenamesos 
+ * @return int, Success code or error code depending on whether successful or failure  
+ */
 int store_file_to_host(char *filenamesos){
     int index_inode = is_file_in_inode(filenamesos);
-    if (index_inode == INODE_TABLE_SIZE) return ERROR; // TODO: Error handling
-    file_t file;
-    read_file(filenamesos, &file);
-    FILE * fd;
+    if (index_inode == INODE_TABLE_SIZE) return ERROR;
     
+    file_t file;
+    if (read_file(filenamesos, &file) == ERROR) return ERROR;
+    
+    FILE * fd;
     fd = fopen(filenamesos, "w");
     if (fd == NULL) return 0;
-    if (fseek(fd, 0, SEEK_SET) != 0) {
-        fprintf(stderr, "Changement de position impossible\n");
-        if (fclose(fd) == EOF) {
-            fprintf( stderr, "Cannot close file\n" );
-        }
+    
+    if (fseek(fd, 0, SEEK_SET) != 0) { 
+        fprintf(stderr, ERROR_FSEEK);
+        if (fclose(fd) == EOF) fprintf(stderr, ERROR_FILE_CLOSE);
         return ERROR;
     }
+    
     int code = (int)fwrite(file.data, sizeof(uchar), file.size, fd);
     if (code != file.size){
-        fprintf(stderr, "An error occurred while writing block\n");
-        if (fclose(fd) == EOF) {
-            fprintf( stderr, "Cannot close file\n" );
-        }
+        fprintf(stderr, ERROR_WRITE_BLOCK);
+        if (fclose(fd) == EOF) fprintf(stderr, ERROR_FILE_CLOSE);
         return ERROR;
     }
-    if (fclose(fd) == EOF) {
-        fprintf( stderr, "Cannot close file\n" );
-        return ERROR;
-    }
+    
+    if (fclose(fd) == EOF) { fprintf(stderr, ERROR_FILE_CLOSE); return ERROR; }
     return SUCCESS;
 }
