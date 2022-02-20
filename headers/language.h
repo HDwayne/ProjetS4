@@ -69,6 +69,20 @@
 #define OUTPUT_OS_STARTING_SHELL "Starting shell...\n"
 #define OUTPUT_OS_STOP_SHELL "Shell return with code %d\n"
 #define OUTPUT_OS_SHUTDOWN "Shutting down...\n"
-
+#define ERROR_INSTALLOS_USAGE "Usage: %s <directory>\n"
+#define MAX_DISK_KID 10
+#define ERROR_READ_DIR "Cannot read dir\n"
+#define ERROR_CLOSE_DIR "Cannot close dir\n"
+#define OUTPUT_OSINSTALL_SELECT_DISK "[INSTALL] Please select the disk for installation. (by number)\n"
+#define OUPTUT_OSINSTALL_FORMAT "[WARNING] Please format disk before installation.\n"
+#define OUPTUT_OSINSTALL_FORMAT_ASK "[INSTALL] accept disk format ? y/N\n"
+#define INPUT_YES "yes"
+#define INPUT_Y "y"
+#define OUTPUT_OSINSTALL_FORAMT_SUCCESS "[INSTALL] formatting completed successfully\n"
+#define OUTPUT_OSINSTALL_CANCEL "[INSTALL] Installation cancel.\n"
+#define OUTPUT_OSINSTALL_SUPERUSER_NAME "[INSTALL] Please enter the superuser nickname (root by defaut): \n"
+#define OUTPUT_OSINSTALL_SUPERUSER_PWD "[INSTALL] Please enter the superuser password: \n"
+#define OUTPUT_OSINSTALL_SUPERUSER_PWD2 "[INSTALL] Please confirm the superuser password: \n"
+#define OUTPUT_OSINSTALL_SUCCESS "[INSTALL] installation completed successfully\n"
 
 #endif //SCRATCHOS_LABGUAGE_H

@@ -37,15 +37,14 @@ uint block_to_uint(block_t block){
  * @param directory 
  * @return int, success code or error code depending on whether success or failure 
  */
-int init_disk_sos(char *directory){
+int init_disk_sos(char *directory, int kid){
     virtual_disk_sos = malloc(sizeof(virtual_disk_t));
     if (virtual_disk_sos == NULL){ fprintf(stderr, ERROR_MALLOC); return ERROR; }
 
     char *diskFile = (char*) malloc(sizeof(char)*(strlen(directory)+4));
     if (diskFile == NULL){ fprintf(stderr, ERROR_MALLOC); return ERROR; }
 
-    strcpy(diskFile, directory);
-    strcat(diskFile, "/d0");
+    snprintf(diskFile, strlen(directory)+5, "%s/d%d", directory, kid);
 
     virtual_disk_sos->storage=fopen(diskFile, "r+w");
     if (virtual_disk_sos->storage==NULL){ fprintf(stderr, ERROR_ACCESS_DISKFILE); return ERROR; }

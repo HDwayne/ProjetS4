@@ -12,7 +12,7 @@ int main(int argc, char **argv){
     if (argc != 2){
         fprintf(stderr, "Usage: %s <directory path>\n", argv[0]);
     }
-    init_disk_sos(argv[1]);
+    init_disk_sos(argv[1], 0);
     update_first_free_byte();
     session_t user;
     user.userid = ROOT_UID;
@@ -30,7 +30,7 @@ int main(int argc, char **argv){
     store_file_to_host("coucou");
     delete_file("coucou");
     shutdown_disk_sos();
-    init_disk_sos(argv[1]);
+    init_disk_sos(argv[1], 0);
     display_disk_storage();
 
     for (int i = 0; i < virtual_disk_sos->super_block.number_of_users; ++i) {

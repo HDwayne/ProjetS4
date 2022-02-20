@@ -18,7 +18,7 @@
 
 void uint_to_block(uint number, block_t *block);
 uint block_to_uint(block_t block);
-int init_disk_sos(char directory[FILENAME_MAX_SIZE]);
+int init_disk_sos(char directory[FILENAME_MAX_SIZE], int kid);
 int shutdown_disk_sos();
 uint compute_nblock(uint octets);
 int rw_tool_block(int pos);

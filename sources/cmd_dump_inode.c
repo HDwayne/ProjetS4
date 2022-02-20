@@ -13,7 +13,7 @@ int main(int argc, char **argv){
         fprintf(stderr, "Usage: %s <directory>", argv[1]);
         return 1;
     }
-    if (init_disk_sos(argv[1]) == ERROR) return ERROR;
+    if (init_disk_sos(argv[1], 0) == ERROR) return ERROR;
     session_t user;
     user.userid = ROOT_UID;
     for (int i = 0; i < INODE_TABLE_SIZE; ++i) {
@@ -35,7 +35,7 @@ int main(int argc, char **argv){
     }
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
     if (shutdown_disk_sos() == ERROR) return ERROR;
-    if (init_disk_sos(argv[1]) == ERROR) return ERROR;
+    if (init_disk_sos(argv[1], 0) == ERROR) return ERROR;
     display_disk_storage();
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
     for (int i = 0; i < virtual_disk_sos->super_block.number_of_files; i++) {

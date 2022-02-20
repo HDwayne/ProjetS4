@@ -112,6 +112,7 @@ int load_file_from_host(char *filename, session_t user){
  * @return int, Success code or error code depending on whether successful or failure  
  */
 int store_file_to_host(char *filenamesos){
+    fprintf(stdout, "%s\n", filenamesos);
     int index_inode = is_file_in_inode(filenamesos);
     if (index_inode == INODE_TABLE_SIZE) return ERROR;
     

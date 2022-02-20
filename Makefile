@@ -75,7 +75,11 @@ $(BIN_DUMP_USER): $(SCR_DUMP_USER)
 .SILENT: disk
 disk:
 	$(info    -------- DISK ---------------)
-	./Format/cmd_format ./${DISK} 50000
+	./Format/cmd_format ./${DISK} 50000 0
+	./Format/cmd_format ./${DISK} 50000 1
+	./Format/cmd_format ./${DISK} 50000 2
+	./Format/cmd_format ./${DISK} 50000 3
+	./Format/cmd_format ./${DISK} 50000 4
 	$(info    OK)
 
 .SILENT: clean

@@ -23,13 +23,11 @@ void format(char *dirname, int size, int diskid){
 
 int main(int argc, char **argv) {
 /// \brief command nom_repertoire taille_fichier (octets)
-    if (argc!=3) {
-        printf("usage %s  existing_dir_to_store_disk disk_size\n", argv[0]);
+    if (argc!=4) {
+        printf("usage %s  existing_dir_to_store_disk disk_size disk_kid\n", argv[0]);
         return 0;
     }
     int size = atoi(argv[2]);
-    if(argc==3) {
-      int diskid = 0;
-	    format(argv[1], size, diskid);
-    }
+    int diskid = atoi(argv[3]);
+    format(argv[1], size, diskid);
 }
