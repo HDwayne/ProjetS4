@@ -39,19 +39,19 @@ uint block_to_uint(block_t block){
  */
 int init_disk_sos(char *directory, int kid){
     virtual_disk_sos = malloc(sizeof(virtual_disk_t));
-    if (virtual_disk_sos == NULL){ fprintf(stderr, ERROR_MALLOC); return ERROR; }
+    if (virtual_disk_sos == NULL){ fprintf(stderr, "%s\n", LangGet(ERROR_MALLOC)); return ERROR; }
 
     char *diskFile = (char*) malloc(sizeof(char)*(strlen(directory)+4));
-    if (diskFile == NULL){ fprintf(stderr, ERROR_MALLOC); return ERROR; }
+    if (diskFile == NULL){ fprintf(stderr, "%s\n", LangGet(ERROR_MALLOC)); return ERROR; }
 
     snprintf(diskFile, strlen(directory)+5, "%s/d%d", directory, kid);
 
     virtual_disk_sos->storage=fopen(diskFile, "r+w");
-    if (virtual_disk_sos->storage==NULL){ fprintf(stderr, ERROR_ACCESS_DISKFILE); return ERROR; }
+    if (virtual_disk_sos->storage==NULL){ fprintf(stderr, "%s\n", LangGet(ERROR_ACCESS_DISKFILE)); return ERROR; }
 
-    if (read_super_block() == ERROR) { fprintf(stderr, ERROR_READ_SUPERBLOCK); return ERROR; }
-    if (read_inodes_table() == ERROR) { fprintf(stderr, ERROR_READ_INODES_TABLE); return ERROR; }
-    if (read_users_table() == ERROR) { fprintf(stderr, ERROR_READ_USERS_TABLE); return ERROR; }
+    if (read_super_block() == ERROR) { fprintf(stderr, "%s\n", LangGet(ERROR_READ_SUPERBLOCK)); return ERROR; }
+    if (read_inodes_table() == ERROR) { fprintf(stderr, "%s\n", LangGet(ERROR_READ_INODES_TABLE)); return ERROR; }
+    if (read_users_table() == ERROR) { fprintf(stderr, "%s\n", LangGet(ERROR_READ_USERS_TABLE)); return ERROR; }
 
     free(diskFile);
     return SUCCESS;
@@ -62,10 +62,10 @@ int init_disk_sos(char *directory, int kid){
  * @return int, success code or error code depending on whether success or failure 
  */
 int shutdown_disk_sos(){
-    if (write_super_block() == ERROR) { fprintf(stderr, ERROR_WRITE_SUPERBLOCK); return ERROR; }
-    if (write_inodes_table() == ERROR) { fprintf(stderr, ERROR_WRITE_INODES_TABLE); return ERROR; }
-    if (write_users_table() == ERROR) { fprintf(stderr, ERROR_WRITE_USERS_TABLE); return ERROR; }
-    if (fclose(virtual_disk_sos->storage) == EOF) { fprintf(stderr, ERROR_FILE_CLOSE); return ERROR; }
+    if (write_super_block() == ERROR) { fprintf(stderr, "%s\n", LangGet(ERROR_WRITE_SUPERBLOCK)); return ERROR; }
+    if (write_inodes_table() == ERROR) { fprintf(stderr, "%s\n", LangGet(ERROR_WRITE_INODES_TABLE)); return ERROR; }
+    if (write_users_table() == ERROR) { fprintf(stderr, "%s\n", LangGet(ERROR_WRITE_USERS_TABLE)); return ERROR; }
+    if (fclose(virtual_disk_sos->storage) == EOF) { fprintf(stderr, "%s\n", LangGet(ERROR_FILE_CLOSE)); return ERROR; }
     free(virtual_disk_sos);
     return SUCCESS;
 }
@@ -86,13 +86,13 @@ uint compute_nblock(uint octets){
  * @return int, error code or success code dpeending on what happened 
  */
 int rw_tool_block(int pos){
-    if (fseek(virtual_disk_sos->storage, 0, SEEK_END) != 0) { fprintf(stderr, ERROR_FSEEK); return ERROR; }
+    if (fseek(virtual_disk_sos->storage, 0, SEEK_END) != 0) { fprintf(stderr, "%s\n", LangGet(ERROR_FSEEK)); return ERROR; }
 
     int currentPos = (int)ftell(virtual_disk_sos->storage);
-    if (currentPos == -1) { fprintf(stderr, ERROR_FTELL); return ERROR; }
-    if (currentPos <= pos){ fprintf(stderr, ERROR_DISK_FULL); return ERROR; }
+    if (currentPos == -1) { fprintf(stderr, "%s\n", LangGet(ERROR_FTELL)); return ERROR; }
+    if (currentPos <= pos){ fprintf(stderr, "%s\n", LangGet(ERROR_DISK_FULL)); return ERROR; }
 
-    if (fseek(virtual_disk_sos->storage, (long)pos, SEEK_SET) != 0) { fprintf(stderr, ERROR_FSEEK); return ERROR; }
+    if (fseek(virtual_disk_sos->storage, (long)pos, SEEK_SET) != 0) { fprintf(stderr, "%s\n", LangGet(ERROR_FSEEK)); return ERROR; }
     return SUCCESS;
 }
 
@@ -105,7 +105,7 @@ int rw_tool_block(int pos){
 int write_block(block_t block, int pos){
     if (rw_tool_block(pos) == ERROR) return ERROR;
     int code = (int)fwrite(block.data, sizeof(uchar), BLOCK_SIZE, virtual_disk_sos->storage);
-    if (code != BLOCK_SIZE){ fprintf(stderr, ERROR_FWRITE); return ERROR; }
+    if (code != BLOCK_SIZE){ fprintf(stderr, "%s\n", LangGet(ERROR_FWRITE)); return ERROR; }
     return SUCCESS;
 }
 
@@ -118,7 +118,7 @@ int write_block(block_t block, int pos){
 int read_block(block_t *block, int pos){
     if (rw_tool_block(pos) == ERROR) return ERROR;
     int code = (int)fread(block->data, sizeof(uchar), BLOCK_SIZE, virtual_disk_sos->storage);
-    if (code != BLOCK_SIZE){ fprintf(stderr, ERROR_READ); return ERROR; }
+    if (code != BLOCK_SIZE){ fprintf(stderr, "%s\n", LangGet(ERROR_READ)); return ERROR; }
     return SUCCESS;
 }
 

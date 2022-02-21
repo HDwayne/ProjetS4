@@ -158,7 +158,7 @@ int write_inodes_table(){
  */
 int delete_inode(int index_inode){
     if (index_inode >= INODE_TABLE_SIZE || index_inode < 0){ 
-        fprintf(stderr, ERROR_INODE_INDEX); return ERROR; 
+        fprintf(stderr, "%s\n", LangGet(ERROR_INODE_INDEX)); return ERROR; 
     }
     virtual_disk_sos->super_block.nb_blocks_used-=virtual_disk_sos->inodes[index_inode].nblock;
     for (int i = index_inode; i < get_unused_inode()-1; ++i) {
@@ -195,7 +195,7 @@ int get_unused_inode(){
 int init_inode(const char *fileName, uint size, uint pos, char *createTime, char *modifyTime, session_t user){
     int index_inode = get_unused_inode();
     if (index_inode == INODE_TABLE_SIZE || virtual_disk_sos->super_block.number_of_files >= 10 ){
-        fprintf(stderr, ERROR_INODE_TABLE_FULL); return ERROR;
+        fprintf(stderr, "%s\n", LangGet(ERROR_INODE_TABLE_FULL)); return ERROR;
     }
     for (int i = 0; i < FILENAME_MAX_SIZE; ++i) {
         virtual_disk_sos->inodes[index_inode].filename[i] = fileName[i];
@@ -228,7 +228,7 @@ int init_inode(const char *fileName, uint size, uint pos, char *createTime, char
  */
 bool has_rights(int i_inode, int user_id, int right){
     if (virtual_disk_sos->inodes[i_inode].first_byte == 0){
-        fprintf(stderr, ERROR_INODE_INIT); return false;
+        fprintf(stderr, "%s\n", LangGet(ERROR_INODE_INIT)); return false;
     }
     if (user_id == ROOT_UID) return true;
     if (virtual_disk_sos->inodes[i_inode].uid == user_id){

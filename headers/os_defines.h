@@ -35,6 +35,8 @@
 #define ERROR (-1)
 #define SUCCESS 0
 
+#define MAX_DISK_KID 10 // nombre de disque maximum
+
 typedef unsigned int uint; // même taille que int
 typedef unsigned char uchar; // 8 bits non signés = octet
 

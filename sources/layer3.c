@@ -42,7 +42,7 @@ int read_users_table(){
  * @return int, Success code or error code depending on whether successful or failure
  */
 int delete_user(int id_user){
-    if (id_user >= NB_USERS || id_user <= 0){ fprintf(stderr, ERROR_USER_ID); return ERROR; }
+    if (id_user >= NB_USERS || id_user <= 0){ fprintf(stderr, "%s\n", LangGet(ERROR_USER_ID)); return ERROR; }
     for (int i = id_user; i < get_unused_user()-1; ++i) {
         virtual_disk_sos->users_table[i] = virtual_disk_sos->users_table[i+1];
     }
@@ -71,8 +71,8 @@ int get_unused_user(){
  */
 int init_user(char *login, char *password){
     int id_user = get_unused_user();
-    if (id_user == NB_USERS){ fprintf(stderr, ERROR_USER_MAX); return ERROR; }
-    if(is_login_in_users_table(login) != NB_USERS){ fprintf(stderr, ERROR_USER_EXIST); return ERROR; }
+    if (id_user == NB_USERS){ fprintf(stderr, "%s\n", LangGet(ERROR_USER_MAX)); return ERROR; }
+    if(is_login_in_users_table(login) != NB_USERS){ fprintf(stderr, "%s\n", LangGet(ERROR_USER_EXIST)); return ERROR; }
     for (int i = 0; i < FILENAME_MAX_SIZE; i++) {
         virtual_disk_sos->users_table[id_user].login[i] = login[i];
     }
@@ -84,8 +84,6 @@ int init_user(char *login, char *password){
     virtual_disk_sos->super_block.number_of_users++;
     return SUCCESS;
 }
-
-
 
 /**
  * @brief Look up the user's index in the table (if connected)
@@ -100,7 +98,6 @@ int is_login_in_users_table(char *login){
     return NB_USERS;
 }
 
-// TODO @BerlinFlorian return ???
 /**
  * @brief Check if the credentials are correct
  * 

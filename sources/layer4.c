@@ -37,7 +37,7 @@ int write_file(char * filename, file_t filedata, session_t user){
             if(write_text_block_uchar(&pos, filedata.size, filedata.data) == ERROR) return ERROR;
         } else {
             char *ctimestamp = malloc(sizeof(char)*TIMESTAMP_SIZE);
-            if (ctimestamp == NULL){ fprintf(stdout, ERROR_MALLOC); return ERROR; }
+            if (ctimestamp == NULL){ fprintf(stdout,"%s\n", LangGet(ERROR_MALLOC)); return ERROR; }
             strcpy(ctimestamp, virtual_disk_sos->inodes[i_inode].ctimestamp);
             if (delete_inode(i_inode) == ERROR) return ERROR;
             if (init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, ctimestamp, timestamp(), user) == ERROR) return ERROR;
@@ -62,7 +62,7 @@ int write_file(char * filename, file_t filedata, session_t user){
  */
 int read_file(char *filename, file_t *filedata) {
     int index_inode = is_file_in_inode(filename);
-    if (index_inode == INODE_TABLE_SIZE) { fprintf(stderr, ERROR_INODE_INDEX); return ERROR; }
+    if (index_inode == INODE_TABLE_SIZE) { fprintf(stderr, "%s\n", LangGet(ERROR_INODE_INDEX)); return ERROR; }
     filedata->size = virtual_disk_sos->inodes[index_inode].size;
     uint pos = virtual_disk_sos->inodes[index_inode].first_byte;
     if (read_text_block_uchar(&pos, filedata->size, filedata->data) == ERROR) return ERROR;
@@ -90,15 +90,15 @@ int delete_file(char *filename){
  */
 int load_file_from_host(char *filename, session_t user){
     FILE * hostfile = fopen(filename, "r");
-    if (hostfile == NULL){ fprintf(stderr, ERROR_FILE_OPEN); return ERROR; }
+    if (hostfile == NULL){ fprintf(stderr, "%s\n", LangGet(ERROR_FILE_OPEN)); return ERROR; }
     file_t sosfile;
-    if (fseek(hostfile, 0, SEEK_END) != 0) { fprintf(stderr, ERROR_FSEEK); return ERROR; }
+    if (fseek(hostfile, 0, SEEK_END) != 0) { fprintf(stderr, "%s\n", LangGet(ERROR_FSEEK)); return ERROR; }
     sosfile.size = ftell(hostfile);
-    if (sosfile.size == -1) { fprintf(stderr, ERROR_FTELL); return ERROR; }
-    if (fseek(hostfile, 0, SEEK_SET) != 0) { fprintf(stderr, ERROR_FSEEK); return ERROR; }
+    if (sosfile.size == -1) { fprintf(stderr, "%s", LangGet(ERROR_FTELL)); return ERROR; }
+    if (fseek(hostfile, 0, SEEK_SET) != 0) { fprintf(stderr, "%s\n", LangGet(ERROR_FSEEK)); return ERROR; }
 
     int code = (int)fread(sosfile.data, sizeof(char), sosfile.size, hostfile);
-    if (code != sosfile.size){ fprintf(stderr, ERROR_READ); return ERROR; }
+    if (code != sosfile.size){ fprintf(stderr, "%s\n", LangGet(ERROR_READ)); return ERROR; }
     sosfile.data[sosfile.size] = '\0';
 
     if (write_file(filename, sosfile, user) == ERROR) return ERROR;
@@ -112,7 +112,6 @@ int load_file_from_host(char *filename, session_t user){
  * @return int, Success code or error code depending on whether successful or failure  
  */
 int store_file_to_host(char *filenamesos){
-    fprintf(stdout, "%s\n", filenamesos);
     int index_inode = is_file_in_inode(filenamesos);
     if (index_inode == INODE_TABLE_SIZE) return ERROR;
     
@@ -124,18 +123,18 @@ int store_file_to_host(char *filenamesos){
     if (fd == NULL) return 0;
     
     if (fseek(fd, 0, SEEK_SET) != 0) { 
-        fprintf(stderr, ERROR_FSEEK);
-        if (fclose(fd) == EOF) fprintf(stderr, ERROR_FILE_CLOSE);
+        fprintf(stderr, "%s\n", LangGet(ERROR_FSEEK));
+        if (fclose(fd) == EOF) fprintf(stderr, "%s\n", LangGet(ERROR_FILE_CLOSE));
         return ERROR;
     }
     
     int code = (int)fwrite(file.data, sizeof(uchar), file.size, fd);
     if (code != file.size){
-        fprintf(stderr, ERROR_WRITE_BLOCK);
-        if (fclose(fd) == EOF) fprintf(stderr, ERROR_FILE_CLOSE);
+        fprintf(stderr, "%s", LangGet(ERROR_WRITE_BLOCK));
+        if (fclose(fd) == EOF) fprintf(stderr, "%s\n", LangGet(ERROR_FILE_CLOSE));
         return ERROR;
     }
     
-    if (fclose(fd) == EOF) { fprintf(stderr, ERROR_FILE_CLOSE); return ERROR; }
+    if (fclose(fd) == EOF) { fprintf(stderr, "%s\n", LangGet(ERROR_FILE_CLOSE)); return ERROR; }
     return SUCCESS;
 }
