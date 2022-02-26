@@ -1,7 +1,7 @@
 #### variables ####
 
 CC = gcc
-CFLAGS = -Wall -std=c99
+CFLAGS = -Wall -std=c99 -D_POSIX_C_SOURCE=200112L
 
 SRC = sources
 BINDIR = bin

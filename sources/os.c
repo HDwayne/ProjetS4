@@ -13,6 +13,7 @@
 #include "../headers/layer3.h"
 #include "../headers/layer4.h"
 #include "../headers/layer5.h"
+#include "../headers/terminal.h"
 
 int main(int argc, char **argv) {
     if (argc != 2) { fprintf(stderr, "[USAGE] %s %s\n", argv[0], LangGet(ERROR_OS_USAGE)); return ERROR; }

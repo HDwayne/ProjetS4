@@ -99,7 +99,8 @@ typedef enum _STR_NAME{
     OUTPUT_OSINSTALL_SUPERUSER_NAME,
     OUTPUT_OSINSTALL_SUPERUSER_PWD,
     OUTPUT_OSINSTALL_SUPERUSER_PWD2,
-    OUTPUT_OSINSTALL_SUCCESS
+    OUTPUT_OSINSTALL_SUCCESS,
+    OUTPUT_OSINSTALL_PRESS_EXIT
 } STR_NAME;
 
 static const STRING strings[] = 
@@ -349,6 +350,9 @@ static const STRING strings[] =
     },
     { 
         {"[INSTALL] installation completed successfully",} // OUTPUT_OSINSTALL_SUCCESS
+    }, 
+    {
+        {"[INSTALL] Touch any key on the keyboard to exit the program",} // OUTPUT_OSINSTALL_PRESS_EXIT
     }
 };
 
