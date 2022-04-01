@@ -197,8 +197,12 @@ int init_inode(const char *fileName, uint size, uint pos, char *createTime, char
     if (index_inode == INODE_TABLE_SIZE || virtual_disk_sos->super_block.number_of_files >= 10 ){
         fprintf(stderr, "%s\n", LangGet(ERROR_INODE_TABLE_FULL)); return ERROR;
     }
-    for (int i = 0; i < FILENAME_MAX_SIZE; ++i) {
+    int i = 0;
+    for (; fileName[i] != '\0' && i < FILENAME_MAX_SIZE; ++i) {
         virtual_disk_sos->inodes[index_inode].filename[i] = fileName[i];
+    }
+    for(; i < FILENAME_MAX_SIZE; ++i){
+        virtual_disk_sos->inodes[index_inode].filename[i] = '\0';
     }
     virtual_disk_sos->inodes[index_inode].size = size;
     virtual_disk_sos->inodes[index_inode].nblock = compute_nblock(size);
