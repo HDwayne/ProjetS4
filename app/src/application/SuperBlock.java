@@ -36,8 +36,8 @@ public class SuperBlock {
         return firstFreeByte;
     }
 
-    public void setFirstFreeByte(int firstFreeByte) {
-        this.firstFreeByte = firstFreeByte;
+    public static void setFirstFreeByte(int firstFreeByte) {
+        firstFreeByte = firstFreeByte;
     }
 
     public void addNbBlocsUsed(int nbBlocsUsed) {
@@ -54,6 +54,23 @@ public class SuperBlock {
 
     public void removeFirstFreeByte(int firstFreeByte) {
         this.firstFreeByte -= firstFreeByte;
+    }
+
+    public static int updateFirstByte(VirtualDisk disk) throws IOException {
+        int ffb = OsDefines.USERS_START + OsDefines.USER_SIZE * OsDefines.USER_SIZE * OsDefines.BLOCK_SIZE;
+        if (disk.getInode(0).isFree()){
+            setFirstFreeByte(ffb);
+            return ffb;
+        }
+        else {
+            int i = 0;
+            while(!disk.getInode(i).isFree()){
+                ffb = disk.getInode(i).getFirstByte() + disk.getInode(i).getnBlock() * OsDefines.BLOCK_SIZE;
+            }
+            setFirstFreeByte(ffb);
+            return ffb;
+        }
+
     }
 
     public static void write(VirtualDisk disk) throws IOException {

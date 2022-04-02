@@ -124,7 +124,7 @@ public class VirtualDisk {
                 minmax = this.tabInode[i].getFirstByte() + this.tabInode[i].getnBlock() * OsDefines.BLOCK_SIZE;
             }
         }
-
+        SuperBlock.updateFirstByte(this);
         System.out.println("[Défragmentation] Espace sauvegardé : " + (max - minmax));
     }
 }
