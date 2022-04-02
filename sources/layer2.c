@@ -66,7 +66,6 @@ int read_super_block(){
 void update_first_free_byte(){
     if (virtual_disk_sos->inodes[0].first_byte == 0){
         virtual_disk_sos->super_block.first_free_byte = USERS_START + (USER_SIZE * NB_USERS * BLOCK_SIZE);
-        fprintf(stdout, "ICIIII: %d %d %d\n", virtual_disk_sos->super_block.first_free_byte, USERS_START, USER_SIZE);
     } else {
         uint maxfirstbyte = USERS_START + (USER_SIZE * NB_USERS * BLOCK_SIZE);
         int imax = 0;

@@ -30,7 +30,7 @@
 #define INODE_SIZE ((FILENAME_MAX_SIZE/BLOCK_SIZE+6+((TIMESTAMP_SIZE)*2)/BLOCK_SIZE)+1)
 #define USERS_START ((INODES_START)+(INODE_SIZE)*(INODE_TABLE_SIZE)*(BLOCK_SIZE))
 #define USER_SIZE ((FILENAME_MAX_SIZE/BLOCK_SIZE)+((((SHA256_BLOCK_SIZE)*2) + 1)/BLOCK_SIZE)+2)
-//= 27 en blocs = 8 blocs de filename+6 uint+timestamps USERS_START + (USER_SIZE * NB_USERS * BLOCK_SIZE)
+//= 27 en blocs = 8 blocs de filename+6 uint+timestamps
 
 #define ERROR (-1)
 #define SUCCESS 0

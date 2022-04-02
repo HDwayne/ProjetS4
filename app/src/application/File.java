@@ -62,7 +62,6 @@ public class File {
         Block block = new Block();
         byte[] buffer = new byte[this.size];
         int nBlocks = this.size/OsDefines.BLOCK_SIZE;
-        System.out.println("size: " + this.size + " nBlocks: " + nBlocks + "total " + (nBlocks)*4 + (this.size%4));
         for (int j = 0; j < nBlocks; j++, i++){
             block.clear();
             block.readBlock(disk, i);
