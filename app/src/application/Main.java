@@ -20,6 +20,10 @@ public class Main {
             file.write(vd, vd.getInode(i));
         }
 
+        vd.defragmentation();
+        vd.saveDisk();
+
+
 
     }
 }

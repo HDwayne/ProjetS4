@@ -5,6 +5,10 @@ import java.io.IOException;
 public class Block {
     private byte[] data = new byte[OsDefines.BLOCK_SIZE];
 
+    public Block(){
+        this.clear();
+    }
+
     public byte getData(int index) {
         return data[index];
     }
@@ -31,7 +35,7 @@ public class Block {
 
     public void clear() {
         for (int i = 0; i < OsDefines.BLOCK_SIZE; i++) {
-            data[i] = 0;
+            data[i] = '\0';
         }
     }
 

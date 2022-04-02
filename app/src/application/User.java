@@ -68,7 +68,7 @@ public class User {
         }
         block.setData(3, this.passwd[OsDefines.PASSWORD_MAX_SIZE-1]);
         for (int k = 2; k >= 0; k--) {
-            block.setData(k, (byte)'0');
+            block.setData(k, (byte)'\0');
         }
         block.writeBlock(disk, i);
 

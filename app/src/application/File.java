@@ -7,6 +7,7 @@ public class File {
     private byte[] data = new byte[OsDefines.MAX_FILE_SIZE];
 
     public File(){
+        this.size = 0;
     }
 
     public void setSize(int size){
@@ -40,12 +41,14 @@ public class File {
         Block block = new Block();
         int nBlocks = this.size/OsDefines.BLOCK_SIZE;
         for (int j = 0; j < nBlocks; j++, i++){
+            block.clear();
             for (int k = 0; k < OsDefines.BLOCK_SIZE; k++){
                 block.setData(k, this.data[j * OsDefines.BLOCK_SIZE + k]);
             }
             block.writeBlock(disk, i);
         }
         if (this.size%4 != 0){
+            block.clear();
             for (int k = 0; k < this.size%4; k++){
                 block.setData(k, this.data[nBlocks*OsDefines.BLOCK_SIZE + k]);
             }
@@ -61,12 +64,14 @@ public class File {
         int nBlocks = this.size/OsDefines.BLOCK_SIZE;
         System.out.println("size: " + this.size + " nBlocks: " + nBlocks + "total " + (nBlocks)*4 + (this.size%4));
         for (int j = 0; j < nBlocks; j++, i++){
+            block.clear();
             block.readBlock(disk, i);
             for (int k = 0; k < OsDefines.BLOCK_SIZE; k++){
                 buffer[j * OsDefines.BLOCK_SIZE + k] = block.getData(k);
             }
         }
         if (this.size%4 != 0){
+            block.clear();
             block.readBlock(disk, i);
             for (int k = this.size%4-1; k >=0; k--){
                 buffer[nBlocks*OsDefines.BLOCK_SIZE + k] = block.getData(k);

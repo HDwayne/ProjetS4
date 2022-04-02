@@ -97,4 +97,34 @@ public class VirtualDisk {
     public Inode getInode(int inodeId){
         return this.tabInode[inodeId];
     }
+
+    public void defragmentation() throws IOException {
+        int max = 0;
+        int minmax = 0;
+        if (!this.tabInode[0].isFree() && this.tabInode[0].getFirstByte() != OsDefines.USERS_START + (OsDefines.USER_SIZE * OsDefines.NB_USERS * OsDefines.BLOCK_SIZE)) {
+            System.out.println("[Défragmentaion] Inode 0");
+            max = this.tabInode[0].getFirstByte() + this.tabInode[0].getnBlock() * OsDefines.BLOCK_SIZE;
+            File file = new File();
+            file.read(this, this.tabInode[0]);
+            file.eraseFromDisk(this, this.tabInode[0]);
+            this.tabInode[0].setFirstByte(OsDefines.USERS_START + (OsDefines.USER_SIZE * OsDefines.NB_USERS * OsDefines.BLOCK_SIZE));
+            file.write(this, this.tabInode[0]);
+            minmax = this.tabInode[0].getFirstByte() + this.tabInode[0].getnBlock() * OsDefines.BLOCK_SIZE;
+        }
+
+        for (int i = 1; i < OsDefines.INODE_TABLE_SIZE; i++) {
+            if (!this.tabInode[i].isFree() && this.tabInode[i].getFirstByte() != this.tabInode[i-1].getFirstByte() + this.tabInode[i-1].getnBlock()*4){
+                max = this.tabInode[i].getFirstByte() + this.tabInode[i].getnBlock() * OsDefines.BLOCK_SIZE;
+                System.out.println("[Défragmentaion] Inode " + i);
+                File file = new File();
+                file.read(this, this.tabInode[i]);
+                file.eraseFromDisk(this, this.tabInode[i]);
+                this.tabInode[i].setFirstByte(this.tabInode[i-1].getFirstByte() + this.tabInode[i-1].getnBlock()*4);
+                file.write(this, this.tabInode[i]);
+                minmax = this.tabInode[i].getFirstByte() + this.tabInode[i].getnBlock() * OsDefines.BLOCK_SIZE;
+            }
+        }
+
+        System.out.println("[Défragmentation] Espace sauvegardé : " + (max - minmax));
+    }
 }
