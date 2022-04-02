@@ -27,7 +27,7 @@ public class File {
         int i = inode.getFirstByte()/OsDefines.BLOCK_SIZE;
         Block block = new Block();
         block.clear();
-        int nBlocks = this.size/OsDefines.BLOCK_SIZE;
+        int nBlocks = Block.computeNBlock(this.size);
         for (int j = 0; j < nBlocks; j++, i++){
             block.writeBlock(disk, i);
         }
@@ -59,23 +59,8 @@ public class File {
     public void read(VirtualDisk disk, Inode inode) throws IOException {
         this.setSize(inode.getSize());
         int i = inode.getFirstByte()/OsDefines.BLOCK_SIZE;
-        Block block = new Block();
         byte[] buffer = new byte[this.size];
-        int nBlocks = this.size/OsDefines.BLOCK_SIZE;
-        for (int j = 0; j < nBlocks; j++, i++){
-            block.clear();
-            block.readBlock(disk, i);
-            for (int k = 0; k < OsDefines.BLOCK_SIZE; k++){
-                buffer[j * OsDefines.BLOCK_SIZE + k] = block.getData(k);
-            }
-        }
-        if (this.size%4 != 0){
-            block.clear();
-            block.readBlock(disk, i);
-            for (int k = this.size%4-1; k >=0; k--){
-                buffer[nBlocks*OsDefines.BLOCK_SIZE + k] = block.getData(k);
-            }
-        }
+        Block.readBlocks(disk, buffer, i);
         this.setData(buffer);
     }
 

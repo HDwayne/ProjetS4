@@ -138,76 +138,32 @@ public class Inode {
         Block block = new Block();
 
         int i = OsDefines.INODES_START/OsDefines.BLOCK_SIZE + inodeId * OsDefines.INODE_SIZE;
-        for (int j = 0; j < Block.computeNBlock(OsDefines.FILENAME_MAX_SIZE); j++, i++){
-            for (int k = 3; k >= 0; k--) {
-                block.setData(k, this.fileName[j * OsDefines.BLOCK_SIZE + k]);
-            }
-            block.writeBlock(disk, i);
-        }
+        i = Block.writeBlocks(disk, this.fileName, i);
 
-        for (int j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.size >> (j * 8)));  //size
-        }
+        block.fromInt(this.size);
         block.writeBlock(disk, i);
         i++;
 
-        for (int j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.uId >> (j * 8)));
-        }
+        block.fromInt(this.uId);
         block.writeBlock(disk, i);
         i++;
 
-        for (int j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.uRight >> (j * 8)));
-        }
+        block.fromInt(this.uRight);
         block.writeBlock(disk, i);
         i++;
 
-        for (int j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.oRight >> (j * 8)));
-        }
+        block.fromInt(this.oRight);
         block.writeBlock(disk, i);
         i++;
 
-        int j;
-        for (j = 0; j < Block.computeNBlock(OsDefines.TIMESTAMP_SIZE)-1; j++, i++){
-            for (int k = 3; k >= 0; k--) {
-                block.setData(k, this.cTimeStamp[j * OsDefines.BLOCK_SIZE + k]);
-            }
-            block.writeBlock(disk, i);
-        }
-        for (int k = 1; k >= 0; k--) {
-            block.setData(k, cTimeStamp[j*OsDefines.BLOCK_SIZE + k]);
-        }
-        block.setData(3, (byte)'\0');
-        block.setData(2, (byte)'\0');
+        i = Block.writeBlocks(disk, this.cTimeStamp, i);
+        i = Block.writeBlocks(disk, this.mTimeStamp, i);
+
+        block.fromInt(this.nBlock);
         block.writeBlock(disk, i);
         i++;
 
-
-        for (j = 0; j < Block.computeNBlock(OsDefines.TIMESTAMP_SIZE)-1; j++, i++){
-            for (int k = 3; k >= 0; k--) {
-                block.setData(k, this.mTimeStamp[j * OsDefines.BLOCK_SIZE + k]);
-            }
-            block.writeBlock(disk, i);
-        }
-        for (int k = 1; k >= 0; k--) {
-            block.setData(k, mTimeStamp[j*OsDefines.BLOCK_SIZE + k]);
-        }
-        block.setData(3, (byte)'\0');
-        block.setData(2, (byte)'\0');
-        block.writeBlock(disk, i);
-        i++;
-
-        for (j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.nBlock >> (j * 8)));
-        }
-        block.writeBlock(disk, i);
-        i++;
-
-        for (j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.firstByte >> (j * 8)));
-        }
+        block.fromInt(this.firstByte);
         block.writeBlock(disk, i);
     }
 
@@ -216,81 +172,36 @@ public class Inode {
 
         byte[] filename = new byte[OsDefines.FILENAME_MAX_SIZE];
         int i = OsDefines.INODES_START/OsDefines.BLOCK_SIZE + inodeId * OsDefines.INODE_SIZE;
-        for (int k = 0; k < Block.computeNBlock(OsDefines.FILENAME_MAX_SIZE); k++, i++) {
-            block.readBlock(disk, i);
-            for (int j = 3; j >= 0; j--) {
-                filename[k*OsDefines.BLOCK_SIZE + j] = block.getData(j);
-            }
-        }
+        i = Block.readBlocks(disk, filename, i);
 
-        int size = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            size = (size << 8) + (block.getData(j) & 0xFF);
-        }
+        int size = block.toInt();
         i++;
 
-        int uId = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            uId = (uId << 8) + (block.getData(j) & 0xFF);
-        }
+        int uId = block.toInt();
         i++;
 
-        int uRight = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            uRight = (uRight << 8) + (block.getData(j) & 0xFF);
-        }
+        int uRight = block.toInt();
         i++;
 
-        int oRight = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            oRight = (oRight << 8) + (block.getData(j) & 0xFF);
-        }
+        int oRight = block.toInt();
         i++;
 
         byte[] cTimeStamp = new byte[OsDefines.TIMESTAMP_SIZE];
-        int k;
-        for (k = 0; k < Block.computeNBlock(OsDefines.TIMESTAMP_SIZE)-1; k++, i++) {
-            block.readBlock(disk, i);
-            for (int j = 3; j >= 0; j--) {
-                cTimeStamp[k * OsDefines.BLOCK_SIZE + j] = block.getData(j);
-            }
-        }
-        block.readBlock(disk, i);
-        for (int j = 1; j >= 0; j--) {
-            cTimeStamp[k*OsDefines.BLOCK_SIZE + j] = block.getData(j);
-        }
-        i++;
-
+        i = Block.readBlocks(disk, cTimeStamp, i);
 
         byte[] mTimeStamp = new byte[OsDefines.TIMESTAMP_SIZE];
-        for (k = 0; k < Block.computeNBlock(OsDefines.TIMESTAMP_SIZE)-1; k++, i++) {
-            block.readBlock(disk, i);
-            for (int j = 3; j >= 0; j--) {
-                mTimeStamp[k*OsDefines.BLOCK_SIZE + j] = block.getData(j);
-            }
-        }
-        block.readBlock(disk, i);
-        for (int j = 1; j >= 0; j--) {
-            mTimeStamp[k*OsDefines.BLOCK_SIZE] = block.getData(j);
-        }
+        i = Block.readBlocks(disk, mTimeStamp, i);
+
+        block.readBlock(disk,i);
+        int nBlock = block.toInt();
         i++;
 
-        int nBlock = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            nBlock = (nBlock << 8) + (block.getData(j) & 0xFF);
-        }
-        i++;
-
-        int firstByte = 0;
-        block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            firstByte = (firstByte << 8) + (block.getData(j) & 0xFF);
-        }
+        int firstByte = block.toInt();
 
         this.init(filename, size, uId, uRight, oRight, cTimeStamp, mTimeStamp, nBlock, firstByte);
     }

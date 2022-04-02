@@ -21,6 +21,7 @@ public class SuperBlock {
             int i = 0;
             while(!disk.getInode(i).isFree()){
                 ffb = disk.getInode(i).getFirstByte() + disk.getInode(i).getnBlock() * OsDefines.BLOCK_SIZE;
+                i++;
             }
             setFirstFreeByte(ffb);
         }
@@ -29,48 +30,32 @@ public class SuperBlock {
     public static void write(VirtualDisk disk) throws IOException {
         Block block = new Block();
 
-        for (int i = 3; i >= 0; i--){
-            block.setData(i, (byte) ((numberOfFiles >> (i * 8)) & 0xFF)); // on écrit le nombre de fichiers
-        }
+        block.fromInt(numberOfFiles);
         block.writeBlock(disk,0);
 
-        for (int i = 3; i >= 0; i--){
-            block.setData(i, (byte) ((numberOfUsers >> (i * 8)) & 0xFF)); // on écrit le nombre d'utilisateurs
-        }
+        block.fromInt(numberOfUsers);
         block.writeBlock(disk,1);
 
-        for (int i = 3; i >= 0; i--){
-            block.setData(i, (byte) ((nbBlocsUsed >> (i * 8)) & 0xFF)); // on écrit le nombre de blocs utilisés
-        }
+        block.fromInt(nbBlocsUsed);
         block.writeBlock(disk,2);
 
-        for (int i = 3; i >= 0; i--){
-            block.setData(i, (byte) ((firstFreeByte >> (i * 8)) & 0xFF)); // on écrit le premier bloc libre
-        }
+        block.fromInt(firstFreeByte);
         block.writeBlock(disk,3);
     }
 
     public static void read(VirtualDisk disk) throws IOException {
         Block block = new Block();
-
         block.readBlock(disk,0);
-        for (int j = 3; j >= 0; j--){
-            numberOfFiles = (numberOfFiles << 8) + (block.getData(j) & 0xFF);
-        }
+        numberOfFiles = block.toInt();
 
         block.readBlock(disk,1);
-        for (int j = 3; j >= 0; j--){
-            numberOfUsers = (numberOfUsers << 8) + (block.getData(j) & 0xFF);
-        }
+        numberOfUsers = block.toInt();
 
         block.readBlock(disk,2);
-        for (int j = 3; j >= 0; j--){
-            nbBlocsUsed = (nbBlocsUsed << 8) + (block.getData(j) & 0xFF);
-        }
+        nbBlocsUsed = block.toInt();
+
         block.readBlock(disk,3);
-        for (int j = 3; j >= 0; j--){
-            firstFreeByte = (firstFreeByte << 8) + (block.getData(j) & 0xFF);
-        }
+        firstFreeByte = block.toInt();
     }
 
     public static void print() {

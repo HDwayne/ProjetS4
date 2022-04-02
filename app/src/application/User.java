@@ -47,49 +47,20 @@ public class User {
     public void write(VirtualDisk disk, int userId) throws IOException {
         Block block = new Block();
         int i = OsDefines.USERS_START/OsDefines.BLOCK_SIZE + userId * OsDefines.USER_SIZE;
-        for (int j = 0; j < Block.computeNBlock(OsDefines.FILENAME_MAX_SIZE); j++, i++){
-            for (int k = 3; k >= 0; k--) {
-                block.setData(k, this.login[j * OsDefines.BLOCK_SIZE + k]);
-            }
-            block.writeBlock(disk, i);
-        }
-
-        for (int j = 0; j < Block.computeNBlock(OsDefines.PASSWORD_MAX_SIZE)-1; j++, i++){
-            for (int k = 3; k >= 0; k--) {
-                block.setData(k, this.passwd[j * OsDefines.BLOCK_SIZE + k]);
-            }
-            block.writeBlock(disk, i);
-        }
-        block.setData(3, this.passwd[OsDefines.PASSWORD_MAX_SIZE-1]);
-        for (int k = 2; k >= 0; k--) {
-            block.setData(k, (byte)'\0');
-        }
+        i = Block.writeBlocks(disk, this.login, i);
+        i = Block.writeBlocks(disk, this.passwd, i);
         block.writeBlock(disk, i);
 
 
     }
 
     public void read(VirtualDisk disk, int userId) throws IOException {
-        Block block = new Block();
-
         byte[] username = new byte[OsDefines.FILENAME_MAX_SIZE];
         int i = OsDefines.USERS_START/OsDefines.BLOCK_SIZE + userId * OsDefines.USER_SIZE;
-        for(int j = 0; j < Block.computeNBlock(OsDefines.FILENAME_MAX_SIZE); j++, i++){
-            block.readBlock(disk, i);
-            for (int k = 3; k >= 0; k--) {
-                username[j*OsDefines.BLOCK_SIZE + k] = block.getData(k);
-            }
-        }
+        i = Block.readBlocks(disk, username, i);
 
         byte[] password = new byte[OsDefines.PASSWORD_MAX_SIZE];
-        for(int j = 0; j < Block.computeNBlock(OsDefines.PASSWORD_MAX_SIZE)-1; j++, i++){
-            block.readBlock(disk, i);
-            for (int k = 3; k >= 0; k--) {
-                password[j*OsDefines.BLOCK_SIZE + k] = block.getData(k);
-            }
-        }
-        block.readBlock(disk, i);
-        password[OsDefines.PASSWORD_MAX_SIZE-1] = block.getData(3);
+        Block.readBlocks(disk, password, i);
 
         this.init(username, password);
     }

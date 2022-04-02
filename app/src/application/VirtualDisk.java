@@ -129,6 +129,6 @@ public class VirtualDisk {
             }
         }
         SuperBlock.updateFirstByte(this);
-        System.out.println("[Défragmentation] Espace sauvegardé : " + (max - minmax));
+        System.out.println("[Défragmentation] Espace sauvé : " + (max - minmax));
     }
 }
