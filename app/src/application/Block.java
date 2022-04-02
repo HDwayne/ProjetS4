@@ -40,13 +40,13 @@ public class Block {
     }
 
     public String toString(){
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for(byte b:this.data){
             if(b < 0x10 && b>=0){
-                str+=0;
+                str.append(0);
             }
-            str+=String.format("%02X", b);
+            str.append(String.format("%02X", b));
         }
-        return str;
+        return str.toString();
     }
 }

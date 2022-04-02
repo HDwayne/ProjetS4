@@ -32,10 +32,6 @@ public class Inode {
         this.setFirstByte(firstByte);
     }
 
-    public void deleteInode(){
-        this.init("\0".getBytes(), 0, 0, 0, 0, "\0".getBytes(), "\0".getBytes(), 0, 0);
-    }
-
     public void setFileName(byte[] fileName){
         int i;
         for (i = 0; i < fileName.length && i < OsDefines.FILENAME_MAX_SIZE; i++){
@@ -98,18 +94,6 @@ public class Inode {
 
     public int getSize(){
         return this.size;
-    }
-
-    public int getuId(){
-        return this.uId;
-    }
-
-    public int getuRight(){
-        return this.uRight;
-    }
-
-    public int getoRight(){
-        return this.oRight;
     }
 
     public byte[] getcTimeStamp(){

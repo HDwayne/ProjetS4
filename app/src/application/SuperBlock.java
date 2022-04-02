@@ -8,59 +8,14 @@ public class SuperBlock {
     private static int nbBlocsUsed = 0; //
     private static int firstFreeByte = 0;
 
-    public int getNumberOfFiles() {
-        return numberOfFiles;
-    }
-
-    public void setNumberOfFiles(int numberOfFiles) {
-        this.numberOfFiles = numberOfFiles;
-    }
-
-    public int getNumberOfUsers() {
-        return numberOfUsers;
-    }
-
-    public void setNumberOfUsers(int numberOfUsers) {
-        this.numberOfUsers = numberOfUsers;
-    }
-
-    public int getNbBlocsUsed() {
-        return nbBlocsUsed;
-    }
-
-    public void setNbBlocsUsed(int nbBlocsUsed) {
-        this.nbBlocsUsed = nbBlocsUsed;
-    }
-
-    public int getFirstFreeByte() {
-        return firstFreeByte;
-    }
-
     public static void setFirstFreeByte(int firstFreeByte) {
-        firstFreeByte = firstFreeByte;
+        SuperBlock.firstFreeByte = firstFreeByte;
     }
 
-    public void addNbBlocsUsed(int nbBlocsUsed) {
-        this.nbBlocsUsed += nbBlocsUsed;
-    }
-
-    public void removeNbBlocsUsed(int nbBlocsUsed) {
-        this.nbBlocsUsed -= nbBlocsUsed;
-    }
-
-    public void addFirstFreeByte(int firstFreeByte) {
-        this.firstFreeByte += firstFreeByte;
-    }
-
-    public void removeFirstFreeByte(int firstFreeByte) {
-        this.firstFreeByte -= firstFreeByte;
-    }
-
-    public static int updateFirstByte(VirtualDisk disk) throws IOException {
+    public static void updateFirstByte(VirtualDisk disk) {
         int ffb = OsDefines.USERS_START + OsDefines.USER_SIZE * OsDefines.USER_SIZE * OsDefines.BLOCK_SIZE;
         if (disk.getInode(0).isFree()){
             setFirstFreeByte(ffb);
-            return ffb;
         }
         else {
             int i = 0;
@@ -68,9 +23,7 @@ public class SuperBlock {
                 ffb = disk.getInode(i).getFirstByte() + disk.getInode(i).getnBlock() * OsDefines.BLOCK_SIZE;
             }
             setFirstFreeByte(ffb);
-            return ffb;
         }
-
     }
 
     public static void write(VirtualDisk disk) throws IOException {
@@ -101,7 +54,6 @@ public class SuperBlock {
         Block block = new Block();
 
         block.readBlock(disk,0);
-        int i = 0;
         for (int j = 3; j >= 0; j--){
             numberOfFiles = (numberOfFiles << 8) + (block.getData(j) & 0xFF);
         }

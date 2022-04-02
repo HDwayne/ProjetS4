@@ -5,7 +5,6 @@ public class OsDefines {
     public final static int FILENAME_MAX_SIZE = 32;
     public final static int MAX_FILE_SIZE = 2*1024;
     public final static int INODE_TABLE_SIZE = 10;
-    public final static int MAX_MSG = 1024;
     public final static int TIMESTAMP_SIZE = 24+2;
     public final static int NB_USERS = 5;
     public final static int SUPER_BLOCK_SIZE = 4;

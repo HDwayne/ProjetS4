@@ -18,13 +18,7 @@ public class User {
     public void setPasswd(byte[] passwd) {
         this.passwd = passwd;
     }
-    public byte[] getLogin() {
-        return login;
-    }
 
-    public byte[] getPasswd() {
-        return passwd;
-    }
 
     public void init(byte[] login, byte[] passwd) {
         this.login = login;
@@ -32,18 +26,18 @@ public class User {
     }
 
     public String toString(){
-        String str = "User : ";
+        StringBuilder str = new StringBuilder("User : ");
         for(int i = 0; i < OsDefines.FILENAME_MAX_SIZE; i++){
             if(login[i] != 0)
-                str += (char)login[i];
+                str.append((char) login[i]);
         }
-        str += "\nPassword : ";
+        str.append("\nPassword : ");
         for(int i = 0; i < OsDefines.PASSWORD_MAX_SIZE; i++){
             if(passwd[i] != 0)
-                str += (char)passwd[i];
+                str.append((char) passwd[i]);
         }
 
-        return str;
+        return str.toString();
     }
 
     public boolean isFree() {

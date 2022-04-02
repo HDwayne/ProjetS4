@@ -79,23 +79,6 @@ public class File {
         this.setData(buffer);
     }
 
-
-    public String dataToString(){
-        String str = "";
-        for (int i = 0; i < this.size; i++){
-            str += (char)this.data[i];
-        }
-        return str;
-    }
-
-    public int getSize(){
-        return this.size;
-    }
-
-    public byte[] getData(){
-        return this.data;
-    }
-
     public String toString(){
         String data = new String(this.data);
         data = data.replace("\0", "");

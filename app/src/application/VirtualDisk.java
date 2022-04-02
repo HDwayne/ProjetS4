@@ -77,20 +77,24 @@ public class VirtualDisk {
         String str="";
 
         SuperBlock.print();
-        System.out.println("");
+        System.out.println();
         str += "Inode Table :\n";
+        StringBuilder strBuilder = new StringBuilder(str);
         for (int i = 0; i < this.tabInode.length; i++) {
             if(!this.tabInode[i].isFree()){
-                str += "inode " + i + " :\n" + this.tabInode[i].toString() + "\n";
+                strBuilder.append("inode ").append(i).append(" :\n").append(this.tabInode[i].toString()).append("\n");
             }
         }
+        str = strBuilder.toString();
 
         str += "User Table :\n";
+        StringBuilder strBuilder1 = new StringBuilder(str);
         for (int i = 0; i < this.tabUser.length; i++) {
             if(!this.tabUser[i].isFree()){
-                str += "user " + i + " :\n" + this.tabUser[i].toString() + "\n";
+                strBuilder1.append("user ").append(i).append(" :\n").append(this.tabUser[i].toString()).append("\n");
             }
         }
+        str = strBuilder1.toString();
         return str;
     }
 
