@@ -1,6 +1,7 @@
 package application;
 
-import java.io.*;
+
+import java.io.IOException;
 
 /**
  * This class is used to store the information of the inode
