@@ -5,7 +5,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
-        VirtualDisk vd = new VirtualDisk();
+        VirtualDisk vd = new VirtualDisk(OsDefines.PATH);
         System.out.println(vd);
 
         for (int i = 0; i < OsDefines.INODE_TABLE_SIZE; i++) {

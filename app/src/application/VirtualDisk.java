@@ -7,8 +7,9 @@ public class VirtualDisk {
     private User[] tabUser = new User[OsDefines.NB_USERS];
     private RandomAccessFile storage;
 
-    public VirtualDisk() throws IOException {
-        this.storage = new RandomAccessFile(OsDefines.PATH + "d0", "rw");
+
+    public VirtualDisk(String Path) throws IOException {
+        this.storage = new RandomAccessFile(Path + "d0", "rw");
 
         for (int i = 0; i < this.tabInode.length; i++) {
             this.tabInode[i] = new Inode();
@@ -27,6 +28,9 @@ public class VirtualDisk {
         }
     }
 
+    /**
+     * This function saves the disk by writing the superblock, the inode table, and the user table to the disk
+     */
     public void saveDisk(){
         try {
             this.writeSuperBlock();
@@ -37,42 +41,70 @@ public class VirtualDisk {
         }
     }
 
+    /**
+     * Reads the inode table from the disk
+     */
     public void readInodeTable() throws IOException {
         for (int i = 0; i < this.tabInode.length; i++) {
             this.tabInode[i].read(this, i);
         }
     }
 
+    /**
+     * Reads the user table from the file
+     */
     public void readUserTable() throws IOException {
         for (int i = 0; i < this.tabUser.length; i++) {
             this.tabUser[i].read(this, i);
         }
     }
 
+    /**
+     * Write the inode table to the disk
+     */
     public void writeInodeTable() throws IOException {
         for (int i = 0; i < this.tabInode.length; i++) {
             this.tabInode[i].write(this, i);
         }
     }
 
+    /**
+     * Write the super block to the disk
+     */
     public void writeSuperBlock() throws IOException {
        SuperBlock.write(this);
     }
 
+    /**
+     * Write the user table to the file
+     */
     public void writeUserTable() throws IOException {
         for (int i = 0; i < this.tabUser.length; i++) {
             this.tabUser[i].write(this, i);
         }
     }
 
+    /**
+     * Returns the storage file
+     *
+     * @return A RandomAccessFile object.
+     */
     public RandomAccessFile getStorage(){
         return this.storage;
     }
 
+    /**
+     * Reads the superblock from the file
+     */
     public void readSuperBlock() throws IOException{
         SuperBlock.read(this);
     }
 
+    /**
+     * Prints the superblock, the inode table, and the user table
+     *
+     * @return The string representation of the filesystem.
+     */
     public String toString(){
         String str="";
 
@@ -98,10 +130,21 @@ public class VirtualDisk {
         return str;
     }
 
+    /**
+     * Given an inodeId, return the corresponding inode
+     *
+     * @param inodeId the inode number of the inode to be returned
+     * @return The inode object with the given inodeId.
+     */
     public Inode getInode(int inodeId){
         return this.tabInode[inodeId];
     }
 
+    /**
+     * The function is used to defragment the disk. It starts by looking at the first inode. If it is not free and its
+     * first byte is not the start of the users area, then it will move the file to the start of the users area. It will
+     * then erase the file from the disk
+     */
     public void defragmentation() throws IOException {
         int max = 0;
         int minmax = 0;
