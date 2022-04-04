@@ -1,7 +1,11 @@
 package application;
 
-import java.io.*;
 
+import java.io.IOException;
+
+/**
+ * This class is used to store the information of the inode
+ */
 public class Inode {
     private byte[] fileName = new byte[OsDefines.FILENAME_MAX_SIZE];
     private int size;
@@ -13,6 +17,7 @@ public class Inode {
     private int nBlock;
     private int firstByte;
 
+    // This is the constructor of the class Inode. It is used to initialize the inode.
     public Inode(){
         this.setFileName("\0".getBytes());
         size = 0;
@@ -20,6 +25,19 @@ public class Inode {
         firstByte = 0;
     }
 
+    /**
+     * This function is used to initialize the file information
+     *
+     * @param fileName the name of the file
+     * @param size the size of the file in bytes
+     * @param uId the user id of the owner of the file
+     * @param uRight the user's right to the file
+     * @param oRight the owner's right to read/write the file
+     * @param cTimeStamp creation time stamp
+     * @param mTimeStamp the last modified time stamp
+     * @param nBlock the number of blocks in the file
+     * @param firstByte the first byte of the file
+     */
     public void init(byte[] fileName, int size, int uId, int uRight, int oRight, byte[] cTimeStamp, byte[] mTimeStamp, int nBlock, int firstByte){
         this.setFileName(fileName);
         this.setSize(size);
@@ -32,10 +50,11 @@ public class Inode {
         this.setFirstByte(firstByte);
     }
 
-    public void deleteInode(){
-        this.init("\0".getBytes(), 0, 0, 0, 0, "\0".getBytes(), "\0".getBytes(), 0, 0);
-    }
-
+    /**
+     * This function sets the file name of the file
+     *
+     * @param fileName The name of the file to be created.
+     */
     public void setFileName(byte[] fileName){
         int i;
         for (i = 0; i < fileName.length && i < OsDefines.FILENAME_MAX_SIZE; i++){
@@ -46,22 +65,47 @@ public class Inode {
         }
     }
 
+    /**
+     * It sets the size of the file.
+     *
+     * @param size The size of the file.
+     */
     public void setSize(int size){
         this.size = size;
     }
 
+    /**
+     * It sets the user id of the user.
+     *
+     * @param uId The user id of the user who is owner of the file.
+     */
     public void setuId(int uId){
         this.uId = uId;
     }
 
+    /**
+     * It sets the value of uRight to the value of uRight.
+     *
+     * @param uRight The right of the user on the file.
+     */
     public void setuRight(int uRight){
         this.uRight = uRight;
     }
 
+    /**
+     * It sets the value of the oRight variable to the value of the parameter passed in.
+     *
+     * @param oRight The right of other users on the file.
+     */
     public void setoRight(int oRight){
         this.oRight = oRight;
     }
 
+    /**
+     * This function sets the cTimeStamp field of the inode to the value of the cTimeStamp parameter
+     *
+     * @param cTimeStamp The time stamp of the file.
+     */
     public void setcTimeStamp(byte[] cTimeStamp){
         int i;
         for (i = 0; i < cTimeStamp.length && i < OsDefines.TIMESTAMP_SIZE; i++){
@@ -72,6 +116,11 @@ public class Inode {
         }
     }
 
+    /**
+     * This function sets the mTimeStamp field of the class to the value of the mTimeStamp parameter
+     *
+     * @param mTimeStamp The time stamp of the file.
+     */
     public void setmTimeStamp(byte[] mTimeStamp){
         int i;
         for (i = 0; i < mTimeStamp.length && i < OsDefines.TIMESTAMP_SIZE; i++){
@@ -82,56 +131,89 @@ public class Inode {
         }
     }
 
+    /**
+     * It sets the value of nBlock to the value of the parameter nBlock.
+     *
+     * @param nBlock The number of blocks.
+     */
     public void setnBlock(int nBlock){
         this.nBlock = nBlock;
     }
 
+    /**
+     * It sets the first byte of the file.
+     *
+     * @param firstByte The first byte of the file.
+     */
     public void setFirstByte(int firstByte){
         this.firstByte = firstByte;
     }
 
+    /**
+     * Given a file name, return the file name in bytes
+     *
+     * @return The file name as a byte array.
+     */
     public byte[] getFileName(){
         String filename = new String(this.fileName);
         filename = filename.replace("\0", "");
         return filename.getBytes();
     }
 
+    /**
+     * Returns the size of the file
+     *
+     * @return The size of the file.
+     */
     public int getSize(){
         return this.size;
     }
 
-    public int getuId(){
-        return this.uId;
-    }
-
-    public int getuRight(){
-        return this.uRight;
-    }
-
-    public int getoRight(){
-        return this.oRight;
-    }
-
+    /**
+     * It removes the null characters from the string.
+     *
+     * @return The cTimeStamp string.
+     */
     public byte[] getcTimeStamp(){
         String cTimeStamp = new String(this.cTimeStamp);
         cTimeStamp = cTimeStamp.replace("\0", "");
         return cTimeStamp.getBytes();
     }
 
+    /**
+     * This function returns the mTimeStamp field of the file as a byte array
+     *
+     * @return The timestamp in bytes.
+     */
     public byte[] getmTimeStamp(){
         String mTimeStamp = new String(this.mTimeStamp);
         mTimeStamp = mTimeStamp.replace("\0", "");
         return mTimeStamp.getBytes();
     }
 
+    /**
+     * Returns the number of blocks of the current file
+     *
+     * @return The number of blocks.
+     */
     public int getnBlock(){
         return this.nBlock;
     }
 
+    /**
+     * Returns the first byte of the file
+     *
+     * @return The first byte of the file.
+     */
     public int getFirstByte(){
         return this.firstByte;
     }
 
+    /**
+     * This function is used to print the file information in a human readable format
+     *
+     * @return The string representation of the file metadata.
+     */
     public String toString(){
         String str = "";
         str += "fileName: " + new String(this.getFileName()) + "\n";
@@ -146,167 +228,95 @@ public class Inode {
         return str;
     }
 
+    /**
+     * Return this.firstByte == 0;
+     *
+     * @return A boolean value.
+     */
     public boolean isFree(){
         return this.firstByte == 0;
     }
 
+    /**
+     * Write the file's metadata to disk
+     *
+     * @param disk the disk to write to
+     * @param inodeId the inode number of the file
+     */
     public void write(VirtualDisk disk, int inodeId) throws IOException {
         Block block = new Block();
 
         int i = OsDefines.INODES_START/OsDefines.BLOCK_SIZE + inodeId * OsDefines.INODE_SIZE;
-        for (int j = 0; j < Block.computeNBlock(OsDefines.FILENAME_MAX_SIZE); j++, i++){
-            for (int k = 3; k >= 0; k--) {
-                block.setData(k, this.fileName[j * OsDefines.BLOCK_SIZE + k]);
-            }
-            block.writeBlock(disk, i);
-        }
+        i = Block.writeBlocks(disk, this.fileName, i);
 
-        for (int j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.size >> (j * 8)));  //size
-        }
+        block.fromInt(this.size);
         block.writeBlock(disk, i);
         i++;
 
-        for (int j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.uId >> (j * 8)));
-        }
+        block.fromInt(this.uId);
         block.writeBlock(disk, i);
         i++;
 
-        for (int j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.uRight >> (j * 8)));
-        }
+        block.fromInt(this.uRight);
         block.writeBlock(disk, i);
         i++;
 
-        for (int j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.oRight >> (j * 8)));
-        }
+        block.fromInt(this.oRight);
         block.writeBlock(disk, i);
         i++;
 
-        int j;
-        for (j = 0; j < Block.computeNBlock(OsDefines.TIMESTAMP_SIZE)-1; j++, i++){
-            for (int k = 3; k >= 0; k--) {
-                block.setData(k, this.cTimeStamp[j * OsDefines.BLOCK_SIZE + k]);
-            }
-            block.writeBlock(disk, i);
-        }
-        for (int k = 1; k >= 0; k--) {
-            block.setData(k, cTimeStamp[j*OsDefines.BLOCK_SIZE + k]);
-        }
-        block.setData(3, (byte)'\0');
-        block.setData(2, (byte)'\0');
+        i = Block.writeBlocks(disk, this.cTimeStamp, i);
+        i = Block.writeBlocks(disk, this.mTimeStamp, i);
+
+        block.fromInt(this.nBlock);
         block.writeBlock(disk, i);
         i++;
 
-
-        for (j = 0; j < Block.computeNBlock(OsDefines.TIMESTAMP_SIZE)-1; j++, i++){
-            for (int k = 3; k >= 0; k--) {
-                block.setData(k, this.mTimeStamp[j * OsDefines.BLOCK_SIZE + k]);
-            }
-            block.writeBlock(disk, i);
-        }
-        for (int k = 1; k >= 0; k--) {
-            block.setData(k, mTimeStamp[j*OsDefines.BLOCK_SIZE + k]);
-        }
-        block.setData(3, (byte)'\0');
-        block.setData(2, (byte)'\0');
-        block.writeBlock(disk, i);
-        i++;
-
-        for (j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.nBlock >> (j * 8)));
-        }
-        block.writeBlock(disk, i);
-        i++;
-
-        for (j = 3; j >= 0; j--) {
-            block.setData(j, (byte) (this.firstByte >> (j * 8)));
-        }
+        block.fromInt(this.firstByte);
         block.writeBlock(disk, i);
     }
 
+    /**
+     * Reads the inode from the disk and initializes the inode
+     *
+     * @param disk the disk to read from
+     * @param inodeId the inode number of the file
+     */
     public void read(VirtualDisk disk, int inodeId) throws IOException {
         Block block = new Block();
 
         byte[] filename = new byte[OsDefines.FILENAME_MAX_SIZE];
         int i = OsDefines.INODES_START/OsDefines.BLOCK_SIZE + inodeId * OsDefines.INODE_SIZE;
-        for (int k = 0; k < Block.computeNBlock(OsDefines.FILENAME_MAX_SIZE); k++, i++) {
-            block.readBlock(disk, i);
-            for (int j = 3; j >= 0; j--) {
-                filename[k*OsDefines.BLOCK_SIZE + j] = block.getData(j);
-            }
-        }
+        i = Block.readBlocks(disk, filename, i);
 
-        int size = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            size = (size << 8) + (block.getData(j) & 0xFF);
-        }
+        int size = block.toInt();
         i++;
 
-        int uId = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            uId = (uId << 8) + (block.getData(j) & 0xFF);
-        }
+        int uId = block.toInt();
         i++;
 
-        int uRight = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            uRight = (uRight << 8) + (block.getData(j) & 0xFF);
-        }
+        int uRight = block.toInt();
         i++;
 
-        int oRight = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            oRight = (oRight << 8) + (block.getData(j) & 0xFF);
-        }
+        int oRight = block.toInt();
         i++;
 
         byte[] cTimeStamp = new byte[OsDefines.TIMESTAMP_SIZE];
-        int k;
-        for (k = 0; k < Block.computeNBlock(OsDefines.TIMESTAMP_SIZE)-1; k++, i++) {
-            block.readBlock(disk, i);
-            for (int j = 3; j >= 0; j--) {
-                cTimeStamp[k * OsDefines.BLOCK_SIZE + j] = block.getData(j);
-            }
-        }
-        block.readBlock(disk, i);
-        for (int j = 1; j >= 0; j--) {
-            cTimeStamp[k*OsDefines.BLOCK_SIZE + j] = block.getData(j);
-        }
-        i++;
-
+        i = Block.readBlocks(disk, cTimeStamp, i);
 
         byte[] mTimeStamp = new byte[OsDefines.TIMESTAMP_SIZE];
-        for (k = 0; k < Block.computeNBlock(OsDefines.TIMESTAMP_SIZE)-1; k++, i++) {
-            block.readBlock(disk, i);
-            for (int j = 3; j >= 0; j--) {
-                mTimeStamp[k*OsDefines.BLOCK_SIZE + j] = block.getData(j);
-            }
-        }
-        block.readBlock(disk, i);
-        for (int j = 1; j >= 0; j--) {
-            mTimeStamp[k*OsDefines.BLOCK_SIZE] = block.getData(j);
-        }
+        i = Block.readBlocks(disk, mTimeStamp, i);
+
+        block.readBlock(disk,i);
+        int nBlock = block.toInt();
         i++;
 
-        int nBlock = 0;
         block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            nBlock = (nBlock << 8) + (block.getData(j) & 0xFF);
-        }
-        i++;
-
-        int firstByte = 0;
-        block.readBlock(disk,i);
-        for (int j = 3; j >= 0; j--){
-            firstByte = (firstByte << 8) + (block.getData(j) & 0xFF);
-        }
+        int firstByte = block.toInt();
 
         this.init(filename, size, uId, uRight, oRight, cTimeStamp, mTimeStamp, nBlock, firstByte);
     }

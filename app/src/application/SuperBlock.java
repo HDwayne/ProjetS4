@@ -3,107 +3,86 @@ package application;
 import java.io.IOException;
 
 public class SuperBlock {
-    private static int numberOfFiles = 0; // dans super bloc
-    private static int numberOfUsers = 0; // idem
-    private static int nbBlocsUsed = 0; //
+    private static int numberOfFiles = 0;
+    private static int numberOfUsers = 0;
+    private static int nbBlocsUsed = 0;
     private static int firstFreeByte = 0;
 
-    public int getNumberOfFiles() {
-        return numberOfFiles;
+    /**
+     * Set the first free byte in the superblock to the given value
+     *
+     * @param firstFreeByte the first byte of the file system that is not allocated to any file.
+     */
+    public static void setFirstFreeByte(int firstFreeByte) {
+        SuperBlock.firstFreeByte = firstFreeByte;
     }
 
-    public void setNumberOfFiles(int numberOfFiles) {
-        this.numberOfFiles = numberOfFiles;
+    /**
+     * If the first inode is free, set the first free byte to the first inode's first byte. Otherwise, set the first free
+     * byte to the first byte of the first inode that is not free
+     *
+     * @param disk the disk to update
+     */
+    public static void updateFirstByte(VirtualDisk disk) {
+        int ffb = OsDefines.USERS_START + OsDefines.USER_SIZE * OsDefines.USER_SIZE * OsDefines.BLOCK_SIZE;
+        if (disk.getInode(0).isFree()){
+            setFirstFreeByte(ffb);
+        }
+        else {
+            int i = 0;
+            while(!disk.getInode(i).isFree()){
+                ffb = disk.getInode(i).getFirstByte() + disk.getInode(i).getnBlock() * OsDefines.BLOCK_SIZE;
+                i++;
+            }
+            setFirstFreeByte(ffb);
+        }
     }
 
-    public int getNumberOfUsers() {
-        return numberOfUsers;
-    }
-
-    public void setNumberOfUsers(int numberOfUsers) {
-        this.numberOfUsers = numberOfUsers;
-    }
-
-    public int getNbBlocsUsed() {
-        return nbBlocsUsed;
-    }
-
-    public void setNbBlocsUsed(int nbBlocsUsed) {
-        this.nbBlocsUsed = nbBlocsUsed;
-    }
-
-    public int getFirstFreeByte() {
-        return firstFreeByte;
-    }
-
-    public void setFirstFreeByte(int firstFreeByte) {
-        this.firstFreeByte = firstFreeByte;
-    }
-
-    public void addNbBlocsUsed(int nbBlocsUsed) {
-        this.nbBlocsUsed += nbBlocsUsed;
-    }
-
-    public void removeNbBlocsUsed(int nbBlocsUsed) {
-        this.nbBlocsUsed -= nbBlocsUsed;
-    }
-
-    public void addFirstFreeByte(int firstFreeByte) {
-        this.firstFreeByte += firstFreeByte;
-    }
-
-    public void removeFirstFreeByte(int firstFreeByte) {
-        this.firstFreeByte -= firstFreeByte;
-    }
-
+    /**
+     * Write the number of files, number of users, number of blocks used and the first free byte to the disk
+     *
+     * @param disk the disk to write to
+     */
     public static void write(VirtualDisk disk) throws IOException {
         Block block = new Block();
 
-        for (int i = 3; i >= 0; i--){
-            block.setData(i, (byte) ((numberOfFiles >> (i * 8)) & 0xFF)); // on écrit le nombre de fichiers
-        }
+        block.fromInt(numberOfFiles);
         block.writeBlock(disk,0);
 
-        for (int i = 3; i >= 0; i--){
-            block.setData(i, (byte) ((numberOfUsers >> (i * 8)) & 0xFF)); // on écrit le nombre d'utilisateurs
-        }
+        block.fromInt(numberOfUsers);
         block.writeBlock(disk,1);
 
-        for (int i = 3; i >= 0; i--){
-            block.setData(i, (byte) ((nbBlocsUsed >> (i * 8)) & 0xFF)); // on écrit le nombre de blocs utilisés
-        }
+        block.fromInt(nbBlocsUsed);
         block.writeBlock(disk,2);
 
-        for (int i = 3; i >= 0; i--){
-            block.setData(i, (byte) ((firstFreeByte >> (i * 8)) & 0xFF)); // on écrit le premier bloc libre
-        }
+        block.fromInt(firstFreeByte);
         block.writeBlock(disk,3);
     }
 
+    /**
+     * Reads the first block of the disk and stores the number of files, number of users, number of blocks used and the
+     * first free byte
+     *
+     * @param disk the disk to read from
+     */
     public static void read(VirtualDisk disk) throws IOException {
         Block block = new Block();
-
         block.readBlock(disk,0);
-        int i = 0;
-        for (int j = 3; j >= 0; j--){
-            numberOfFiles = (numberOfFiles << 8) + (block.getData(j) & 0xFF);
-        }
+        numberOfFiles = block.toInt();
 
         block.readBlock(disk,1);
-        for (int j = 3; j >= 0; j--){
-            numberOfUsers = (numberOfUsers << 8) + (block.getData(j) & 0xFF);
-        }
+        numberOfUsers = block.toInt();
 
         block.readBlock(disk,2);
-        for (int j = 3; j >= 0; j--){
-            nbBlocsUsed = (nbBlocsUsed << 8) + (block.getData(j) & 0xFF);
-        }
+        nbBlocsUsed = block.toInt();
+
         block.readBlock(disk,3);
-        for (int j = 3; j >= 0; j--){
-            firstFreeByte = (firstFreeByte << 8) + (block.getData(j) & 0xFF);
-        }
+        firstFreeByte = block.toInt();
     }
 
+    /**
+     * Print the superblock
+     */
     public static void print() {
         System.out.print("SuperBlock { ");
         System.out.print("Number of files: " + numberOfFiles + ", ");

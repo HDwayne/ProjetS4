@@ -190,11 +190,10 @@ void display_block(block_t block) {
 int write_text_block_char(int *pos, int size, char *source) {
     block_t block;
     for (int j = 0; j < compute_nblock(size); j++) {
-        for (int i = 0; i < 4; i++)
-            block.data[i] = (unsigned char)source[j * BLOCK_SIZE + i];
-        if (write_block(block, *pos) == ERROR)
-            return ERROR;
-        (*pos) += BLOCK_SIZE;
+        for (int i = 0; i < BLOCK_SIZE; i++) { block.data[i] = '\0';}
+        for (int i = 0; i < BLOCK_SIZE; i++) block.data[i] = (unsigned char)source[j*BLOCK_SIZE+i];
+        if (write_block(block, *pos) == ERROR) return ERROR;
+        (*pos)+=BLOCK_SIZE;
     }
     return SUCCESS;
 }
