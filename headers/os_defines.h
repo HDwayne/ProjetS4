@@ -10,6 +10,9 @@
 #include "sha256_utils.h"
 #include "timestamp.h"
 
+/* This is a macro that defines the title of the OS installer. */
+#define OS_TITLE "SOSS4 - Scratch Operating System Semester 4"
+
 // pour les droits : minuscule = pas le droit, majuscule = droit ok
 #define rw 0 // 00
 #define rW 1 // 01

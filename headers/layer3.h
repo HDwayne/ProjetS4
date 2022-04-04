@@ -23,5 +23,6 @@ int get_unused_user();
 int init_user(char login[FILENAME_MAX_SIZE], char password[FILENAME_MAX_SIZE]);
 int is_login_in_users_table(char login[FILENAME_MAX_SIZE]);
 int is_good_credentials(char login[FILENAME_MAX_SIZE], char password[FILENAME_MAX_SIZE]);
+bool is_valid_password(char *pwd1, char *pwd2);
 
 #endif //SCRATCHOS_LAYER3_H

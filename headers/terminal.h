@@ -15,6 +15,7 @@
 #define TERMINAL_MAGENTA  "\x1B[1;35m"
 #define TERMINAL_CYAN  "\x1B[1;36m"
 #define TERMINAL_WHITE  "\x1B[1;37m"
+#define TERMINAL_ORANGE "\x1B[38;5;166m"
 #define TERMINAL_BG_NRM "\x1B[40m"
 #define TERMINAL_BG_RED "\x1B[41m"
 #define TERMINAL_BG_GRN "\x1B[42m"
@@ -70,5 +71,7 @@ int terminal_canonique();
 int menu(char** liste_elem, int max);
 void menu_selected(int pos, char** list_item, int max);
 void setborder();
+void initTerm();
+void exitTerm();
 
 #endif // TERMINAL_OS_DEFINES_H

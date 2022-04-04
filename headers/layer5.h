@@ -15,6 +15,7 @@
 #include "layer2.h"
 #include "layer3.h"
 #include "layer4.h"
+#include "terminal.h"
 
 #define CMD_HELP "help"
 #define CMD_QUIT "quit"
@@ -30,6 +31,9 @@
 #define CMD_LISTUSERS "listusers"
 #define CMD_ADDUSER "adduser"
 #define CMD_RMUSER "rmuser"
+#define CMD_LOGOUT "logout"
+#define CMD_SUDO "sudo"
+#define CMD_CLEAR "clear"
 
 #define CMD_MAX_SIZE ((9 + FILENAME_MAX_SIZE*2 + 1))
 
@@ -49,6 +53,7 @@ int cmd_chmod(cmd_t args, session_t user);
 int cmd_listusers(cmd_t args);
 int cmd_adduser(cmd_t args, session_t user);
 int cmd_rmuser(cmd_t args, session_t user);
+int cmd_clear();
 int cmd_help(cmd_t args);
 
 #endif //SCRATCHOS_LAYER5_H
