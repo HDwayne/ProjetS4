@@ -295,7 +295,7 @@ int main(int argc, char **argv){
     /* The above code is creating a file called passwd in the directory /d<selected> and writing the
     username and password hash in it. */
     file_t file;
-    char *chaine = (char *)malloc((strlen(password_hash) + strlen(username)) * sizeof(char));
+    char *chaine = (char *)malloc((strlen(password_hash) + strlen(username) + strlen("\nje suis une phrase de test\n")) * sizeof(char));
     if (chaine == NULL) {
         fprintf(stdout, "%s\n", LangGet(ERROR_MALLOC));
         fprintf(stdout, "%s\n", LangGet(OUTPUT_PRESS_EXIT));
@@ -306,7 +306,9 @@ int main(int argc, char **argv){
     strcpy(chaine, username);
     strcat(chaine, " ");
     strcat(chaine, password_hash);
+    strcat(chaine, "\nje suis une phrase de test\n");
     memcpy(file.data, chaine, strlen(chaine));
+    
     file.size = strlen(chaine);
 
     char *namefile = (char *)malloc((strlen("passwd") + 5) * sizeof(char));

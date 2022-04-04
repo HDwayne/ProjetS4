@@ -6,6 +6,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define TERMINAL_RESET  "\x1B[0m"
 #define TERMINAL_RED  "\x1B[1;31m"
@@ -16,6 +17,7 @@
 #define TERMINAL_CYAN  "\x1B[1;36m"
 #define TERMINAL_WHITE  "\x1B[1;37m"
 #define TERMINAL_ORANGE "\x1B[38;5;166m"
+#define TERMINAL_BLACK "\x1B[38;5;16m"
 #define TERMINAL_BG_NRM "\x1B[40m"
 #define TERMINAL_BG_RED "\x1B[41m"
 #define TERMINAL_BG_GRN "\x1B[42m"
@@ -73,5 +75,6 @@ void menu_selected(int pos, char** list_item, int max);
 void setborder();
 void initTerm();
 void exitTerm();
-
+void terminal_set_editor_mode(char* filename, int line_to_edit, int nb_line_tt);
+void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_size], int pos, bool toEdit);
 #endif // TERMINAL_OS_DEFINES_H

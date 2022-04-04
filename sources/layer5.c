@@ -187,53 +187,193 @@ int cmd_cr(cmd_t args, session_t user) {
  * @param user
  * @return int
  */
+// int cmd_edit(cmd_t args, session_t user) {
+//     if (args.nbArgs != 2) {
+//         terminal_print(LangGet(ERROR_COMMAND_EDIT_USAGE), TERMINAL_ORANGE);
+//         // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_EDIT_USAGE));
+//         return ERROR;
+//     }
+//     int index_inode = is_file_in_inode(args.tabArgs[1]);
+//     if (index_inode == INODE_TABLE_SIZE) {
+//         fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1], TERMINAL_RESET);
+//         // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1]);
+//         return ERROR;
+//     }
+//     if (!has_rights(index_inode, user.userid, rW)) {
+//         terminal_print(LangGet(ERROR_FILE_RIGHTS), TERMINAL_RED);
+//         // fprintf(stderr, "%s\n", LangGet(ERROR_FILE_RIGHTS));
+//         return ERROR;
+//     }
+
+//     file_t file;
+//     file.size = 0;
+//     char ligne[MAX_MSG];
+//     int i = 0;
+//     fprintf(stdout, "%s\n", LangGet(OUTPUT_COMMAND_EDIT_EDITING));
+//     do {
+//         fprintf(stdout, "%s%d : ", LangGet(OUTPUT_COMMAND_EDIT_LINE), i);
+//         read_cmd(ligne, MAX_MSG);
+//         if (strlen(ligne) == MAX_MSG)
+//             terminal_print(LangGet(ERROR_COMMAND_EDIT_INPUT_MAX), TERMINAL_RED);
+//             // fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_EDIT_INPUT_MAX));
+//         if (ligne[0] != '\0' && (strlen(ligne) + file.size) <= MAX_FILE_SIZE) {
+//             memcpy(file.data + file.size, ligne, strlen(ligne));
+//             file.size += strlen(ligne);
+//             memcpy(file.data + file.size, "\n", strlen("\n"));
+//             file.size += strlen("\n");
+//             i++;
+//         }
+//     } while (ligne[0] != '\0' && file.size < MAX_FILE_SIZE);
+//     if (file.size > MAX_FILE_SIZE) {
+//         terminal_print(LangGet(ERROR_COMMAND_EDIT_FILE_MAXSIZE), TERMINAL_RED);
+//         // fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_EDIT_FILE_MAXSIZE));
+//         file.data[MAX_FILE_SIZE - 1] = '\0';
+//     }
+//     file.data[file.size] = '\0';
+//     file.size = strlen((char *)file.data);
+
+//     if (write_file(args.tabArgs[1], file, user) == ERROR)
+//         return ERROR;
+//     fprintf(stdout, "%s %s\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_EDIT_END));
+//     return SUCCESS;
+// }
+
 int cmd_edit(cmd_t args, session_t user) {
     if (args.nbArgs != 2) {
         terminal_print(LangGet(ERROR_COMMAND_EDIT_USAGE), TERMINAL_ORANGE);
-        // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_EDIT_USAGE));
         return ERROR;
     }
     int index_inode = is_file_in_inode(args.tabArgs[1]);
     if (index_inode == INODE_TABLE_SIZE) {
         fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1], TERMINAL_RESET);
-        // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1]);
         return ERROR;
     }
     if (!has_rights(index_inode, user.userid, rW)) {
         terminal_print(LangGet(ERROR_FILE_RIGHTS), TERMINAL_RED);
-        // fprintf(stderr, "%s\n", LangGet(ERROR_FILE_RIGHTS));
         return ERROR;
     }
-    file_t file;
-    file.size = 0;
-    char ligne[MAX_MSG];
-    int i = 0;
-    fprintf(stdout, "%s\n", LangGet(OUTPUT_COMMAND_EDIT_EDITING));
-    do {
-        fprintf(stdout, "%s%d : ", LangGet(OUTPUT_COMMAND_EDIT_LINE), i);
-        read_cmd(ligne, MAX_MSG);
-        if (strlen(ligne) == MAX_MSG)
-            terminal_print(LangGet(ERROR_COMMAND_EDIT_INPUT_MAX), TERMINAL_RED);
-            // fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_EDIT_INPUT_MAX));
-        if (ligne[0] != '\0' && (strlen(ligne) + file.size) <= MAX_FILE_SIZE) {
-            memcpy(file.data + file.size, ligne, strlen(ligne));
-            file.size += strlen(ligne);
-            memcpy(file.data + file.size, "\n", strlen("\n"));
-            file.size += strlen("\n");
-            i++;
-        }
-    } while (ligne[0] != '\0' && file.size < MAX_FILE_SIZE);
-    if (file.size > MAX_FILE_SIZE) {
-        terminal_print(LangGet(ERROR_COMMAND_EDIT_FILE_MAXSIZE), TERMINAL_RED);
-        // fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_EDIT_FILE_MAXSIZE));
-        file.data[MAX_FILE_SIZE - 1] = '\0';
-    }
-    file.data[file.size] = '\0';
-    file.size = strlen((char *)file.data);
 
-    if (write_file(args.tabArgs[1], file, user) == ERROR)
+
+    file_t file;
+    if (read_file(args.tabArgs[1], &file) == ERROR)
         return ERROR;
-    fprintf(stdout, "%s %s\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_EDIT_END));
+
+    int nb_line_tt = 1;
+    for (uint i = 0; i < file.size; i++){
+        if (file.data[i] == '\n')
+            nb_line_tt++;
+    }
+
+    char text[nb_line_tt][MAX_MSG];
+
+    int i = 0;
+    const char delim[1] = "\n";
+    char *token;
+    token = strtok((char*)file.data, delim);
+    while( token != NULL ) {
+        strcpy(text[i], token);
+        i++;
+        token = strtok(NULL, delim);
+    }
+
+    // int line_to_edit=1;
+    // int nb_line=nb_line_tt;
+    // while (nb_line > 0) { // tq ligne to edit
+    //     terminal_set_editor_mode(args.tabArgs[1], line_to_edit, nb_line_tt);
+    //     for (int i = 0; i < nb_line_tt; i++){
+    //         terminal_cursor(1,i+2);
+    //         if (i == line_to_edit-1)
+    //             fprintf(stdout, "%s┝ %s%s", TERMINAL_GREEN, text[i], TERMINAL_RESET);
+    //         else
+    //             fprintf(stdout, "┝ %s", text[i]);
+    //     }
+    //     fflush(stdout);
+    //     read(STDIN_FILENO, &lettre, sizeof(char));
+    //     nb_line--;
+    //     line_to_edit++;
+    // }
+    terminal_clear();
+    terminal_non_canonique();
+    printf("\e[?25l");
+
+    char lettre;
+    int pos = 0;
+    do {
+        terminal_set_editor_mode(args.tabArgs[1], pos+1, nb_line_tt);
+        terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, false);
+        read(STDIN_FILENO, &lettre, sizeof(char));
+        if (lettre == 'A' && pos > 0){
+            pos--;
+            terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, false);
+        } else if (lettre == 'B' && pos < nb_line_tt-1) {
+            pos++;
+            terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, false);
+        } else if (lettre == 'C') {
+            terminal_set_editor_mode(args.tabArgs[1], pos+1, nb_line_tt);
+            terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, true);
+            terminal_cursor(13,pos+3);
+            printf("\e[?25h");
+	        terminal_canonique();
+            fgets(text[pos], MAX_MSG, stdin);
+            terminal_non_canonique();
+            printf("\e[?25l");
+        } else if (lettre == 'D') {
+            terminal_cursor(1,pos+2);
+            fprintf(stdout, "%s┝ %s%s", TERMINAL_RED, text[pos], TERMINAL_RESET);
+            fflush(stdout);
+            do {
+                read(STDIN_FILENO, &lettre, sizeof(char));
+            } while (lettre != 'D' && lettre != 'C');
+            if (lettre == 'D') {
+                strcpy(text[pos], "");
+                if (pos > 0)
+                    pos--;
+            } else {
+                fprintf(stdout, "┝ %s", text[pos]);
+                fflush(stdout);
+            }
+        }
+    } while (lettre != TC_KEY_ENTER);
+    
+
+    // fprintf(stdout, "%s\n", file.data);
+
+    // file_t file;
+    // file.size = 0;
+    // char ligne[MAX_MSG];
+    // int i = 0;
+    // fprintf(stdout, "%s\n", LangGet(OUTPUT_COMMAND_EDIT_EDITING));
+    // do {
+    //     fprintf(stdout, "%s%d : ", LangGet(OUTPUT_COMMAND_EDIT_LINE), i);
+    //     read_cmd(ligne, MAX_MSG);
+    //     if (strlen(ligne) == MAX_MSG)
+    //         terminal_print(LangGet(ERROR_COMMAND_EDIT_INPUT_MAX), TERMINAL_RED);
+    //         // fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_EDIT_INPUT_MAX));
+    //     if (ligne[0] != '\0' && (strlen(ligne) + file.size) <= MAX_FILE_SIZE) {
+    //         memcpy(file.data + file.size, ligne, strlen(ligne));
+    //         file.size += strlen(ligne);
+    //         memcpy(file.data + file.size, "\n", strlen("\n"));
+    //         file.size += strlen("\n");
+    //         i++;
+    //     }
+    // } while (ligne[0] != '\0' && file.size < MAX_FILE_SIZE);
+    // if (file.size > MAX_FILE_SIZE) {
+    //     terminal_print(LangGet(ERROR_COMMAND_EDIT_FILE_MAXSIZE), TERMINAL_RED);
+    //     // fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_EDIT_FILE_MAXSIZE));
+    //     file.data[MAX_FILE_SIZE - 1] = '\0';
+    // }
+    // file.data[file.size] = '\0';
+    // file.size = strlen((char *)file.data);
+
+    // if (write_file(args.tabArgs[1], file, user) == ERROR)
+    //     return ERROR;
+    // fprintf(stdout, "%s %s\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_EDIT_END));
+
+
+    printf("\e[?25h");
+	terminal_cursor(0, 0);
+	terminal_canonique();
+	terminal_clear();
     return SUCCESS;
 }
 

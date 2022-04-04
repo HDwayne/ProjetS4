@@ -132,3 +132,70 @@ void exitTerm() {
 	terminal_canonique();
 	terminal_clear();
 }
+
+void terminal_set_editor_mode(char* filename, int line_to_edit, int nb_line_tt){
+    terminal_clear();
+	int col;
+    int row;
+    terminal_get_max_size(&col, &row);
+
+    terminal_cursor(0,0);
+    fprintf(stdout, "┌──");
+    for (int i = 4; i < col-2; i++){
+		terminal_cursor(i, 0);
+        terminal_print_bg(" ", TERMINAL_BLACK, TERMINAL_BG_WHT);
+	}
+    terminal_cursor(col-2,0);
+    fprintf(stdout, "──┐");
+
+    terminal_cursor(5,0);
+    terminal_print_bg(filename, TERMINAL_BLACK, TERMINAL_BG_WHT);
+
+    terminal_cursor((int)((col / 2) - (strlen("Text editor")) / 2), 0);
+    terminal_print_bg("Text editor", TERMINAL_BLACK, TERMINAL_BG_WHT);
+
+	char pos[10];
+	char end[10];
+	sprintf(pos, "%d", line_to_edit);
+	sprintf(end, "%d", nb_line_tt);
+	terminal_cursor((int)(col-(strlen(pos)+1+strlen(end))), 0);
+    terminal_print_bg(pos, TERMINAL_BLACK, TERMINAL_BG_WHT);
+	terminal_cursor((int)(col-(1+strlen(end))), 0);
+    terminal_print_bg("/", TERMINAL_BLACK, TERMINAL_BG_WHT);
+	terminal_cursor((int)(col-(strlen(end))), 0);
+    terminal_print_bg(end, TERMINAL_BLACK, TERMINAL_BG_WHT);
+    
+    for (int i = 2; i < row; i++){
+		terminal_cursor(0, i);
+		fprintf(stdout, "│");
+		terminal_cursor(col, i);
+		fprintf(stdout, "│");
+	}
+
+    terminal_cursor(0, row);
+    fprintf(stdout, "└");
+	for (int i = 2; i < col; i++){
+		terminal_cursor(i, row);
+        fprintf(stdout, "─");
+	}
+    terminal_cursor(col, row);
+    fprintf(stdout, "┘");
+}
+
+void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_size], int pos, bool toEdit){
+	fflush(stdout);
+	int j=0;
+	for (int i = 0; i < array_size; i++){
+		terminal_cursor(1,i+2+j);
+		if (i == pos){
+			fprintf(stdout, "%s┝ %s%s", TERMINAL_GREEN, text[i], TERMINAL_RESET);
+			if (toEdit){
+				terminal_cursor(1,i+3);
+				fprintf(stdout, "│ new text : ");
+				j=1;
+			}
+		} else
+			fprintf(stdout, "┝ %s", text[i]);
+	}
+	fflush(stdout);
+}
