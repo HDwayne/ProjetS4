@@ -231,8 +231,9 @@ int read_text_block_char(int *pos, int size, char *destination) {
     for (int j = 0; j < compute_nblock(size); j++) {
         if (read_block(&block, *pos) == ERROR)
             return ERROR;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) {
             destination[j * BLOCK_SIZE + i] = (char)block.data[i];
+        }
         (*pos) += BLOCK_SIZE;
     }
     return SUCCESS;
