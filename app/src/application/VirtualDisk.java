@@ -9,7 +9,7 @@ public class VirtualDisk {
 
 
     public VirtualDisk(String Path) throws IOException {
-        this.storage = new RandomAccessFile(Path + "d0", "rw");
+        this.storage = new RandomAccessFile(Path, "rw");
 
         for (int i = 0; i < this.tabInode.length; i++) {
             this.tabInode[i] = new Inode();
@@ -127,6 +127,39 @@ public class VirtualDisk {
             }
         }
         str = strBuilder1.toString();
+        return str;
+    }
+
+    public String getInodeTableString(){
+        String str = "";
+        StringBuilder strBuilder = new StringBuilder(str);
+        for (int i = 0; i < this.tabInode.length; i++) {
+            if(!this.tabInode[i].isFree()){
+                strBuilder.append("inode ").append(i).append(" :\n").append(this.tabInode[i].toString()).append("------------------------------\n");
+            }
+        }
+        str = strBuilder.toString();
+        return str;
+    }
+
+    public String getUserTableString(){
+        String str = "";
+        StringBuilder strBuilder1 = new StringBuilder(str);
+        for (int i = 0; i < this.tabUser.length; i++) {
+            if(!this.tabUser[i].isFree()){
+                strBuilder1.append("user ").append(i).append(" :\n").append(this.tabUser[i].toString()).append("\n---------------\n");
+            }
+        }
+        str = strBuilder1.toString();
+        return str;
+    }
+
+    public String getSuperBlockString(){
+        String str = "";
+        str += "Number of files: " + SuperBlock.getNumberOfFiles() + "\n";
+        str += "Number of users: " + SuperBlock.getNumberOfUsers() + "\n";
+        str += "Number of blocks used: " + SuperBlock.getNbBlocsUsed() +"\n";
+        str += "First free byte: " + SuperBlock.getFirstFreeByte() + "\n";
         return str;
     }
 

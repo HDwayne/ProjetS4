@@ -90,6 +90,19 @@ public class SuperBlock {
         System.out.print("Number of blocks used: " + nbBlocsUsed +", ");
         System.out.println("First free byte: " + firstFreeByte + " }");
     }
+
+    public static int getNumberOfFiles(){
+        return numberOfFiles;
+    }
+    public static int getNumberOfUsers(){
+        return numberOfUsers;
+    }
+    public static int getNbBlocsUsed(){
+        return nbBlocsUsed;
+    }
+    public static int getFirstFreeByte(){
+        return firstFreeByte;
+    }
 }
 
 

@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdbool.h>
+#include "os_defines.h"
 
 #define TERMINAL_RESET  "\x1B[0m"
 #define TERMINAL_RED  "\x1B[1;31m"
@@ -76,5 +77,5 @@ void setborder();
 void initTerm();
 void exitTerm();
 void terminal_set_editor_mode(char* filename, int line_to_edit, int nb_line_tt);
-void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_size], int pos, bool toEdit);
+void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_size], int pos, int offset, bool toEdit);
 #endif // TERMINAL_OS_DEFINES_H
