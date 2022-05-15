@@ -18,8 +18,12 @@ public class Main {
         }
         System.out.println("Début défragmentation");
 
+        System.out.println(vd.analysis());
+
+
         vd.defragmentation();
         vd.saveDisk();
+
 
     }
 }

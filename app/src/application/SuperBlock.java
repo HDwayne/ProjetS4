@@ -18,6 +18,15 @@ public class SuperBlock {
     }
 
     /**
+     * This function returns the first free byte.
+     *
+     * @return The first free byte in the memory.
+     */
+    public static int getFirstFreeByte(){
+        return firstFreeByte;
+    }
+
+    /**
      * If the first inode is free, set the first free byte to the first inode's first byte. Otherwise, set the first free
      * byte to the first byte of the first inode that is not free
      *
@@ -89,6 +98,62 @@ public class SuperBlock {
         System.out.print("Number of users: " + numberOfUsers + ", ");
         System.out.print("Number of blocks used: " + nbBlocsUsed +", ");
         System.out.println("First free byte: " + firstFreeByte + " }");
+    }
+
+    /**
+     * It checks if the number of files, users, blocks used and the first free byte are correct
+     *
+     * @param disk the virtual disk
+     * @return The result of the analysis of the superblock.
+     */
+    public static String analysis(VirtualDisk disk) throws IOException {
+        String result = "Cohérence du superblock\n";
+
+        // Check if the number of files is correct
+        int nbFiles = 0;
+        for (int i = 0; i < OsDefines.INODE_TABLE_SIZE && !disk.getInode(i).isFree(); i++)
+            nbFiles++;
+
+        if (nbFiles != numberOfFiles) {
+            result += "Nombre de fichiers incorrect " + nbFiles + " au lieu de " + numberOfFiles + "\n";
+        } else {
+            result += "Nombre de fichiers correct " + nbFiles + " fichiers trouvés\n";
+        }
+
+        // Check if the number of users is correct
+        int nbUsers = 0;
+        for (int i = 0; i < OsDefines.NB_USERS && !disk.getUser(i).isFree(); i++)
+            nbUsers++;
+
+        if (nbUsers != numberOfUsers) {
+            result += "Nombre d'utilisateurs incorrect " + nbUsers + " au lieu de " + numberOfUsers + "\n";
+        } else {
+            result += "Nombre d'utilisateurs correct " + nbUsers + " utilisateurs trouvés\n";
+        }
+
+        // Check if the number of blocks used is correct
+        int nbBlocsUsedFound = 0;
+        for (int i = 0; i < OsDefines.INODE_TABLE_SIZE && !disk.getInode(i).isFree(); i++) {
+            nbBlocsUsedFound += disk.getInode(i).getnBlock();
+        }
+
+        if (nbBlocsUsedFound != nbBlocsUsed) {
+            result += "Nombre de blocs utilisés incorrect " + nbBlocsUsedFound + " au lieu de " + nbBlocsUsed + "\n";
+        } else{
+            result += "Nombre de blocs utilisés correct " + nbBlocsUsedFound + " blocs trouvés\n";
+        }
+
+        // Check if the first free byte is correct
+        int firstfreebyteFound = disk.getInode(nbFiles-1).getFirstByte() + disk.getInode(nbFiles-1).getnBlock() * OsDefines.BLOCK_SIZE;
+        if (firstfreebyteFound != firstFreeByte) {
+            result += "Premier bloc libre incorrect " + firstfreebyteFound + " au lieu de " + firstFreeByte + "\n";
+        }
+        else {
+            result += "Premier bloc libre correct " + firstfreebyteFound + " bloc trouvé\n";
+        }
+
+        return result;
+
     }
 }
 

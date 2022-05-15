@@ -320,4 +320,41 @@ public class Inode {
 
         this.init(filename, size, uId, uRight, oRight, cTimeStamp, mTimeStamp, nBlock, firstByte);
     }
+
+    public String analysis(VirtualDisk disk, int inodeId) throws IOException {
+        String result = "Début d'analyse de l'inode n°" + inodeId + "\n";
+
+        int nBlockFound = this.size % OsDefines.BLOCK_SIZE == 0 ? this.size / OsDefines.BLOCK_SIZE : this.size / OsDefines.BLOCK_SIZE + 1;
+        if (nBlockFound != this.nBlock) {
+            result += "Le nombre de blocs de l'inode n'est pas correct " + this.nBlock + " != " + nBlockFound + "\n";
+        }else{
+            result += "Le nombre de blocs de l'inode est correct " + this.nBlock + " == " + nBlockFound + "\n";
+        }
+
+        if (this.uRight == 0 ){
+            result += "L'inode n'est pas accessible en lecture par celui qui possède le fichier.\n";
+        }
+
+        if (this.oRight > this.uRight ){
+            result += "Le propriétaire du fichier possède des droits inférieurs aux autre utilisateurs.\n";
+        }
+
+        // Convert the byte array timestamp to a date
+        int nextInode = this.firstByte + this.nBlock*OsDefines.BLOCK_SIZE;
+        if (disk.getInode(inodeId + 1).isFree()){
+            if (SuperBlock.getFirstFreeByte() != nextInode){
+                result += "Le prochain inode est libre mais ne sera pas initialisé au bon endroit sur le disk. First free byte = " +  SuperBlock.getFirstFreeByte() + " Valeur calculée : " + nextInode + "\n";
+            }else{
+                result += "Le prochain inode est libre et sera initialisé au bon endroit sur le disk.\n";
+            }
+        }else{
+            if(nextInode != disk.getInode(inodeId + 1).getFirstByte()){
+                result += "Problème de fragmentation. La prochaine inode est déjà occupée mais n'est initialisée au bon endroit sur le disk. First byte = " +  disk.getInode(inodeId + 1).getFirstByte() + " Valeur calculée : " + nextInode + "\n";
+            }else{
+                result += "La prochaine inode est déjà occupée et est initialisée au bon endroit sur le disk.\n";
+            }
+        }
+
+        return result;
+    }
 }
