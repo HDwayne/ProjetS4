@@ -174,6 +174,14 @@ public class VirtualDisk {
     }
 
     /**
+     * This function returns the user with the given userId.
+     *
+     * @param userId The user's ID.
+     * @return The user object at the index of the userId.
+     */
+    public User getUser(int userId){ return this.tabUser[userId]; }
+
+    /**
      * The function is used to defragment the disk. It starts by looking at the first inode. If it is not free and its
      * first byte is not the start of the users area, then it will move the file to the start of the users area. It will
      * then erase the file from the disk
@@ -206,5 +214,24 @@ public class VirtualDisk {
         }
         SuperBlock.updateFirstByte(this);
         System.out.println("[Défragmentation] Espace sauvé : " + (max - minmax));
+    }
+
+    public String analysis() throws IOException {
+        StringBuilder result = new StringBuilder("Début de l'analyse du système... \n");
+        result.append(SuperBlock.analysis(this));
+
+        for (int i = 0; i < this.tabInode.length; i++) {
+            if(!this.tabInode[i].isFree()){
+                result.append(this.tabInode[i].analysis(this, i));
+            }
+        }
+
+        for (int i = 0; i < this.tabUser.length; i++) {
+            if(!this.tabUser[i].isFree()){
+                result.append(this.tabUser[i].analysis(this, i));
+            }
+        }
+        result.append("Fin de l'analyse du système... \n");
+        return result.toString();
     }
 }
