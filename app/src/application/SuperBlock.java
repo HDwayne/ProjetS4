@@ -106,7 +106,7 @@ public class SuperBlock {
      * @param disk the virtual disk
      * @return The result of the analysis of the superblock.
      */
-    public static String analysis(VirtualDisk disk) throws IOException {
+    public static String analysis(VirtualDisk disk) {
         String result = "Cohérence du superblock\n";
 
         // Check if the number of files is correct

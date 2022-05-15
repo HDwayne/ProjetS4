@@ -184,21 +184,21 @@ public class VirtualDisk {
     }
 
     public String analysis() throws IOException {
-        String result = "Début de l'analyse du système... \n";
-        result += SuperBlock.analysis(this);
+        StringBuilder result = new StringBuilder("Début de l'analyse du système... \n");
+        result.append(SuperBlock.analysis(this));
 
         for (int i = 0; i < this.tabInode.length; i++) {
             if(!this.tabInode[i].isFree()){
-                result += this.tabInode[i].analysis(this, i);
+                result.append(this.tabInode[i].analysis(this, i));
             }
         }
 
         for (int i = 0; i < this.tabUser.length; i++) {
             if(!this.tabUser[i].isFree()){
-                result += this.tabUser[i].analysis(this, i);
+                result.append(this.tabUser[i].analysis(this, i));
             }
         }
-        result += "Fin de l'analyse du système... \n";
-        return result;
+        result.append("Fin de l'analyse du système... \n");
+        return result.toString();
     }
 }

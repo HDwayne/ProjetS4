@@ -102,7 +102,7 @@ public class User {
         this.init(username, password);
     }
 
-    public String analysis(VirtualDisk disk, int userId) throws IOException {
+    public String analysis(VirtualDisk disk, int userId) {
         String result = "Analyse de l'utilisateur n°" + userId + "\n";
         int size = 0;
         for (int i = 0; i < OsDefines.PASSWORD_MAX_SIZE && this.passwd[i] != 0; i++) {

@@ -321,7 +321,7 @@ public class Inode {
         this.init(filename, size, uId, uRight, oRight, cTimeStamp, mTimeStamp, nBlock, firstByte);
     }
 
-    public String analysis(VirtualDisk disk, int inodeId) throws IOException {
+    public String analysis(VirtualDisk disk, int inodeId){
         String result = "Début d'analyse de l'inode n°" + inodeId + "\n";
 
         int nBlockFound = this.size % OsDefines.BLOCK_SIZE == 0 ? this.size / OsDefines.BLOCK_SIZE : this.size / OsDefines.BLOCK_SIZE + 1;
