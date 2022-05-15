@@ -324,23 +324,21 @@ int cmd_edit(cmd_t args, session_t user) {
 
     for (int i = 0; i < nb_line_tt; i++) {
         if (strcmp(text[i], "\n") != 0) {
-            memcpy(newfile.data + newfile.size, text[i], strlen(text[i]));    
+            memcpy(newfile.data + newfile.size, text[i], strlen(text[i]));
             newfile.size += strlen(text[i]);
-            if (i < nb_line_tt-1 && text[i][strlen(text[i])-1] != '\n'){
+            if (i < nb_line_tt - 1 && text[i][strlen(text[i]) - 1] != '\n') {
                 memcpy(newfile.data + newfile.size, "\n", strlen("\n"));
                 newfile.size += strlen("\n");
             }
         }
     }
-    if (newfile.data[newfile.size-1] == '\n'){
-        newfile.data[newfile.size-1] = '\0';
-    }else {
-        newfile.data[newfile.size] = '\0';
-    }
+    if (newfile.data[newfile.size - 1] == '\n')newfile.data[newfile.size -1] = '\0';
+    else strcat((char *)newfile.data, "\0");
     // newfile.size += strlen("\0");
     // newfile.size = strlen((char *)newfile.data);
     newfile.size = cara;
     //fprintf(stdout, "size: %d\n", newfile.size);
+
     int nb_n=0;
     for (uint i = 0; newfile.data[i] != '\0'; i++)
         if (newfile.data[i] == '\n')

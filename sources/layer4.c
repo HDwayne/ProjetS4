@@ -77,7 +77,7 @@ int read_file(char *filename, file_t *filedata) {
         return ERROR;
     }
     filedata->size = virtual_disk_sos->inodes[index_inode].size;
-    strcpy(filedata->data, "");
+    strcpy((char *)filedata->data, "");
     uint pos = virtual_disk_sos->inodes[index_inode].first_byte;
     if (read_text_block_uchar(&pos, filedata->size, filedata->data) == ERROR)
         return ERROR;
