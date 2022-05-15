@@ -122,7 +122,8 @@ typedef enum _STR_NAME {
     ERROR_COMMAND_LOGOUT_USAGE,
     ERROR_COMMAND_CLEAR_USAGE,
     ERROR_COMMAND_ARGS_LOGIN_EMPTY,
-    ERROR_COMMAND_ARGS_LOGIN_SELF
+    ERROR_COMMAND_ARGS_LOGIN_SELF,
+    ERROR_COMMAND_ARGS_REMOVE_ROOT
 } STR_NAME;
 
 static const STRING strings[] = {
@@ -743,6 +744,12 @@ static const STRING strings[] = {
             "Cannot delete the current user",
             "Impossible de supprimer l'utilisateur courant",
         } // ERROR_COMMAND_ARGS_LOGIN_SELF
+    },
+    {
+        {
+            "Cannot delete the superuser",
+            "Impossible de supprimer le superutilisateur",
+        } // ERROR_COMMAND_ARGS_REMOVE_ROOT
     }
 };
 

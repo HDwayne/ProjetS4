@@ -572,7 +572,7 @@ int cmd_rmuser(cmd_t args, session_t user, int index_user_real) {
         // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_RMUSER_USAGE));
         return ERROR;
     }
-    
+
     if (user.userid != ROOT_UID) {
         terminal_print(LangGet(ERROR_COMMAND_ARGS_ROOT_ONLY), TERMINAL_RED);
         // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_ARGS_ROOT_ONLY));
@@ -585,10 +585,16 @@ int cmd_rmuser(cmd_t args, session_t user, int index_user_real) {
         // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_ARGS_LOGIN_EXIST), args.tabArgs[1]);
         return ERROR;
     }
-
+    
     if (index_user_real != -1 && strcmp(args.tabArgs[1], virtual_disk_sos->users_table[index_user_real].login) == 0) { // si l'utilisateur à supprimer est celui connecté
         // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_ARGS_LOGIN_SELF));
         terminal_print(LangGet(ERROR_COMMAND_ARGS_LOGIN_SELF), TERMINAL_RED);
+        return ERROR;
+    }
+
+    if (strcmp(args.tabArgs[1], virtual_disk_sos->users_table[ROOT_UID].login) == 0) { // si l'utilisateur à supprimer est le root
+        // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_ARGS_REMOVE_ROOT));
+        terminal_print(LangGet(ERROR_COMMAND_ARGS_REMOVE_ROOT), TERMINAL_RED);
         return ERROR;
     }
 
