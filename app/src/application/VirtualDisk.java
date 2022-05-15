@@ -186,11 +186,12 @@ public class VirtualDisk {
      * first byte is not the start of the users area, then it will move the file to the start of the users area. It will
      * then erase the file from the disk
      */
-    public void defragmentation() throws IOException {
+    public String defragmentation() throws IOException {
+        StringBuilder result = new StringBuilder("Début de la défragmentation... \n");
         int max = 0;
         int minmax = 0;
         if (!this.tabInode[0].isFree() && this.tabInode[0].getFirstByte() != OsDefines.USERS_START + (OsDefines.USER_SIZE * OsDefines.NB_USERS * OsDefines.BLOCK_SIZE)) {
-            System.out.println("[Défragmentaion] Inode 0");
+            result.append("[Défragmentaion] Inode 0\n");
             max = this.tabInode[0].getFirstByte() + this.tabInode[0].getnBlock() * OsDefines.BLOCK_SIZE;
             File file = new File();
             file.read(this, this.tabInode[0]);
@@ -203,7 +204,7 @@ public class VirtualDisk {
         for (int i = 1; i < OsDefines.INODE_TABLE_SIZE; i++) {
             if (!this.tabInode[i].isFree() && this.tabInode[i].getFirstByte() != this.tabInode[i-1].getFirstByte() + this.tabInode[i-1].getnBlock()*4){
                 max = this.tabInode[i].getFirstByte() + this.tabInode[i].getnBlock() * OsDefines.BLOCK_SIZE;
-                System.out.println("[Défragmentaion] Inode " + i);
+                result.append("[Défragmentaion] Inode").append(i).append("\n");
                 File file = new File();
                 file.read(this, this.tabInode[i]);
                 file.eraseFromDisk(this, this.tabInode[i]);
@@ -213,7 +214,8 @@ public class VirtualDisk {
             }
         }
         SuperBlock.updateFirstByte(this);
-        System.out.println("[Défragmentation] Espace sauvé : " + (max - minmax));
+        result.append("[Défragmentation] Espace sauvé : ").append((max - minmax)).append("\n");
+        return result.toString();
     }
 
     public String analysis() throws IOException {
@@ -221,13 +223,13 @@ public class VirtualDisk {
         result.append(SuperBlock.analysis(this));
 
         for (int i = 0; i < this.tabInode.length; i++) {
-            if(!this.tabInode[i].isFree()){
+            if (!this.tabInode[i].isFree()) {
                 result.append(this.tabInode[i].analysis(this, i));
             }
         }
 
         for (int i = 0; i < this.tabUser.length; i++) {
-            if(!this.tabUser[i].isFree()){
+            if (!this.tabUser[i].isFree()) {
                 result.append(this.tabUser[i].analysis(this, i));
             }
         }

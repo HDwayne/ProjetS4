@@ -19,11 +19,22 @@ public class MainForm extends JFrame{
     private JTextArea JTextAreaIT;
     private JTextArea JTextAreaF;
     private JTextArea JTextAreaUT;
+    private JPanel JSysAnalyse;
+    private JButton JButtonAnalyse;
+    private JTextArea JTextAreaAS;
+    private JButton JButtonRefreshF;
+    private JButton JButtonRefreshIT;
+    private JButton JButtonRefreshUT;
+    private JButton JButtonRefreshSB;
+    private JPanel JDefrag;
+    private JButton JButtonDefrag;
+    private JTextArea JTextAreaDefrag;
+    private VirtualDisk vd = null;
 
     public MainForm() throws IOException {
         setContentPane(Panel1);
-        setTitle("oui");
-        setSize(400,300);
+        setTitle("OADS");
+        setSize(700,500);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
 
@@ -35,11 +46,14 @@ public class MainForm extends JFrame{
                 JFileChooser fileselect = new JFileChooser();
                 fileselect.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
-                int response = fileselect.showSaveDialog(null);
+                int response = fileselect.showOpenDialog(null);
                 if (response == JFileChooser.APPROVE_OPTION){
-                    // File file = new File(fileselect.getSelectedFile().getAbsolutePath());
-
-                    VirtualDisk vd = null;
+                    JTextAreaAS.setText("");
+                    JTextAreaF.setText("");
+                    JTextAreaIT.setText("");
+                    JTextAreaUT.setText("");
+                    JTextAreaSB.setText("");
+                    JTextAreaDefrag.setText("");
                     try {
                         vd = new VirtualDisk(fileselect.getSelectedFile().getAbsolutePath());
                         JTextAreaSB.setText(vd.getSuperBlockString());
@@ -54,21 +68,106 @@ public class MainForm extends JFrame{
                             JTextAreaF.append("File " + i + ": " + new String(vd.getInode(i).getFileName()) + "\n");
                             JTextAreaF.append(file.toString() + "------------------------------\n");
                         }
-
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null, "Fichier sélectionné invalide");
-                        // throw new RuntimeException(ex);
                     }
                 }
             }
         });
 
+        JButtonAnalyse.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
 
-        /*
-        System.out.println("Début défragmentation");
-        vd.defragmentation();
-        vd.saveDisk();
-        */
+                if (vd != null){
+                    try {
+                        JTextAreaAS.setText(vd.analysis());
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de l'analyse");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Merci de sélectionner un disk");
+                }
+            }
+        });
+
+        JButtonRefreshF.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (vd != null) {
+                    JTextAreaF.setText("");
+                    for (int i = 0; i < OsDefines.INODE_TABLE_SIZE; i++) {
+                        application.File file = new application.File();
+                        if (!vd.getInode(i).isFree()) {
+                            try {
+                                file.read(vd, vd.getInode(i));
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                        JTextAreaF.append("File " + i + ": " + new String(vd.getInode(i).getFileName()) + "\n");
+                        JTextAreaF.append(file + "------------------------------\n");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Merci de sélectionner un disk");
+                }
+            }
+        });
+
+        JButtonRefreshIT.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (vd != null){
+                    JTextAreaIT.setText(vd.getInodeTableString());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Merci de sélectionner un disk");
+                }
+            }
+        });
+
+        JButtonRefreshUT.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (vd != null) {
+                    JTextAreaUT.setText(vd.getUserTableString());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Merci de sélectionner un disk");
+                }
+            }
+        });
+
+        JButtonRefreshSB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (vd != null){
+                    JTextAreaSB.setText(vd.getSuperBlockString());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Merci de sélectionner un disk");
+                }
+            }
+        });
+
+        JButtonDefrag.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (vd != null){
+                    try {
+                        JTextAreaDefrag.setText(vd.defragmentation());
+                        vd.saveDisk();
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de la défragmentation");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Merci de sélectionner un disk");
+                }
+            }
+        });
     }
 
     public static void main(String[] args) throws IOException {

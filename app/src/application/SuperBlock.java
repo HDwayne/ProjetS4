@@ -109,8 +109,6 @@ public class SuperBlock {
     public static int getNbBlocsUsed(){
         return nbBlocsUsed;
     }
-    public static int getFirstFreeByte(){
-        return firstFreeByte;
 
     /**
      * It checks if the number of files, users, blocks used and the first free byte are correct
@@ -119,6 +117,10 @@ public class SuperBlock {
      * @return The result of the analysis of the superblock.
      */
     public static String analysis(VirtualDisk disk) {
+        if (numberOfFiles == 0){
+            return "Pas de données à analyser\n";
+        }
+
         String result = "Cohérence du superblock\n";
 
         // Check if the number of files is correct
