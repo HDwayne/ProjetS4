@@ -120,7 +120,8 @@ typedef enum _STR_NAME {
     OUTPUT_COMMAND_SUDO_ROOT_PWD_FAIL,
     ERROR_COMMAND_SUDO_USAGE,
     ERROR_COMMAND_LOGOUT_USAGE,
-    ERROR_COMMAND_CLEAR_USAGE
+    ERROR_COMMAND_CLEAR_USAGE,
+    ERROR_COMMAND_ARGS_LOGIN_EMPTY
 } STR_NAME;
 
 static const STRING strings[] = {
@@ -729,6 +730,12 @@ static const STRING strings[] = {
             "Usage: clear",
             "usage: clear",
         } // ERROR_COMMAND_CLEAR_USAGE
+    },
+    {
+        {
+            "Login cannot be empty",
+            "L'identifiant ne peut pas être vide",
+        } // ERROR_COMMAND_ARGS_LOGIN_EMPTY
     }
 };
 

@@ -531,6 +531,11 @@ int cmd_adduser(cmd_t args, session_t user) {
     fprintf(stdout, "%s ", LangGet(OUTPUT_COMMAND_ADDUSER_LOGIN));
     if (read_cmd(login, FILENAME_MAX_SIZE) == ERROR)
         return ERROR;
+
+    if (strcmp(login, "") == 0) {
+        terminal_print(LangGet(ERROR_COMMAND_ARGS_LOGIN_EMPTY), TERMINAL_RED);
+        return ERROR;
+    }
     
     terminal_non_canonique();
     printf("\e[?25l");
