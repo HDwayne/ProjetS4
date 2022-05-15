@@ -341,7 +341,6 @@ int cmd_edit(cmd_t args, session_t user) {
     // newfile.size = strlen((char *)newfile.data);
     newfile.size = cara;
     //fprintf(stdout, "size: %d\n", newfile.size);
-
     int nb_n=0;
     for (uint i = 0; newfile.data[i] != '\0'; i++)
         if (newfile.data[i] == '\n')
