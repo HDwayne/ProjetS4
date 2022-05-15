@@ -332,8 +332,11 @@ int cmd_edit(cmd_t args, session_t user) {
             }
         }
     }
-
-    newfile.data[newfile.size-1] = '\0';
+    if (newfile.data[newfile.size-1] == '\n'){
+        newfile.data[newfile.size-1] = '\0';
+    }else {
+        newfile.data[newfile.size] = '\0';
+    }
     // newfile.size += strlen("\0");
     // newfile.size = strlen((char *)newfile.data);
     newfile.size = cara;
