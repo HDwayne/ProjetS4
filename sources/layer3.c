@@ -79,11 +79,13 @@ int get_unused_user() {
 int init_user(char *login, char *password) {
     int id_user = get_unused_user();
     if (id_user == NB_USERS) {
-        fprintf(stderr, "%s\n", LangGet(ERROR_USER_MAX));
+        // fprintf(stderr, "%s\n", LangGet(ERROR_USER_MAX));
+        terminal_print(LangGet(ERROR_USER_MAX), TERMINAL_RED);
         return ERROR;
     }
     if (is_login_in_users_table(login) != NB_USERS) {
-        fprintf(stderr, "%s\n", LangGet(ERROR_USER_EXIST));
+        // fprintf(stderr, "%s\n", LangGet(ERROR_USER_EXIST));
+        terminal_print(LangGet(ERROR_USER_EXIST), TERMINAL_RED);
         return ERROR;
     }
     for (int i = 0; i < FILENAME_MAX_SIZE; i++)

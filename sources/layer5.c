@@ -555,7 +555,8 @@ int cmd_adduser(cmd_t args, session_t user) {
     
     if (init_user(login, password) == ERROR)
         return ERROR;
-    fprintf(stdout, "%s\n", LangGet(OUTPUT_COMMAND_ADDUSER_CREATED));
+    // fprintf(stdout, "%s\n", LangGet(OUTPUT_COMMAND_ADDUSER_CREATED));
+    terminal_print(LangGet(OUTPUT_COMMAND_ADDUSER_CREATED), TERMINAL_GREEN);
     return SUCCESS;
 }
 
