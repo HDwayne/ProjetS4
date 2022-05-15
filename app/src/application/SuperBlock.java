@@ -100,6 +100,18 @@ public class SuperBlock {
         System.out.println("First free byte: " + firstFreeByte + " }");
     }
 
+    public static int getNumberOfFiles(){
+        return numberOfFiles;
+    }
+    public static int getNumberOfUsers(){
+        return numberOfUsers;
+    }
+    public static int getNbBlocsUsed(){
+        return nbBlocsUsed;
+    }
+    public static int getFirstFreeByte(){
+        return firstFreeByte;
+
     /**
      * It checks if the number of files, users, blocks used and the first free byte are correct
      *
@@ -153,7 +165,6 @@ public class SuperBlock {
         }
 
         return result;
-
     }
 }
 

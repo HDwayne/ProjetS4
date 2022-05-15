@@ -37,6 +37,7 @@ int write_file(char *filename, file_t filedata, session_t user) {
             uint pos = virtual_disk_sos->inodes[i_inode].first_byte;
             if (write_text_block_uchar(&pos, filedata.size, filedata.data) == ERROR)
                 return ERROR;
+            virtual_disk_sos->inodes[i_inode].size = filedata.size;
         } else {
             char *ctimestamp = malloc(sizeof(char) * TIMESTAMP_SIZE);
             if (ctimestamp == NULL) {
@@ -76,6 +77,7 @@ int read_file(char *filename, file_t *filedata) {
         return ERROR;
     }
     filedata->size = virtual_disk_sos->inodes[index_inode].size;
+    strcpy(filedata->data, "");
     uint pos = virtual_disk_sos->inodes[index_inode].first_byte;
     if (read_text_block_uchar(&pos, filedata->size, filedata->data) == ERROR)
         return ERROR;

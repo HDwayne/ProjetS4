@@ -182,20 +182,37 @@ void terminal_set_editor_mode(char* filename, int line_to_edit, int nb_line_tt){
     fprintf(stdout, "┘");
 }
 
-void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_size], int pos, bool toEdit){
+void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_size], int pos, int offset, bool toEdit){
 	fflush(stdout);
-	int j=0;
-	for (int i = 0; i < array_size; i++){
-		terminal_cursor(1,i+2+j);
-		if (i == pos){
-			fprintf(stdout, "%s┝ %s%s", TERMINAL_GREEN, text[i], TERMINAL_RESET);
+
+	int edit_offset=0;
+	int col;
+    int row;
+    terminal_get_max_size(&col, &row);
+
+	for (int i = 0; i+2<row-1 && i+offset<array_size; i++){
+		terminal_cursor(1, i+2+edit_offset);
+		if (i==pos){
+			fprintf(stdout, "%s┝ %s%s", TERMINAL_GREEN, text[i+offset], TERMINAL_RESET);
 			if (toEdit){
 				terminal_cursor(1,i+3);
 				fprintf(stdout, "│ new text : ");
-				j=1;
+				edit_offset=1;
 			}
 		} else
-			fprintf(stdout, "┝ %s", text[i]);
+			fprintf(stdout, "┝ %s", text[i+offset]);
 	}
+
+	int cara=0;
+	for (int i = 0; i < array_size; i++)
+		cara+=strlen(text[i]);
+	char cara_str[10];
+	sprintf(cara_str, "%d", cara);
+	
+	terminal_cursor((int)(col-(strlen(cara_str))), row);
+	if (cara < MAX_FILE_SIZE)
+		fprintf(stdout, "%s%s%s%s", TERMINAL_BLACK, TERMINAL_BG_WHT, cara_str, TERMINAL_RESET);
+	else
+		fprintf(stdout, "%s%s%s%s", TERMINAL_WHITE, TERMINAL_BG_RED, cara_str, TERMINAL_RESET);
 	fflush(stdout);
 }
