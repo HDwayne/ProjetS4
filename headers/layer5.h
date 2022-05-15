@@ -40,7 +40,7 @@
 int terminal_shell();
 int read_cmd(char * cmd, int size);
 void interprete_cmd(char * cmd, cmd_t *args);
-int execute_cmd(cmd_t args, session_t user);
+int execute_cmd(cmd_t args, session_t user, int sudo_mode_user);
 int cmd_ls(cmd_t args, session_t user);
 int cmd_cat(cmd_t args, session_t user);
 int cmd_rm(cmd_t args, session_t user);
@@ -52,7 +52,7 @@ int cmd_chown(cmd_t args, session_t user);
 int cmd_chmod(cmd_t args, session_t user);
 int cmd_listusers(cmd_t args);
 int cmd_adduser(cmd_t args, session_t user);
-int cmd_rmuser(cmd_t args, session_t user);
+int cmd_rmuser(cmd_t args, session_t user, int index_user_real);
 int cmd_clear();
 int cmd_help(cmd_t args);
 

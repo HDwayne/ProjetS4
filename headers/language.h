@@ -121,7 +121,8 @@ typedef enum _STR_NAME {
     ERROR_COMMAND_SUDO_USAGE,
     ERROR_COMMAND_LOGOUT_USAGE,
     ERROR_COMMAND_CLEAR_USAGE,
-    ERROR_COMMAND_ARGS_LOGIN_EMPTY
+    ERROR_COMMAND_ARGS_LOGIN_EMPTY,
+    ERROR_COMMAND_ARGS_LOGIN_SELF
 } STR_NAME;
 
 static const STRING strings[] = {
@@ -736,6 +737,12 @@ static const STRING strings[] = {
             "Login cannot be empty",
             "L'identifiant ne peut pas être vide",
         } // ERROR_COMMAND_ARGS_LOGIN_EMPTY
+    },
+    {
+        {
+            "Cannot delete the current user",
+            "Impossible de supprimer l'utilisateur courant",
+        } // ERROR_COMMAND_ARGS_LOGIN_SELF
     }
 };
 

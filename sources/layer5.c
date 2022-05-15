@@ -566,23 +566,32 @@ int cmd_adduser(cmd_t args, session_t user) {
  * @param user
  * @return int, Success code or error code depending on whether successful or failure
  */
-int cmd_rmuser(cmd_t args, session_t user) {
+int cmd_rmuser(cmd_t args, session_t user, int index_user_real) {
     if (args.nbArgs != 2) {
         terminal_print(LangGet(ERROR_COMMAND_RMUSER_USAGE), TERMINAL_ORANGE);
         // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_RMUSER_USAGE));
         return ERROR;
     }
+    
     if (user.userid != ROOT_UID) {
         terminal_print(LangGet(ERROR_COMMAND_ARGS_ROOT_ONLY), TERMINAL_RED);
         // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_ARGS_ROOT_ONLY));
         return ERROR;
     }
+
     int index_login = is_login_in_users_table(args.tabArgs[1]);
     if (index_login == NB_USERS) {
         fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_ARGS_LOGIN_EXIST), args.tabArgs[1], TERMINAL_RESET);
         // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_ARGS_LOGIN_EXIST), args.tabArgs[1]);
         return ERROR;
     }
+
+    if (index_user_real != -1 && strcmp(args.tabArgs[1], virtual_disk_sos->users_table[index_user_real].login) == 0) { // si l'utilisateur à supprimer est celui connecté
+        // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_ARGS_LOGIN_SELF));
+        terminal_print(LangGet(ERROR_COMMAND_ARGS_LOGIN_SELF), TERMINAL_RED);
+        return ERROR;
+    }
+
     if (delete_user(index_login) == ERROR)
         return ERROR;
     fprintf(stdout, "%s %s\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_RMUSER));
@@ -710,7 +719,7 @@ void interprete_cmd(char *cmd, cmd_t *args) {
  * @param user
  * @return int, Success code or error code depending on whether successful or failure
  */
-int execute_cmd(cmd_t args, session_t user) {
+int execute_cmd(cmd_t args, session_t user, int sudo_mode_user) {
     char cmd_name[CMD_MAX_SIZE];
     strcpy(cmd_name, args.tabArgs[0]);
     if (strcmp(cmd_name, CMD_HELP) == 0)
@@ -738,7 +747,7 @@ int execute_cmd(cmd_t args, session_t user) {
     if (strcmp(cmd_name, CMD_ADDUSER) == 0)
         return cmd_adduser(args, user);
     if (strcmp(cmd_name, CMD_RMUSER) == 0)
-        return cmd_rmuser(args, user);
+        return cmd_rmuser(args, user, sudo_mode_user);
     if (strcmp(cmd_name, CMD_LOGOUT) == 0)
         return SUCCESS;
     if (strcmp(cmd_name, CMD_SUDO) == 0)
@@ -788,7 +797,7 @@ int terminal_shell() {
             for (int i = 0; i < interpreted_cmd.nbArgs; i++)
                 strcpy(interpreted_cmd.tabArgs[i], interpreted_cmd.tabArgs[i + 1]);
             if (user.userid == ROOT_UID)
-                execute_cmd(interpreted_cmd, user);
+                execute_cmd(interpreted_cmd, user, -1);
             else {
                 fprintf(stdout, "%s\n", LangGet(OUTPUT_COMMAND_SUDO_ROOT_PWD_ASK));
                 char password[FILENAME_MAX_SIZE];
@@ -801,7 +810,7 @@ int terminal_shell() {
                 if (is_good_credentials(virtual_disk_sos->users_table[ROOT_UID].login, password) == ROOT_UID) {
                     int saved_user_id = user.userid;
                     user.userid = ROOT_UID;
-                    execute_cmd(interpreted_cmd, user);
+                    execute_cmd(interpreted_cmd, user, saved_user_id);
                     user.userid = saved_user_id;
                 } else {
                     terminal_print(LangGet(OUTPUT_COMMAND_SUDO_ROOT_PWD_FAIL), TERMINAL_RED);
@@ -814,7 +823,7 @@ int terminal_shell() {
         else if (strcmp(interpreted_cmd.tabArgs[0], CMD_QUIT) == 0)
             system_on = false;
         else
-            execute_cmd(interpreted_cmd, user);
+            execute_cmd(interpreted_cmd, user, -1);
     }
     return SUCCESS;
 }
