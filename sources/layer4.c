@@ -38,6 +38,7 @@ int write_file(char *filename, file_t filedata, session_t user) {
             if (write_text_block_uchar(&pos, filedata.size, filedata.data) == ERROR)
                 return ERROR;
             virtual_disk_sos->inodes[i_inode].size = filedata.size;
+            update_first_free_byte(;)
         } else {
             char *ctimestamp = malloc(sizeof(char) * TIMESTAMP_SIZE);
             if (ctimestamp == NULL) {
@@ -53,6 +54,7 @@ int write_file(char *filename, file_t filedata, session_t user) {
             if (write_text_block_uchar(&pos, filedata.size, filedata.data) == ERROR)
                 return ERROR;
             free(ctimestamp);
+            update_first_free_byte();
         }
     } else {
         if (init_inode(filename, filedata.size, virtual_disk_sos->super_block.first_free_byte, timestamp(), timestamp(), user) == ERROR)
@@ -60,6 +62,7 @@ int write_file(char *filename, file_t filedata, session_t user) {
         uint pos = virtual_disk_sos->inodes[is_file_in_inode(filename)].first_byte;
         if (write_text_block_uchar(&pos, filedata.size, filedata.data) == ERROR)
             return ERROR;
+        update_first_free_byte();
     }
     return SUCCESS;
 }
