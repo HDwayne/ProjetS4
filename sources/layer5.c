@@ -148,7 +148,7 @@ int cmd_rm(cmd_t args, session_t user) {
     }
     if (delete_file(args.tabArgs[1]) == ERROR)
         return ERROR;
-    fprintf(stderr, "%s %s\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_RM));
+    fprintf(stderr, "%s%s %s%s\n", TERMINAL_GREEN, args.tabArgs[1], LangGet(OUTPUT_COMMAND_RM), TERMINAL_RESET);
     return SUCCESS;
 }
 
