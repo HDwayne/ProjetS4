@@ -219,7 +219,8 @@ int get_unused_inode() {
 int init_inode(const char *fileName, uint size, uint pos, char *createTime, char *modifyTime, session_t user) {
     int index_inode = get_unused_inode();
     if (index_inode == INODE_TABLE_SIZE || virtual_disk_sos->super_block.number_of_files >= 10) {
-        fprintf(stderr, "%s\n", LangGet(ERROR_INODE_TABLE_FULL));
+        // fprintf(stderr, "%s\n", LangGet(ERROR_INODE_TABLE_FULL));
+        terminal_print(LangGet(ERROR_INODE_TABLE_FULL), TERMINAL_RED);
         return ERROR;
     }
     int i = 0;

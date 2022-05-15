@@ -176,7 +176,7 @@ int cmd_cr(cmd_t args, session_t user) {
     file.data[0] = '\0';
     if (write_file(args.tabArgs[1], file, user) == ERROR)
         return ERROR;
-    fprintf(stdout, "%s %s\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_CR));
+    fprintf(stdout, "%s%s %s%s\n", TERMINAL_GREEN, args.tabArgs[1], LangGet(OUTPUT_COMMAND_CR), TERMINAL_RESET);
     return SUCCESS;
 }
 
