@@ -343,7 +343,10 @@ int cmd_edit(cmd_t args, session_t user) {
     else 
         strcat((char *)newfile.data, "\0");
 
-    newfile.size = cara + j - 1;
+    if (cara  > 0 )
+        newfile.size = cara + j - 1;
+    else
+        newfile.size = cara;
 
     int nb_n=0;
     for (uint i = 0; newfile.data[i] != '\0'; i++)
