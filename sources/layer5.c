@@ -201,31 +201,33 @@ int cmd_cr(cmd_t args, session_t user) {
  * @return int
  */
 int cmd_edit(cmd_t args, session_t user) {
-    if (args.nbArgs != 2) {
+    // Verifications
+    if (args.nbArgs != 2) { // Nombre d'arguments
         terminal_print(LangGet(ERROR_COMMAND_EDIT_USAGE), TERMINAL_ORANGE);
         return ERROR;
     }
     int index_inode = is_file_in_inode(args.tabArgs[1]);
-    if (index_inode == INODE_TABLE_SIZE) {
+    if (index_inode == INODE_TABLE_SIZE) { // Le fichier n'existe pas
         fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1], TERMINAL_RESET);
         return ERROR;
     }
-    if (!has_rights(index_inode, user.userid, rW)) {
+    if (!has_rights(index_inode, user.userid, rW)) { // Le fichier n'est pas accessible en écriture
         terminal_print(LangGet(ERROR_FILE_RIGHTS), TERMINAL_RED);
         return ERROR;
     }
 
     file_t file;
-    if (read_file(args.tabArgs[1], &file) == ERROR)
+    if (read_file(args.tabArgs[1], &file) == ERROR) // Lecture du fichier
         return ERROR;
 
+    // Compteur du nombre de lignes
     int nb_line_tt = 1;
     for (uint i = 0; file.data[i] != '\0'; i++)
         if (file.data[i] == '\n')
             nb_line_tt++;
 
     char text[1000][MAX_MSG];
-
+    // On remplit le tableau de chaînes de caractères à partir du fichier
     int i = 0;
     const char delim[1] = "\n";
     char *token;
@@ -237,6 +239,7 @@ int cmd_edit(cmd_t args, session_t user) {
         token = strtok(NULL, delim);
     }
 
+    // Passage en terminal non canonique
     terminal_clear();
     terminal_non_canonique();
     printf("\e[?25l");
@@ -244,10 +247,8 @@ int cmd_edit(cmd_t args, session_t user) {
     char lettre;
     int pos=0;
     int offset=0;
-    int cara;
+    int cara, col, row;
 
-    int col;
-    int row;
     terminal_get_max_size(&col, &row);
 
     do {
@@ -309,7 +310,7 @@ int cmd_edit(cmd_t args, session_t user) {
             terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, offset, false);
         }
         cara=0;
-        for (int i = 0; i < nb_line_tt; i++){
+        for (int i = 0; i < nb_line_tt; i++){ // Compteur nombre de caractères
             if(text[i][0] != '\n'){
                 cara += strlen(text[i]);
                 if (i < nb_line_tt-1 && text[i][strlen(text[i])-1] != '\n')
@@ -319,13 +320,14 @@ int cmd_edit(cmd_t args, session_t user) {
             }
         }
     } while (lettre != TC_KEY_ENTER || cara >= MAX_FILE_SIZE);
-    
+
+    // Passage en terminal canonique
     printf("\e[?25h");
 	terminal_cursor(0, 0);
 	terminal_canonique();
 	terminal_clear();
 
-    if (strlen(text[0]) == 0 && nb_line_tt == 1)
+    if (strlen(text[0]) == 0 && nb_line_tt == 1) // Si texte vide, on ajoute un caractère
         strcpy(text[0], " ");
 
     file_t newfile;
@@ -333,7 +335,7 @@ int cmd_edit(cmd_t args, session_t user) {
     memcpy(newfile.data, "", strlen(""));
 
     int j = 0;
-    for (int i = 0; i < nb_line_tt; i++) {
+    for (int i = 0; i < nb_line_tt; i++) { // On remplie le fichier avec le texte saisi
         if (text[i][0] != '\n') {
             memcpy(newfile.data + newfile.size, text[i], strlen(text[i]));
             newfile.size += strlen(text[i]);
@@ -348,22 +350,17 @@ int cmd_edit(cmd_t args, session_t user) {
         }
     }
 
-    if (newfile.data[newfile.size - 1] == '\n' && newfile.size -1 > 0)
+    if (newfile.data[newfile.size - 1] == '\n' && newfile.size -1 > 0) // On termine le fichier avec un \0
         newfile.data[newfile.size -1] = '\0';
     else 
         strcat((char *)newfile.data, "\0");
 
     newfile.size = cara;
 
-    int nb_n=0;
-    for (uint i = 0; newfile.data[i] != '\0'; i++)
-        if (newfile.data[i] == '\n')
-            nb_n++;
-
-    if (write_file(args.tabArgs[1], newfile, user) == ERROR)
+    if (write_file(args.tabArgs[1], newfile, user) == ERROR) // On écrit le fichier
         return ERROR;
 
-    for (int i = 0; i < nb_line_tt; i++)
+    for (int i = 0; i < nb_line_tt; i++) // On libère la mémoire
         strcpy(text[i], "");
 
     return SUCCESS;
@@ -785,12 +782,12 @@ int execute_cmd(cmd_t args, session_t user, int sudo_mode_user) {
  * @return int, Success code or error code depending on whether successful or failure
  */
 int terminal_shell() {
-    char cmd[CMD_MAX_SIZE];
     int user_id = NB_USERS;
-    session_t user;
     int system_on = true;
+    session_t user;
     char log[FILENAME_MAX_SIZE];
     char pwd[FILENAME_MAX_SIZE];
+    char cmd[CMD_MAX_SIZE];
     
     while (system_on) {
         if (user_id == NB_USERS) {
