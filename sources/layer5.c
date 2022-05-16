@@ -327,7 +327,7 @@ int cmd_edit(cmd_t args, session_t user) {
 
     int j = 0;
     for (int i = 0; i < nb_line_tt; i++) {
-        if (strcmp(text[i], "\n") != 0) {
+        if (text[i][0] != '\n') {
             memcpy(newfile.data + newfile.size, text[i], strlen(text[i]));
             newfile.size += strlen(text[i]);
             if (i < nb_line_tt - 1 && text[i][strlen(text[i]) - 1] != '\n') {
@@ -335,6 +335,9 @@ int cmd_edit(cmd_t args, session_t user) {
                 newfile.size += strlen("\n");
                 j++;
             }
+        }else{
+            memcpy(newfile.data + newfile.size, "\n", strlen("\n"));
+            newfile.size += strlen("\n");
         }
     }
 
