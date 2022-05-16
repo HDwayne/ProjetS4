@@ -14,3 +14,5 @@ bin/dump_user
 .idea/uiDesigner.xml
 .idea/modules.xml
 .idea/misc.xml
+app/app.iml
+ProjetS4.iml
