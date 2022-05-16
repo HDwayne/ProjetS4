@@ -308,9 +308,7 @@ int cmd_edit(cmd_t args, session_t user) {
             nb_line_tt++;
             terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, offset, false);
         }
-        cara=0;
-        for (int i = 0; i < nb_line_tt; i++)
-            cara+=strlen(text[i]);
+        cara=get_nb_cara(text);
     } while (lettre != TC_KEY_ENTER || cara >= MAX_FILE_SIZE);
     
     printf("\e[?25h");

@@ -182,6 +182,17 @@ void terminal_set_editor_mode(char* filename, int line_to_edit, int nb_line_tt){
     fprintf(stdout, "┘");
 }
 
+int get_nb_cara(char** text){
+    int nb_cara = 0;
+    for (int i = 0; text[i] != NULL; i++){
+        if (text[i][0] != '\0')
+            nb_cara += strlen(text[i]);
+        else
+            nb_cara += 1;
+    }
+    return nb_cara;
+}
+
 void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_size], int pos, int offset, bool toEdit){
 	fflush(stdout);
 
@@ -203,9 +214,7 @@ void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_s
 			fprintf(stdout, "┝ %s", text[i+offset]);
 	}
 
-	int cara=0;
-	for (int i = 0; i < array_size; i++)
-		cara+=strlen(text[i]);
+	cara = get_nb_cara(text);
 	char cara_str[10];
 	sprintf(cara_str, "%d", cara);
 	
