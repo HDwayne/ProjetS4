@@ -1,5 +1,5 @@
 # Scratch OS
-HERZBERG Dwayne (n°etudiant Dwayne) \
+HERZBERG Dwayne (22000086) \
 BERLIN Florian (22006270) \
 TPA12
 
