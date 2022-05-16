@@ -199,11 +199,7 @@ int delete_inode(int index_inode) {
  * @return int, 0 <= x <= 10
  */
 int get_unused_inode() {
-    for (int i = 0; i < INODE_TABLE_SIZE; i++) {
-        if (virtual_disk_sos->inodes[i].first_byte == 0)
-            return i;
-    }
-    return INODE_TABLE_SIZE;
+    return virtual_disk_sos->super_block.number_of_files;
 }
 
 /**

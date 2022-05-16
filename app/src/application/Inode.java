@@ -349,7 +349,7 @@ public class Inode {
             }
         }else{
             if(nextInode != disk.getInode(inodeId + 1).getFirstByte()){
-                result += "Problème de fragmentation. La prochaine inode est déjà occupée mais n'est initialisée au bon endroit sur le disk. First byte = " +  disk.getInode(inodeId + 1).getFirstByte() + " Valeur calculée : " + nextInode + "\n";
+                result += "Problème de fragmentation. La prochaine inode est déjà occupée mais n'est pas initialisée au bon endroit sur le disk. First byte = " +  disk.getInode(inodeId + 1).getFirstByte() + " Valeur calculée : " + nextInode + "\n";
             }else{
                 result += "La prochaine inode est déjà occupée et est initialisée au bon endroit sur le disk.\n";
             }

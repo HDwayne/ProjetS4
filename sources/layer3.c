@@ -62,11 +62,7 @@ int delete_user(int id_user) {
  * @return int
  */
 int get_unused_user() {
-    for (int i = 0; i < NB_USERS; ++i) {
-        if (virtual_disk_sos->users_table[i].login[0] == '\0')
-            return i;
-    }
-    return NB_USERS;
+    return virtual_disk_sos->super_block.number_of_users;
 }
 
 /**
