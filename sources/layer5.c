@@ -340,8 +340,8 @@ int cmd_edit(cmd_t args, session_t user) {
 
     if (newfile.data[newfile.size - 1] == '\n' && strlen(newfile.data) > 1)
         newfile.data[newfile.size -1] = '\0';
-    else strcat((char *)
-        newfile.data, "\0");
+    else 
+        strcat((char *)newfile.data, "\0");
 
     newfile.size = cara + j;
 
