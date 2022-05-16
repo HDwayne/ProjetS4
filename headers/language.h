@@ -129,7 +129,8 @@ typedef enum _STR_NAME {
     ERROR_COMMAND_ARGS_FILE_EXIST_ALREADY,
     ERROR_LOGIN_ATTEMPT,
     ERROR_COMMAND_RENAME_USAGE,
-    ERROR_COMMAND_CP_USAGE
+    ERROR_COMMAND_CP_USAGE,
+    ERROR_COMMAND_ARGS_FILE_NAME_EMPTY
 } STR_NAME;
 
 static const STRING strings[] = {
@@ -784,16 +785,22 @@ static const STRING strings[] = {
         } // ERROR_LOGIN_ATTEMPT
     },
     {
-            {
-                "Usage: rename <old name> <new name>",
-                    "Usage: rename <ancien nom> <nouveau nom>",
-            } // ERROR_COMMAND_RENAME_USAGE
+        {
+            "Usage: rename <old name> <new name>",
+            "Usage: rename <ancien nom> <nouveau nom>",
+        } // ERROR_COMMAND_RENAME_USAGE
     },
     {
-            {
-                    "Usage: cp <file name> <new name>",
-                    "Usage: cp <nom fichier> <nouveau nom>",
-            } // ERROR_COMMAND_CP_USAGE
+        {
+            "Usage: cp <file name> <new name>",
+            "Usage: cp <nom fichier> <nouveau nom>",
+        } // ERROR_COMMAND_CP_USAGE
+    },
+    {
+        {
+            "New file name cannot be empty",
+            "Le nouveau nom du fichier ne peut pas être vide",
+        } // ERROR_COMMAND_ARGS_FILE_NAME_EMPTY
     }
 };
 
