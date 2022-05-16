@@ -363,6 +363,9 @@ int cmd_edit(cmd_t args, session_t user) {
     if (write_file(args.tabArgs[1], newfile, user) == ERROR)
         return ERROR;
 
+    for (int i = 0; i < nb_line_tt; i++)
+        strcpy(text[i], "");
+
     return SUCCESS;
 }
 
