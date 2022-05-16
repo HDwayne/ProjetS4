@@ -380,12 +380,30 @@ int cmd_load(cmd_t args, session_t user) {
         // fprintf(stderr, "%s\n", LangGet(ERROR_COMMAND_LOAD_USAGE));
         return ERROR;
     }
+
+    int index_inode = is_file_in_inode(args.tabArgs[1]);
+    if (index_inode != INODE_TABLE_SIZE) {
+        fprintf(stdout, "%s%s %s%s\n", TERMINAL_ORANGE, LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1], TERMINAL_RESET);
+        fprintf(stdout, "Souhaitez-vous le remplacer ? (y/n) ");
+        char* text = malloc(sizeof(char) * MAX_MSG);
+        do {
+            fgets(text, 4, stdin);
+        } while (!(strcmp(text, "y\n") == 0 || strcmp(text,  "yes\n") == 0 || strcmp(text,  "no\n") == 0 || strcmp(text,  "n\n") == 0));
+
+        if (strcmp(text, "n\n") == 0 || strcmp(text, "N\n") == 0){
+            free(text);
+            return SUCCESS;
+        }
+        free(text);
+
+    }
+
     if (load_file_from_host(args.tabArgs[1], user) == ERROR) {
         fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_LOAD_LOADING_FILE), args.tabArgs[1], TERMINAL_RESET);
         // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_LOAD_LOADING_FILE), args.tabArgs[1]);
         return ERROR;
     }
-    fprintf(stdout, "%s %s\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_LOAD));
+    fprintf(stdout, "%s%s %s%s\n", TERMINAL_GREEN, args.tabArgs[1], LangGet(OUTPUT_COMMAND_LOAD), TERMINAL_RESET);
     return SUCCESS;
 }
 
@@ -418,7 +436,7 @@ int cmd_store(cmd_t args, session_t user) {
         // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_STORE_STORING_FILE), args.tabArgs[1]);
         return ERROR;
     }
-    fprintf(stdout, "%s %s\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_STORE));
+    fprintf(stdout, "%s%s %s%s\n", TERMINAL_GREEN, args.tabArgs[1], LangGet(OUTPUT_COMMAND_STORE), TERMINAL_RESET);
     return SUCCESS;
 }
 
@@ -454,7 +472,7 @@ int cmd_chown(cmd_t args, session_t user) {
     }
     uint last_uid = virtual_disk_sos->inodes[index_inode].uid;
     virtual_disk_sos->inodes[index_inode].uid = index_login;
-    fprintf(stderr, "%s: %s (%s -> %s)\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_CHOWN), virtual_disk_sos->users_table[last_uid].login, args.tabArgs[2]);
+    fprintf(stderr, "%s%s: %s (%s -> %s)%s\n", TERMINAL_GREEN, args.tabArgs[1], LangGet(OUTPUT_COMMAND_CHOWN), virtual_disk_sos->users_table[last_uid].login, args.tabArgs[2], TERMINAL_RESET);
     return SUCCESS;
 }
 
@@ -495,7 +513,7 @@ int cmd_chmod(cmd_t args, session_t user) {
         // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_ARGS_RIGHT_EXIST), args.tabArgs[2]);
         return ERROR;
     }
-    fprintf(stdout, "%s: %s %s\n", args.tabArgs[1], LangGet(OUTPUT_COMMAND_CHMOD), args.tabArgs[2]);
+    fprintf(stdout, "%s%s: %s %s%s\n", TERMINAL_GREEN, args.tabArgs[1], LangGet(OUTPUT_COMMAND_CHMOD), args.tabArgs[2], TERMINAL_RESET);
     return SUCCESS;
 }
 
