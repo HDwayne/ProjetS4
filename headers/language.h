@@ -127,7 +127,9 @@ typedef enum _STR_NAME {
     ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR,
     ERROR_COMMAND_ARGS_FILE_LENGTH,
     ERROR_COMMAND_ARGS_FILE_EXIST_ALREADY,
-    ERROR_LOGIN_ATTEMPT
+    ERROR_LOGIN_ATTEMPT,
+    ERROR_COMMAND_RENAME_USAGE,
+    ERROR_COMMAND_CP_USAGE
 } STR_NAME;
 
 static const STRING strings[] = {
@@ -780,6 +782,18 @@ static const STRING strings[] = {
             "Login failed, thanks to try again later",
             "Identifiant incorrect, merci de réessayer plus tard",
         } // ERROR_LOGIN_ATTEMPT
+    },
+    {
+            {
+                "Usage: rename <old name> <new name>",
+                    "Usage: rename <ancien nom> <nouveau nom>",
+            } // ERROR_COMMAND_RENAME_USAGE
+    },
+    {
+            {
+                    "Usage: cp <file name> <new name>",
+                    "Usage: cp <nom fichier> <nouveau nom>",
+            } // ERROR_COMMAND_CP_USAGE
     }
 };
 

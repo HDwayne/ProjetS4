@@ -35,6 +35,8 @@
 #define CMD_LOGOUT "logout"
 #define CMD_SUDO "sudo"
 #define CMD_CLEAR "clear"
+#define CMD_RENAME "rename"
+#define CMD_CP "cp"
 
 #define CMD_MAX_SIZE ((9 + FILENAME_MAX_SIZE*2 + 1))
 
@@ -55,6 +57,8 @@ int cmd_listusers(cmd_t args);
 int cmd_adduser(cmd_t args, session_t user);
 int cmd_rmuser(cmd_t args, session_t user, int index_user_real);
 int cmd_clear();
+int cmd_rename(cmd_t args, session_t user);
+int cmd_cp(cmd_t args, session_t user);
 int cmd_help(cmd_t args);
 
 #endif //SCRATCHOS_LAYER5_H

@@ -152,6 +152,81 @@ int cmd_rm(cmd_t args, session_t user) {
     return SUCCESS;
 }
 
+
+int cmd_rename(cmd_t args, session_t user){
+    if(args.nbArgs != 3){
+        terminal_print(LangGet(ERROR_COMMAND_RENAME_USAGE), TERMINAL_ORANGE);
+        return ERROR;
+    }
+    int index_inode = is_file_in_inode(args.tabArgs[1]);
+    if (index_inode == INODE_TABLE_SIZE){
+        fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1], TERMINAL_RESET);
+        return ERROR;
+    }
+
+    if (!has_rights(index_inode, user.userid, rW)) {
+        terminal_print(LangGet(ERROR_FILE_RIGHTS), TERMINAL_RED);
+        // fprintf(stderr, "%s\n", LangGet(ERROR_FILE_RIGHTS));
+        return ERROR;
+    }
+
+    if (strlen(args.tabArgs[2]) >= FILENAME_MAX_SIZE) {
+        terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_LENGTH), TERMINAL_RED);
+        return ERROR;
+    }
+
+    for(int i=0; i<strlen(args.tabArgs[2]); i++ ) {
+        if (ispunct(args.tabArgs[2][i]) && args.tabArgs[2][i] != '_') { // !"#$%&'()*+,-./:;<=>?@ [\]^_`{|}~
+            terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR), TERMINAL_RED);
+            return ERROR;
+        }
+    }
+
+    strcpy(virtual_disk_sos->inodes[index_inode].filename, args.tabArgs[2]);
+    return SUCCESS;
+}
+
+int cmd_cp(cmd_t args, session_t user){
+    if(args.nbArgs != 3){
+        terminal_print(LangGet(ERROR_COMMAND_CP_USAGE), TERMINAL_ORANGE);
+        return ERROR;
+    }
+    int index_inode = is_file_in_inode(args.tabArgs[1]);
+    if (index_inode == INODE_TABLE_SIZE){
+        fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1], TERMINAL_RESET);
+        return ERROR;
+    }
+
+    if (!has_rights(index_inode, user.userid, rW)) {
+        terminal_print(LangGet(ERROR_FILE_RIGHTS), TERMINAL_RED);
+        // fprintf(stderr, "%s\n", LangGet(ERROR_FILE_RIGHTS));
+        return ERROR;
+    }
+
+    if (strlen(args.tabArgs[2]) >= FILENAME_MAX_SIZE) {
+        terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_LENGTH), TERMINAL_RED);
+        return ERROR;
+    }
+
+    for(int i=0; i<strlen(args.tabArgs[2]); i++ ) {
+        if (ispunct(args.tabArgs[2][i]) && args.tabArgs[2][i] != '_') { // !"#$%&'()*+,-./:;<=>?@ [\]^_`{|}~
+            terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR), TERMINAL_RED);
+            return ERROR;
+        }
+    }
+
+    file_t file;
+    if (read_file(args.tabArgs[1], &file) == ERROR)
+        return ERROR;
+
+    if (write_file(args.tabArgs[2], file, user) == ERROR)
+        return ERROR;
+
+
+    return SUCCESS;
+
+}
+
 /**
  * @brief Executes cr command
  *
@@ -670,6 +745,8 @@ int cmd_help(cmd_t args) {
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_SUDO_USAGE));
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_LOGOUT_USAGE));
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_CLEAR_USAGE));
+        fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_RENAME_USAGE));
+        fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_CP_USAGE));
         return SUCCESS;
     } else {
         if (strcmp(args.tabArgs[1], CMD_HELP) == 0)
@@ -704,6 +781,11 @@ int cmd_help(cmd_t args) {
             fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_LOGOUT_USAGE));
         else if (strcmp(args.tabArgs[1], CMD_CLEAR) == 0)
             fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_CLEAR_USAGE));
+        else if (strcmp(args.tabArgs[1], CMD_RENAME) == 0){
+            fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_RENAME_USAGE));
+        }else if (strcmp(args.tabArgs[1], CMD_CP) == 0){
+            fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_CP_USAGE));
+        }
         else {
             terminal_print(LangGet(ERROR_COMMAND_ARGS_UNKNOWN), TERMINAL_RED);
             // fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_ARGS_UNKNOWN));
@@ -761,36 +843,41 @@ int execute_cmd(cmd_t args, session_t user, int sudo_mode_user) {
     strcpy(cmd_name, args.tabArgs[0]);
     if (strcmp(cmd_name, CMD_HELP) == 0)
         return cmd_help(args);
-    if (strcmp(cmd_name, CMD_LS) == 0)
+    else if (strcmp(cmd_name, CMD_LS) == 0)
         return cmd_ls(args, user);
-    if (strcmp(cmd_name, CMD_CAT) == 0)
+    else if (strcmp(cmd_name, CMD_CAT) == 0)
         return cmd_cat(args, user);
-    if (strcmp(cmd_name, CMD_RM) == 0)
+    else if (strcmp(cmd_name, CMD_RM) == 0)
         return cmd_rm(args, user);
-    if (strcmp(cmd_name, CMD_CR) == 0)
+    else if (strcmp(cmd_name, CMD_CR) == 0)
         return cmd_cr(args, user);
-    if (strcmp(cmd_name, CMD_EDIT) == 0)
+    else if (strcmp(cmd_name, CMD_EDIT) == 0)
         return cmd_edit(args, user);
-    if (strcmp(cmd_name, CMD_LOAD) == 0)
+    else if (strcmp(cmd_name, CMD_LOAD) == 0)
         return cmd_load(args, user);
-    if (strcmp(cmd_name, CMD_STORE) == 0)
+    else if (strcmp(cmd_name, CMD_STORE) == 0)
         return cmd_store(args, user);
-    if (strcmp(cmd_name, CMD_CHOWN) == 0)
+    else if (strcmp(cmd_name, CMD_CHOWN) == 0)
         return cmd_chown(args, user);
-    if (strcmp(cmd_name, CMD_CHMOD) == 0)
+    else if (strcmp(cmd_name, CMD_CHMOD) == 0)
         return cmd_chmod(args, user);
-    if (strcmp(cmd_name, CMD_LISTUSERS) == 0)
+    else if (strcmp(cmd_name, CMD_LISTUSERS) == 0)
         return cmd_listusers(args);
-    if (strcmp(cmd_name, CMD_ADDUSER) == 0)
+    else if (strcmp(cmd_name, CMD_ADDUSER) == 0)
         return cmd_adduser(args, user);
-    if (strcmp(cmd_name, CMD_RMUSER) == 0)
+    else if (strcmp(cmd_name, CMD_RMUSER) == 0)
         return cmd_rmuser(args, user, sudo_mode_user);
-    if (strcmp(cmd_name, CMD_LOGOUT) == 0)
+    else if (strcmp(cmd_name, CMD_LOGOUT) == 0)
         return SUCCESS;
-    if (strcmp(cmd_name, CMD_SUDO) == 0)
+    else if (strcmp(cmd_name, CMD_SUDO) == 0)
         return SUCCESS;
-    if (strcmp(cmd_name, CMD_CLEAR) == 0)
+    else if (strcmp(cmd_name, CMD_CLEAR) == 0)
         return cmd_clear();
+    else if (strcmp(cmd_name, CMD_RENAME) == 0)
+        return cmd_rename(args, user);
+    else if (strcmp(cmd_name, CMD_CP) == 0)
+        return cmd_cp(args, user);
+
     fprintf(stdout, "%s%s \"%s\"%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_UNKNOWN), cmd_name, TERMINAL_RESET);
     return ERROR;
 }
