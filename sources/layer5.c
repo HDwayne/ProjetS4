@@ -225,7 +225,6 @@ int cmd_edit(cmd_t args, session_t user) {
 
     char text[1000][MAX_MSG];
 
-    // TODO
     int i = 0;
     const char delim[1] = "\n";
     char *token;
@@ -323,10 +322,10 @@ int cmd_edit(cmd_t args, session_t user) {
     if (strlen(text[0]) == 0 && nb_line_tt == 1)
         strcpy(text[0], " ");
 
-    fprintf(stdout, "--- text ---\n");
-    for (int i = 0; i < nb_line_tt; i++)
-        fprintf(stdout, "%s", text[i]);
-    fprintf(stdout, "--- ---- ---\n");
+    // fprintf(stdout, "--- text ---\n");
+    // for (int i = 0; i < nb_line_tt; i++)
+    //     fprintf(stdout, "%s", text[i]);
+    // fprintf(stdout, "--- ---- ---\n");
 
     file_t newfile;
     newfile.size = 0;

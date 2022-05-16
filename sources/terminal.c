@@ -173,8 +173,8 @@ void terminal_set_editor_mode(char* filename, int line_to_edit, int nb_line_tt){
 	}
 
     terminal_cursor(0, row);
-    fprintf(stdout, "└");
-	for (int i = 2; i < col; i++){
+    fprintf(stdout, "└─ n - insert ──── b - duplicate ─");
+	for (int i =35; i < col; i++){
 		terminal_cursor(i, row);
         fprintf(stdout, "─");
 	}
