@@ -177,8 +177,8 @@ int cmd_cr(cmd_t args, session_t user) {
         return ERROR;
     }
 
-    for(int i=0; i<strlen(args.tabArgs[1]); i++ ) { // TDODO _
-        if (ispunct(args.tabArgs[1][i])) { // !"#$%&'()*+,-./:;<=>?@ [\]^_`{|}~
+    for(int i=0; i<strlen(args.tabArgs[1]); i++ ) {
+        if (ispunct(args.tabArgs[1][i]) && args.tabArgs[1][i] != '_') { // !"#$%&'()*+,-./:;<=>?@ [\]^_`{|}~
             terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR), TERMINAL_RED);
             return ERROR;
         }
