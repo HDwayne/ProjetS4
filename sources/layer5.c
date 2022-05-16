@@ -158,6 +158,7 @@ int cmd_rename(cmd_t args, session_t user){
         terminal_print(LangGet(ERROR_COMMAND_RENAME_USAGE), TERMINAL_ORANGE);
         return ERROR;
     }
+
     int index_inode = is_file_in_inode(args.tabArgs[1]);
     if (index_inode == INODE_TABLE_SIZE){
         fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1], TERMINAL_RESET);
@@ -172,6 +173,11 @@ int cmd_rename(cmd_t args, session_t user){
 
     if (strlen(args.tabArgs[2]) >= FILENAME_MAX_SIZE) {
         terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_LENGTH), TERMINAL_RED);
+        return ERROR;
+    }
+
+    if (strcmp(args.tabArgs[2], "") == 0){
+        terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_NAME_EMPTY), TERMINAL_RED);
         return ERROR;
     }
 
@@ -734,6 +740,8 @@ int cmd_help(cmd_t args) {
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_CAT_USAGE));
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_RM_USAGE));
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_CR_USAGE));
+        fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_RENAME_USAGE));
+        fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_CP_USAGE));
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_EDIT_USAGE));
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_LOAD_USAGE));
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_STORE_USAGE));
@@ -745,8 +753,6 @@ int cmd_help(cmd_t args) {
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_SUDO_USAGE));
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_LOGOUT_USAGE));
         fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_CLEAR_USAGE));
-        fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_RENAME_USAGE));
-        fprintf(stdout, "%s\n", LangGet(ERROR_COMMAND_CP_USAGE));
         return SUCCESS;
     } else {
         if (strcmp(args.tabArgs[1], CMD_HELP) == 0)
