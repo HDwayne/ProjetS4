@@ -309,11 +309,14 @@ int cmd_edit(cmd_t args, session_t user) {
             terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, offset, false);
         }
         cara=0;
-        for (int i = 0; i < 1000; i++){
-            if (text[i][0] != '\0')
+        for (int i = 0; i < nb_line_tt; i++){
+            if(text[i][0] != '\n'){
                 cara += strlen(text[i]);
-            else if (strlen(text[i]) != 0)
-                cara += 1;
+                if (i < nb_line_tt-1 && text[i][strlen(text[i])-1] != '\n')
+                    cara++;
+            }else{
+                cara++;
+            }
         }
     } while (lettre != TC_KEY_ENTER || cara >= MAX_FILE_SIZE);
     
@@ -350,10 +353,7 @@ int cmd_edit(cmd_t args, session_t user) {
     else 
         strcat((char *)newfile.data, "\0");
 
-    if (cara  > 0 )
-        newfile.size = cara + j - 1;
-    else
-        newfile.size = cara;
+    newfile.size = cara;
 
     int nb_n=0;
     for (uint i = 0; newfile.data[i] != '\0'; i++)

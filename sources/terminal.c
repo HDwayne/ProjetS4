@@ -203,12 +203,15 @@ void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_s
 			fprintf(stdout, "┝ %s", text[i+offset]);
 	}
 
-	int cara = 0;
-    for (int i = 0; i < 1000; i++){
-        if (text[i][0] != '\0')
+	int cara=0;
+    for (int i = 0; i < array_size; i++){
+        if(text[i][0] != '\n'){
             cara += strlen(text[i]);
-        else if (strlen(text[i]) != 0)
-            cara += 1;
+            if (i < nb_line_tt-1 && text[i][strlen(text[i])-1] != '\n')
+                cara++;
+        }else{
+            cara++;
+        }
     }
 	char cara_str[10];
 	sprintf(cara_str, "%d", cara);
