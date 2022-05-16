@@ -174,7 +174,6 @@ int cmd_cr(cmd_t args, session_t user) {
 
     for(int i=0; i<strlen(args.tabArgs[1]); i++ ) { 
         if (ispunct(args.tabArgs[1][i])) { // !"#$%&'()*+,-./:;<=>?@ [\]^_`{|}~
-            printf("%c", args.tabArgs[1][i]);
             terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR), TERMINAL_RED);
             return ERROR;
         }
@@ -211,12 +210,9 @@ int cmd_edit(cmd_t args, session_t user) {
         return ERROR;
     }
 
-
     file_t file;
     if (read_file(args.tabArgs[1], &file) == ERROR)
         return ERROR;
-
-    //fprintf(stdout, "%s\n", file.data);
 
     int nb_line_tt = 1;
     for (uint i = 0; file.data[i] != '\0'; i++)
@@ -230,7 +226,6 @@ int cmd_edit(cmd_t args, session_t user) {
     char *token;
     token = strtok((char*)file.data, delim);
     while( token != NULL && strlen(token) != 0 ) {
-        //fprintf(stdout, "%s\n", token);
         strcpy(text[i], token);
         strcat(text[i], "\n");
         i++;
@@ -273,7 +268,6 @@ int cmd_edit(cmd_t args, session_t user) {
             printf("\e[?25h");
 	        terminal_canonique();
             fgets(text[pos+offset], MAX_MSG, stdin);
-            // text[pos+offset][strcspn(text[pos+offset], "\n")] = 0;
             terminal_non_canonique();
             printf("\e[?25l");
         } else if (lettre == 'D') { // delete
@@ -312,7 +306,7 @@ int cmd_edit(cmd_t args, session_t user) {
         cara=0;
         for (int i = 0; i < nb_line_tt; i++)
             cara+=strlen(text[i]);
-    } while (lettre != TC_KEY_ENTER && cara < MAX_FILE_SIZE);
+    } while (lettre != TC_KEY_ENTER || cara >= MAX_FILE_SIZE);
     
     printf("\e[?25h");
 	terminal_cursor(0, 0);
@@ -322,16 +316,9 @@ int cmd_edit(cmd_t args, session_t user) {
     if (strlen(text[0]) == 0 && nb_line_tt == 1)
         strcpy(text[0], " ");
 
-    // fprintf(stdout, "--- text ---\n");
-    // for (int i = 0; i < nb_line_tt; i++)
-    //     fprintf(stdout, "%s", text[i]);
-    // fprintf(stdout, "--- ---- ---\n");
-
     file_t newfile;
     newfile.size = 0;
     memcpy(newfile.data, "", strlen(""));
-    
-    // fprintf(stdout, "nb: %d\n", nb_line_tt);
 
     for (int i = 0; i < nb_line_tt; i++) {
         if (strcmp(text[i], "\n") != 0) {
@@ -343,22 +330,18 @@ int cmd_edit(cmd_t args, session_t user) {
             }
         }
     }
-    if (newfile.data[newfile.size - 1] == '\n')newfile.data[newfile.size -1] = '\0';
-    else strcat((char *)newfile.data, "\0");
-    // newfile.size += strlen("\0");
-    // newfile.size = strlen((char *)newfile.data);
+
+    if (newfile.data[newfile.size - 1] == '\n')
+        newfile.data[newfile.size -1] = '\0';
+    else strcat((char *)
+        newfile.data, "\0");
+
     newfile.size = cara + nb_line_tt-1;
-    //fprintf(stdout, "size: %d\n", newfile.size);
 
     int nb_n=0;
     for (uint i = 0; newfile.data[i] != '\0'; i++)
         if (newfile.data[i] == '\n')
             nb_n++;
-
-   // fprintf(stdout, "nb_n: %d\n", nb_n);
-
-    //fprintf(stdout, "--- data ---\n%s\n--- ---- ---\n", (char*)newfile.data);
-
 
     if (write_file(args.tabArgs[1], newfile, user) == ERROR)
         return ERROR;
