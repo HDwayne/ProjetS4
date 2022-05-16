@@ -214,7 +214,7 @@ void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_s
 			fprintf(stdout, "┝ %s", text[i+offset]);
 	}
 
-	cara = get_nb_cara(text);
+	int cara = get_nb_cara(text);
 	char cara_str[10];
 	sprintf(cara_str, "%d", cara);
 	
