@@ -183,12 +183,9 @@ void terminal_set_editor_mode(char* filename, int line_to_edit, int nb_line_tt){
 }
 
 int get_nb_cara(size_t msg_size, char (*text)[msg_size]){
-    for (int i = 0; strlen(text[i]) != 0; ++i) {
-        fprintf(stdout, "%s\n", text[i]);
-    }
     int nb_cara = 0;
     for (int i = 0; text[i] != NULL; i++){
-        if (text[i][0] != '\0')
+        if (strlen(text[i]) != 0)
             nb_cara += strlen(text[i]);
         else
             nb_cara += 1;
