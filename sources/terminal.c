@@ -207,7 +207,7 @@ void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_s
     for (int i = 0; i < array_size; i++){
         if(text[i][0] != '\n'){
             cara += strlen(text[i]);
-            if (i < nb_line_tt-1 && text[i][strlen(text[i])-1] != '\n')
+            if (i < array_size-1 && text[i][strlen(text[i])-1] != '\n')
                 cara++;
         }else{
             cara++;
