@@ -126,7 +126,8 @@ typedef enum _STR_NAME {
     ERROR_COMMAND_ARGS_REMOVE_ROOT,
     ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR,
     ERROR_COMMAND_ARGS_FILE_LENGTH,
-    ERROR_COMMAND_ARGS_FILE_EXIST_ALREADY
+    ERROR_COMMAND_ARGS_FILE_EXIST_ALREADY,
+    ERROR_LOGIN_ATTEMPT
 } STR_NAME;
 
 static const STRING strings[] = {
@@ -773,6 +774,12 @@ static const STRING strings[] = {
             "File already exists",
             "Le fichier existe déjà",
         } // ERROR_COMMAND_ARGS_FILE_EXIST_ALREADY
+    },
+    {
+        {
+            "Login failed, thanks to try again later",
+            "Identifiant incorrect, merci de réessayer plus tard",
+        } // ERROR_LOGIN_ATTEMPT
     }
 };
 

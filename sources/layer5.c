@@ -784,6 +784,7 @@ int terminal_shell() {
     
     while (system_on) {
         if (user_id == NB_USERS) {
+            int attempt = 0;
             do {
                 fprintf(stdout, "%s ", LangGet(CONSOLE_LOGIN));
                 if (read_cmd(log, FILENAME_MAX_SIZE) == ERROR)
@@ -796,7 +797,12 @@ int terminal_shell() {
                 terminal_canonique();
                 printf("\e[?25h");
                 user_id = is_good_credentials(log, pwd);
-            } while (user_id == NB_USERS);
+                attempt++;
+            } while (user_id == NB_USERS && attempt <= 3);
+            if (attempt == 4) {
+                terminal_print(LangGet(ERROR_LOGIN_ATTEMPT), TERMINAL_RED);
+                return SUCCESS;
+            }
             user.userid = user_id;
         }
         fprintf(stdout, "[%s]: ", virtual_disk_sos->users_table[user.userid].login);
