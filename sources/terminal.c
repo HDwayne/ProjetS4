@@ -204,7 +204,7 @@ void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_s
 	}
 
 	int cara = 0;
-    for (int i = 0; text[i] != NULL; i++){
+    for (int i = 0; i < 1000; i++){
         if (text[i][0] != '\0')
             cara += strlen(text[i]);
         else

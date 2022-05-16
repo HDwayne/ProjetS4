@@ -309,7 +309,7 @@ int cmd_edit(cmd_t args, session_t user) {
             terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, offset, false);
         }
         cara=0;
-        for (int i = 0; text[i] != NULL; i++){
+        for (int i = 0; i < 1000; i++){
             if (text[i][0] != '\0')
                 cara += strlen(text[i]);
             else
