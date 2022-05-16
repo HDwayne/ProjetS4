@@ -171,6 +171,15 @@ int cmd_cr(cmd_t args, session_t user) {
         // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1]);
         return ERROR;
     }
+
+    for(int i=0; i<strlen(args.tabArgs[1]); i++ ) { 
+        if (ispunct(args.tabArgs[1][i])) { // !"#$%&'()*+,-./:;<=>?@ [\]^_`{|}~
+            printf("%c", args.tabArgs[1][i]);
+            terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR), TERMINAL_RED);
+            return ERROR;
+        }
+    }
+
     file_t file;
     file.size = 1;
     file.data[0] = '\0';
@@ -311,6 +320,9 @@ int cmd_edit(cmd_t args, session_t user) {
 	terminal_canonique();
 	terminal_clear();
 
+    if (strlen(text[0]) == 0 && nb_line_tt == 1)
+        strcpy(text[0], " ");
+
     fprintf(stdout, "--- text ---\n");
     for (int i = 0; i < nb_line_tt; i++)
         fprintf(stdout, "%s", text[i]);
@@ -347,6 +359,7 @@ int cmd_edit(cmd_t args, session_t user) {
    // fprintf(stdout, "nb_n: %d\n", nb_n);
 
     //fprintf(stdout, "--- data ---\n%s\n--- ---- ---\n", (char*)newfile.data);
+
 
     if (write_file(args.tabArgs[1], newfile, user) == ERROR)
         return ERROR;
