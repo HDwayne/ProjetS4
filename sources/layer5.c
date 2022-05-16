@@ -167,12 +167,17 @@ int cmd_cr(cmd_t args, session_t user) {
     }
     int index_inode = is_file_in_inode(args.tabArgs[1]);
     if (index_inode != INODE_TABLE_SIZE) {
-        fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1], TERMINAL_RESET);
-        // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_ARGS_FILE_EXIST), args.tabArgs[1]);
+        fprintf(stderr, "%s%s %s%s\n", TERMINAL_RED, LangGet(ERROR_COMMAND_ARGS_FILE_EXIST_ALREADY), args.tabArgs[1], TERMINAL_RESET);
+        // fprintf(stderr, "%s %s\n", LangGet(ERROR_COMMAND_ARGS_FILE_EXIST_ALREADY), args.tabArgs[1]);
         return ERROR;
     }
 
-    for(int i=0; i<strlen(args.tabArgs[1]); i++ ) { 
+    if (strlen(args.tabArgs[1]) >= FILENAME_MAX_SIZE) {
+        terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_LENGTH), TERMINAL_RED);
+        return ERROR;
+    }
+
+    for(int i=0; i<strlen(args.tabArgs[1]); i++ ) { // TDODO _
         if (ispunct(args.tabArgs[1][i])) { // !"#$%&'()*+,-./:;<=>?@ [\]^_`{|}~
             terminal_print(LangGet(ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR), TERMINAL_RED);
             return ERROR;
@@ -332,7 +337,7 @@ int cmd_edit(cmd_t args, session_t user) {
     }
 
     if (newfile.data[newfile.size - 1] == '\n')
-        newfile.data[newfile.size -1] = '\0';
+        newfile.data[newfile.size - 1] = '\0';
     else strcat((char *)
         newfile.data, "\0");
 

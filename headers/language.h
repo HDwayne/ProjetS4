@@ -125,6 +125,8 @@ typedef enum _STR_NAME {
     ERROR_COMMAND_ARGS_LOGIN_SELF,
     ERROR_COMMAND_ARGS_REMOVE_ROOT,
     ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR,
+    ERROR_COMMAND_ARGS_FILE_LENGTH,
+    ERROR_COMMAND_ARGS_FILE_EXIST_ALREADY
 } STR_NAME;
 
 static const STRING strings[] = {
@@ -193,8 +195,10 @@ static const STRING strings[] = {
         } // ERROR_FILE_OPEN
     },
     {
-        {"Unable to change file position",
-            "Impossible de changer de position dans le fichier"} // ERROR_FSEEK
+        {
+            "Unable to change file position",
+            "Impossible de changer de position dans le fichier"
+        } // ERROR_FSEEK
     },
     {
         {
@@ -757,6 +761,18 @@ static const STRING strings[] = {
             "Cannot create file with name containing special characters",
             "Impossible de créer un fichier avec un nom contenant des caractères spéciaux",
         } // ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR
+    },
+    {
+        {
+            "File name cannot contain more than 32 characters",
+            "Le nom du fichier ne peut pas contenir plus de 32 caractères",
+        } // ERROR_COMMAND_ARGS_FILE_LENGTH
+    },
+    {
+        {
+            "File already exists",
+            "Le fichier existe déjà",
+        } // ERROR_COMMAND_ARGS_FILE_EXIST_ALREADY
     }
 };
 
