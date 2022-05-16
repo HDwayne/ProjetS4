@@ -9,24 +9,24 @@ import java.io.IOException;
 public class MainForm extends JFrame{
     private JPanel Panel1;
     private JButton jButtonFolder;
-    // private JLabel jLabelFolder;
-    // private JTabbedPane tabbedPane1;
-    // private JPanel jUserTable;
-    // private JPanel jFolders;
-    // private JPanel JInodeTable;
-    // private JPanel JSuperBlock;
+    private JLabel jLabelFolder;
+    private JTabbedPane tabbedPane1;
+    private JPanel jUserTable;
+    private JPanel jFolders;
+    private JPanel JInodeTable;
+    private JPanel JSuperBlock;
     private JTextArea JTextAreaSB;
     private JTextArea JTextAreaIT;
     private JTextArea JTextAreaF;
     private JTextArea JTextAreaUT;
-    // private JPanel JSysAnalyse;
+    private JPanel JSysAnalyse;
     private JButton JButtonAnalyse;
     private JTextArea JTextAreaAS;
     private JButton JButtonRefreshF;
     private JButton JButtonRefreshIT;
     private JButton JButtonRefreshUT;
     private JButton JButtonRefreshSB;
-    // private JPanel JDefrag;
+    private JPanel JDefrag;
     private JButton JButtonDefrag;
     private JTextArea JTextAreaDefrag;
     private VirtualDisk vd = null;
@@ -34,7 +34,7 @@ public class MainForm extends JFrame{
     public MainForm() throws IOException {
         setContentPane(Panel1);
         setTitle("OADS");
-        setSize(700,500);
+        setSize(750,500);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
 

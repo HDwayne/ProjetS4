@@ -214,30 +214,30 @@ public class VirtualDisk {
             }
         }
         SuperBlock.updateFirstByte(this);
-        result.append("[Défragmentation] Espace sauvé : ").append((max - minmax)).append("\n");
+        result.append("[Défragmentation] Espace sauvé : ").append((max - minmax)).append("\n").append("Fin de la défragmentation...\n");
         return result.toString();
     }
 
     public String analysis() throws IOException {
         StringBuilder result = new StringBuilder("Début de l'analyse du système... \n");
-        result.append("----------SuperBlock------------\n");
+        result.append("---------- SuperBlock ------------\n");
         result.append(SuperBlock.analysis(this));
-        result.append("------------------------------\n");
+        result.append("----------------------------------\n");
         for (int i = 0; i < this.tabInode.length; i++) {
             if (!this.tabInode[i].isFree()) {
-                result.append("----------Inode n°").append(i).append("------------\n");
+                result.append("---------- Inode n°").append(i).append(" ------------\n");
                 result.append(this.tabInode[i].analysis(this, i));
             }
         }
-        result.append("------------------------------\n");
+        result.append("---------------------------------\n");
 
         for (int i = 0; i < this.tabUser.length; i++) {
             if (!this.tabUser[i].isFree()) {
-                result.append("--------Utilisateur n°").append(i).append("----------\n");
+                result.append("-------- Utilisateur n°").append(i).append(" ----------\n");
                 result.append(this.tabUser[i].analysis(this, i));
             }
         }
-        result.append("------------------------------\n");
+        result.append("-----------------------------------\n");
         result.append("Fin de l'analyse du système... \n");
         return result.toString();
     }

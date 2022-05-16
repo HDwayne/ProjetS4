@@ -9,3 +9,8 @@ bin/dump_file
 bin/dump_inode
 bin/dump_user
 .vscode/*
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/uiDesigner.xml
+.idea/modules.xml
+.idea/misc.xml
