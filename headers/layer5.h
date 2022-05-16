@@ -16,6 +16,7 @@
 #include "layer3.h"
 #include "layer4.h"
 #include "terminal.h"
+#include <ctype.h>
 
 #define CMD_HELP "help"
 #define CMD_QUIT "quit"

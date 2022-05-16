@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="10b35979-5f8f-459c-bb73-8ae2e83e282d" name="Changes" comment="interface OADS" />
+    <list default="true" id="1ba3a656-a6a8-4003-8a28-ba6ae3fb0c4d" name="Changes" comment="Réduction des warning">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/application/Inode.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/application/Inode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/application/VirtualDisk.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/application/VirtualDisk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/cmd_dump_file.c" beforeDir="false" afterPath="$PROJECT_DIR$/sources/cmd_dump_file.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/cmd_dump_user.c" beforeDir="false" afterPath="$PROJECT_DIR$/sources/cmd_dump_user.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/layer2.c" beforeDir="false" afterPath="$PROJECT_DIR$/sources/layer2.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/layer3.c" beforeDir="false" afterPath="$PROJECT_DIR$/sources/layer3.c" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,23 +39,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH": "289",
-    "WebServerToolWindowFactoryState": "false",
-    "extract.method.default.visibility": "private",
-    "last_opened_file_path": "//wsl$/Ubuntu/home/dwayne/L2INFO/S4/ProjetS4"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH&quot;: &quot;289&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
+    &quot;last_opened_file_path&quot;: &quot;//wsl$/Ubuntu/home/dwayne/L2INFO/S4/ProjetS4&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="\\wsl$\Ubuntu\home\dwayne\L2INFO\S4\ProjetS4\app\src\application" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.MainForm">
+  <component name="RunManager" selected="Application.application.MainForm">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="application.Main" />
       <module name="ProjetS4" />
@@ -71,8 +83,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="application.MainForm" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="application.MainForm" />
+      <module name="app" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="application.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.application.MainForm" />
         <item itemvalue="Application.MainForm" />
         <item itemvalue="Application.Main" />
       </list>

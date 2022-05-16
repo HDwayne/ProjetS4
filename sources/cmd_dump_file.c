@@ -29,6 +29,23 @@ int main(int argc, char **argv){
     load_file_from_host("coucou", user);
     store_file_to_host("coucou");
     delete_file("coucou");
+
+    session_t session;
+    session.userid = 0;
+    file_t newfile;
+    strcpy((char *)newfile.data, "Bonjour comment ça va ?");
+    newfile.size = strlen("Bonjour comment ça va ?");
+    write_file("fichier_test", newfile, session);
+
+    strcpy((char *)newfile.data, "Bonjour comment vont-ils ?\n Bien j'espère\n");
+    newfile.size = strlen("Bonjour comment vont-ils ?\n Bien j'espère\n");
+    write_file("fichier_test", newfile, session);
+
+    strcpy((char *)newfile.data, "coucou");
+    newfile.size = strlen("coucou");
+    write_file("fichier_test", newfile, session);
+    store_file_to_host("fichier_test");
+
     shutdown_disk_sos();
     init_disk_sos(argv[1], 0);
     display_disk_storage();

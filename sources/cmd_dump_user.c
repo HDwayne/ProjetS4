@@ -26,8 +26,12 @@ int main(int argc, char **argv){
     for (int i = 1; i < NB_USERS; ++i) {
         init_user("Michel", "bonjour");
     }
-    delete_user(3);
+    printf("Login Michel in users table : %d \n", is_login_in_users_table("Michel"));
+    printf("Test login Michel : %d \n", is_good_credentials("Michel", "bonjour"));
     printf("Superblock : %d %d %d %d\n", virtual_disk_sos->super_block.number_of_files, virtual_disk_sos->super_block.number_of_users, virtual_disk_sos->super_block.nb_blocks_used, virtual_disk_sos->super_block.first_free_byte);
+    delete_user(3);
+    printf("Login Michel in users table : %d \n", is_login_in_users_table("Michel"));
+
     shutdown_disk_sos();
     init_disk_sos(argv[1], 0);
     display_disk_storage();

@@ -123,7 +123,8 @@ typedef enum _STR_NAME {
     ERROR_COMMAND_CLEAR_USAGE,
     ERROR_COMMAND_ARGS_LOGIN_EMPTY,
     ERROR_COMMAND_ARGS_LOGIN_SELF,
-    ERROR_COMMAND_ARGS_REMOVE_ROOT
+    ERROR_COMMAND_ARGS_REMOVE_ROOT,
+    ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR,
 } STR_NAME;
 
 static const STRING strings[] = {
@@ -750,6 +751,12 @@ static const STRING strings[] = {
             "Cannot delete the superuser",
             "Impossible de supprimer le superutilisateur",
         } // ERROR_COMMAND_ARGS_REMOVE_ROOT
+    },
+    {
+        {
+            "Cannot create file with name containing special characters",
+            "Impossible de créer un fichier avec un nom contenant des caractères spéciaux",
+        } // ERROR_COMMAND_ARGS_FILE_NAME_SPECIAL_CHAR
     }
 };
 
