@@ -312,7 +312,7 @@ int cmd_edit(cmd_t args, session_t user) {
         for (int i = 0; i < 1000; i++){
             if (text[i][0] != '\0')
                 cara += strlen(text[i]);
-            else
+            else if (strlen(text[i]) != 0)
                 cara += 1;
         }
     } while (lettre != TC_KEY_ENTER || cara >= MAX_FILE_SIZE);
