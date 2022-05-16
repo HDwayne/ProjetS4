@@ -120,5 +120,11 @@ int main(int argc, char **argv) {
     terminal_print(LangGet(OUTPUT_OS_SHUTDOWN), TERMINAL_GREEN);
     fprintf(stdout, "%s\n", LangGet(OUTPUT_PRESS_EXIT));
     exitTerm();
+
+    for (int i = 0; i < MAX_DISK_KID + 1; ++i) {
+        free(list_kid[i]);
+    }
+    free(list_kid);
+
     return shutdown_disk_sos();
 }

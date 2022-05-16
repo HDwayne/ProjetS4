@@ -184,6 +184,11 @@ int main(int argc, char **argv){
         setborder();
         int choix = menu(yes_no, 2);
 
+        for (int i = 0; i < 3; ++i) {
+            free(yes_no[i]);
+        }
+        free(yes_no);
+
         terminal_clear();
         terminal_cursor((int)((col / 2) - (strlen(OS_TITLE)) / 2), 2);
         fprintf(stdout, "%s\n", OS_TITLE);
@@ -214,6 +219,7 @@ int main(int argc, char **argv){
             return ERROR;
         }
     }
+
 
     update_first_free_byte();
     session_t user;
@@ -333,6 +339,9 @@ int main(int argc, char **argv){
 
     free(chaine);
     free(namefile);
+    for (int i = 0; i < MAX_DISK_KID + 1; ++i) {
+        free(list_kid[i]);
+    }
     free(list_kid);
     free(username);
     free(verifpwd);

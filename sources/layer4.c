@@ -168,8 +168,8 @@ int store_file_to_host(char *filenamesos) {
         return ERROR;
     }
 
-    int code = (int)fwrite(file.data, sizeof(uchar), file.size, fd);
-    if (code != file.size) {
+    int code = (int)fwrite(file.data, sizeof(uchar), strlen((char *)file.data), fd);
+    if (code != strlen((char *)file.data)) {
         fprintf(stderr, "%s", LangGet(ERROR_WRITE_BLOCK));
         if (fclose(fd) == EOF)
             fprintf(stderr, "%s\n", LangGet(ERROR_FILE_CLOSE));
