@@ -798,8 +798,8 @@ int terminal_shell() {
                 printf("\e[?25h");
                 user_id = is_good_credentials(log, pwd);
                 attempt++;
-            } while (user_id == NB_USERS && attempt <= 3);
-            if (attempt == 4) {
+            } while (user_id == NB_USERS && attempt < 3);
+            if (attempt == 3) {
                 terminal_print(LangGet(ERROR_LOGIN_ATTEMPT), TERMINAL_RED);
                 return SUCCESS;
             }
