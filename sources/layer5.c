@@ -338,12 +338,12 @@ int cmd_edit(cmd_t args, session_t user) {
         }
     }
 
-    if (newfile.data[newfile.size - 1] == '\n' && strlen(newfile.data) > 1)
+    if (newfile.data[newfile.size - 1] == '\n' && newfile.size -1 > 0)
         newfile.data[newfile.size -1] = '\0';
     else 
         strcat((char *)newfile.data, "\0");
 
-    newfile.size = cara + j;
+    newfile.size = strlen((char *)newfile.data);
 
     int nb_n=0;
     for (uint i = 0; newfile.data[i] != '\0'; i++)
