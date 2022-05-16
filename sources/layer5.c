@@ -244,7 +244,7 @@ int cmd_edit(cmd_t args, session_t user) {
     char lettre;
     int pos=0;
     int offset=0;
-    int cara=0;
+    int cara;
 
     int col;
     int row;
@@ -325,6 +325,7 @@ int cmd_edit(cmd_t args, session_t user) {
     newfile.size = 0;
     memcpy(newfile.data, "", strlen(""));
 
+    int j = 0;
     for (int i = 0; i < nb_line_tt; i++) {
         if (strcmp(text[i], "\n") != 0) {
             memcpy(newfile.data + newfile.size, text[i], strlen(text[i]));
@@ -332,16 +333,17 @@ int cmd_edit(cmd_t args, session_t user) {
             if (i < nb_line_tt - 1 && text[i][strlen(text[i]) - 1] != '\n') {
                 memcpy(newfile.data + newfile.size, "\n", strlen("\n"));
                 newfile.size += strlen("\n");
+                j++;
             }
         }
     }
 
-    if (newfile.data[newfile.size - 1] == '\n')
-        newfile.data[newfile.size - 1] = '\0';
+    if (newfile.data[newfile.size - 1] == '\n' && strlen(newfile.data) > 1)
+        newfile.data[newfile.size -1] = '\0';
     else strcat((char *)
         newfile.data, "\0");
 
-    newfile.size = cara + nb_line_tt-1;
+    newfile.size = cara + j;
 
     int nb_n=0;
     for (uint i = 0; newfile.data[i] != '\0'; i++)
