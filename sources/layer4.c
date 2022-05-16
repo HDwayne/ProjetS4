@@ -38,7 +38,7 @@ int write_file(char *filename, file_t filedata, session_t user) {
             if (write_text_block_uchar(&pos, filedata.size, filedata.data) == ERROR)
                 return ERROR;
             virtual_disk_sos->inodes[i_inode].size = filedata.size;
-            update_first_free_byte(;)
+            update_first_free_byte();
         } else {
             char *ctimestamp = malloc(sizeof(char) * TIMESTAMP_SIZE);
             if (ctimestamp == NULL) {

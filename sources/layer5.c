@@ -266,7 +266,7 @@ int cmd_edit(cmd_t args, session_t user) {
             else if (offset+pos < nb_line_tt-1)
                 offset++;
             terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, offset, false);
-        } else if (lettre == 'C') { // edit - TODO offset edit overwiting
+        } else if (lettre == 'C') { // edit
             terminal_set_editor_mode(args.tabArgs[1], pos+offset+1, nb_line_tt);
             terminal_editor_elem(nb_line_tt, MAX_MSG, text, pos, offset, true);
             terminal_cursor(13,pos+3);
