@@ -77,6 +77,6 @@ void setborder();
 void initTerm();
 void exitTerm();
 void terminal_set_editor_mode(char* filename, int line_to_edit, int nb_line_tt);
-int get_nb_cara(char* text[msg_size]);
+int get_nb_cara(char* text[MSG_SIZE]);
 void terminal_editor_elem(size_t array_size, size_t msg_size, char (*text)[msg_size], int pos, int offset, bool toEdit);
 #endif // TERMINAL_OS_DEFINES_H
